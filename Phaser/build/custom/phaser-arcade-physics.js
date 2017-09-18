@@ -7,7 +7,7 @@
 *
 * Phaser - http://phaser.io
 *
-* v2.8.7 "2017-09-12" - Built: Tue Sep 12 2017 10:19:28
+* v2.8.7 "2017-09-12" - Built: Tue Sep 12 2017 10:19:21
 *
 * By Richard Davey http://www.photonstorm.com @photonstorm
 *
@@ -73564,6 +73564,9116 @@ Phaser.Physics.prototype.constructor = Phaser.Physics;
 */
 
 /**
+* The Arcade Physics world. Contains Arcade Physics related collision, overlap and motion methods.
+*
+* @class Phaser.Physics.Arcade
+* @constructor
+* @param {Phaser.Game} game - reference to the current game instance.
+*/
+Phaser.Physics.Arcade = function (game) {
+
+    /**
+    * @property {Phaser.Game} game - Local reference to game.
+    */
+    this.game = game;
+
+    /**
+    * @property {Phaser.Point} gravity - The World gravity setting. Defaults to x: 0, y: 0, or no gravity.
+    */
+    this.gravity = new Phaser.Point();
+
+    /**
+    * @property {Phaser.Rectangle} bounds - The bounds inside of which the physics world exists. Defaults to match the world bounds.
+    */
+    this.bounds = new Phaser.Rectangle(0, 0, game.world.width, game.world.height);
+
+    /**
+    * Which edges of the World bounds Bodies can collide against when `collideWorldBounds` is `true`.
+    * For example checkCollision.down = false means Bodies cannot collide with the World.bounds.bottom.
+    * @property {object} checkCollision - An object containing allowed collision flags (up, down, left, right).
+    */
+    this.checkCollision = { up: true, down: true, left: true, right: true };
+
+    /**
+    * @property {number} maxObjects - Used by the QuadTree to set the maximum number of objects per quad.
+    */
+    this.maxObjects = 10;
+
+    /**
+    * @property {number} maxLevels - Used by the QuadTree to set the maximum number of iteration levels.
+    */
+    this.maxLevels = 4;
+
+    /**
+    * @property {number} OVERLAP_BIAS - A value added to the delta values during collision checks.
+    */
+    this.OVERLAP_BIAS = 4;
+
+    /**
+    * @property {boolean} forceX - If true World.separate will always separate on the X axis before Y. Otherwise it will check gravity totals first.
+    */
+    this.forceX = false;
+
+    /**
+    * @property {number} sortDirection - Used when colliding a Sprite vs. a Group, or a Group vs. a Group, this defines the direction the sort is based on. Default is Phaser.Physics.Arcade.LEFT_RIGHT.
+    * @default
+    */
+    this.sortDirection = Phaser.Physics.Arcade.LEFT_RIGHT;
+
+    /**
+    * @property {boolean} skipQuadTree - If true the QuadTree will not be used for any collision. QuadTrees are great if objects are well spread out in your game, otherwise they are a performance hit. If you enable this you can disable on a per body basis via `Body.skipQuadTree`.
+    */
+    this.skipQuadTree = true;
+
+    /**
+    * @property {boolean} isPaused - If `true` the `Body.preUpdate` method will be skipped, halting all motion for all bodies. Note that other methods such as `collide` will still work, so be careful not to call them on paused bodies.
+    */
+    this.isPaused = false;
+
+    /**
+    * @property {Phaser.QuadTree} quadTree - The world QuadTree.
+    */
+    this.quadTree = new Phaser.QuadTree(this.game.world.bounds.x, this.game.world.bounds.y, this.game.world.bounds.width, this.game.world.bounds.height, this.maxObjects, this.maxLevels);
+
+    /**
+    * @property {number} _total - Internal cache var.
+    * @private
+    */
+    this._total = 0;
+
+    // By default we want the bounds the same size as the world bounds
+    this.setBoundsToWorld();
+
+};
+
+Phaser.Physics.Arcade.prototype.constructor = Phaser.Physics.Arcade;
+
+/**
+* A constant used for the sortDirection value.
+* Use this if you don't wish to perform any pre-collision sorting at all, or will manually sort your Groups.
+* @constant
+* @type {number}
+*/
+Phaser.Physics.Arcade.SORT_NONE = 0;
+
+/**
+* A constant used for the sortDirection value.
+* Use this if your game world is wide but short and scrolls from the left to the right (i.e. Mario)
+* @constant
+* @type {number}
+*/
+Phaser.Physics.Arcade.LEFT_RIGHT = 1;
+
+/**
+* A constant used for the sortDirection value.
+* Use this if your game world is wide but short and scrolls from the right to the left (i.e. Mario backwards)
+* @constant
+* @type {number}
+*/
+Phaser.Physics.Arcade.RIGHT_LEFT = 2;
+
+/**
+* A constant used for the sortDirection value.
+* Use this if your game world is narrow but tall and scrolls from the top to the bottom (i.e. Dig Dug)
+* @constant
+* @type {number}
+*/
+Phaser.Physics.Arcade.TOP_BOTTOM = 3;
+
+/**
+* A constant used for the sortDirection value.
+* Use this if your game world is narrow but tall and scrolls from the bottom to the top (i.e. Commando or a vertically scrolling shoot-em-up)
+* @constant
+* @type {number}
+*/
+Phaser.Physics.Arcade.BOTTOM_TOP = 4;
+
+Phaser.Physics.Arcade.prototype = {
+
+    /**
+    * Updates the size of this physics world.
+    *
+    * @method Phaser.Physics.Arcade#setBounds
+    * @param {number} x - Top left most corner of the world.
+    * @param {number} y - Top left most corner of the world.
+    * @param {number} width - New width of the world. Can never be smaller than the Game.width.
+    * @param {number} height - New height of the world. Can never be smaller than the Game.height.
+    */
+    setBounds: function (x, y, width, height) {
+
+        this.bounds.setTo(x, y, width, height);
+
+    },
+
+    /**
+    * Updates the size of this physics world to match the size of the game world.
+    *
+    * @method Phaser.Physics.Arcade#setBoundsToWorld
+    */
+    setBoundsToWorld: function () {
+
+        this.bounds.copyFrom(this.game.world.bounds);
+
+    },
+
+    /**
+    * This will create an Arcade Physics body on the given game object or array of game objects.
+    * A game object can only have 1 physics body active at any one time, and it can't be changed until the object is destroyed.
+    *
+    * @method Phaser.Physics.Arcade#enable
+    * @param {object|array|Phaser.Group} object - The game object to create the physics body on. Can also be an array or Group of objects, a body will be created on every child that has a `body` property.
+    * @param {boolean} [children=true] - Should a body be created on all children of this object? If true it will recurse down the display list as far as it can go.
+    */
+    enable: function (object, children) {
+
+        if (children === undefined) { children = true; }
+
+        var i = 1;
+
+        if (Array.isArray(object))
+        {
+            i = object.length;
+
+            while (i--)
+            {
+                if (object[i] instanceof Phaser.Group)
+                {
+                    //  If it's a Group then we do it on the children regardless
+                    this.enable(object[i].children, children);
+                }
+                else
+                {
+                    this.enableBody(object[i]);
+
+                    if (children && object[i].hasOwnProperty('children') && object[i].children.length > 0)
+                    {
+                        this.enable(object[i], true);
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (object instanceof Phaser.Group)
+            {
+                //  If it's a Group then we do it on the children regardless
+                this.enable(object.children, children);
+            }
+            else
+            {
+                this.enableBody(object);
+
+                if (children && object.hasOwnProperty('children') && object.children.length > 0)
+                {
+                    this.enable(object.children, true);
+                }
+            }
+        }
+
+    },
+
+    /**
+    * Creates an Arcade Physics body on the given game object.
+    *
+    * A game object can only have 1 physics body active at any one time, and it can't be changed until the body is nulled.
+    *
+    * When you add an Arcade Physics body to an object it will automatically add the object into its parent Groups hash array.
+    *
+    * @method Phaser.Physics.Arcade#enableBody
+    * @param {object} object - The game object to create the physics body on. A body will only be created if this object has a null `body` property.
+    */
+    enableBody: function (object) {
+
+        if (object.hasOwnProperty('body') && object.body === null)
+        {
+            object.body = new Phaser.Physics.Arcade.Body(object);
+
+            if (object.parent && object.parent instanceof Phaser.Group)
+            {
+                object.parent.addToHash(object);
+            }
+        }
+
+    },
+
+    /**
+    * Called automatically by a Physics body, it updates all motion related values on the Body unless `World.isPaused` is `true`.
+    *
+    * @method Phaser.Physics.Arcade#updateMotion
+    * @param {Phaser.Physics.Arcade.Body} The Body object to be updated.
+    */
+    updateMotion: function (body) {
+
+        if (body.allowRotation)
+        {
+            var velocityDelta = this.computeVelocity(0, body, body.angularVelocity, body.angularAcceleration, body.angularDrag, body.maxAngular) - body.angularVelocity;
+            body.angularVelocity += velocityDelta;
+            body.rotation += (body.angularVelocity * this.game.time.physicsElapsed);
+        }
+
+        body.velocity.x = this.computeVelocity(1, body, body.velocity.x, body.acceleration.x, body.drag.x, body.maxVelocity.x);
+        body.velocity.y = this.computeVelocity(2, body, body.velocity.y, body.acceleration.y, body.drag.y, body.maxVelocity.y);
+
+    },
+
+    /**
+    * A tween-like function that takes a starting velocity and some other factors and returns an altered velocity.
+    * Based on a function in Flixel by @ADAMATOMIC
+    *
+    * @method Phaser.Physics.Arcade#computeVelocity
+    * @param {number} axis - 0 for nothing, 1 for horizontal, 2 for vertical.
+    * @param {Phaser.Physics.Arcade.Body} body - The Body object to be updated.
+    * @param {number} velocity - Any component of velocity (e.g. 20).
+    * @param {number} acceleration - Rate at which the velocity is changing.
+    * @param {number} drag - Really kind of a deceleration, this is how much the velocity changes if Acceleration is not set.
+    * @param {number} [max=10000] - An absolute value cap for the velocity.
+    * @return {number} The altered Velocity value.
+    */
+    computeVelocity: function (axis, body, velocity, acceleration, drag, max) {
+
+        if (max === undefined) { max = 10000; }
+
+        if (axis === 1 && body.allowGravity)
+        {
+            velocity += (this.gravity.x + body.gravity.x) * this.game.time.physicsElapsed;
+        }
+        else if (axis === 2 && body.allowGravity)
+        {
+            velocity += (this.gravity.y + body.gravity.y) * this.game.time.physicsElapsed;
+        }
+
+        if (acceleration)
+        {
+            velocity += acceleration * this.game.time.physicsElapsed;
+        }
+        else if (drag && body.allowDrag)
+        {
+            drag *= this.game.time.physicsElapsed;
+
+            if (velocity - drag > 0)
+            {
+                velocity -= drag;
+            }
+            else if (velocity + drag < 0)
+            {
+                velocity += drag;
+            }
+            else
+            {
+                velocity = 0;
+            }
+        }
+
+        if (velocity > max)
+        {
+            velocity = max;
+        }
+        else if (velocity < -max)
+        {
+            velocity = -max;
+        }
+
+        return velocity;
+
+    },
+
+    /**
+    * Checks for overlaps between two game objects. The objects can be Sprites, Groups or Emitters.
+    *
+    * Unlike {@link #collide} the objects are NOT automatically separated or have any physics applied, they merely test for overlap results.
+    *
+    * You can perform Sprite vs. Sprite, Sprite vs. Group and Group vs. Group overlap checks.
+    * Both the first and second parameter can be arrays of objects, of differing types.
+    * If two arrays are passed, the contents of the first parameter will be tested against all contents of the 2nd parameter.
+    *
+    * **This function is not recursive**, and will not test against children of objects passed (i.e. Groups within Groups).
+    *
+    * ##### Tilemaps
+    *
+    * Any overlapping tiles, including blank/null tiles, will give a positive result. Tiles marked via {@link Phaser.Tilemap#setCollision} (and similar methods) have no special status, and callbacks added via {@link Phaser.Tilemap#setTileIndexCallback} or {@link Phaser.Tilemap#setTileLocationCallback} are not invoked. So calling this method without any callbacks isn't very useful.
+    *
+    * If you're interested only in whether an object overlaps a certain tile or class of tiles, filter the tiles with `processCallback` and then use the result returned by this method. Blank/null tiles can be excluded by their {@link Phaser.Tile#index index} (-1).
+    *
+    * If you want to take action on certain overlaps, examine the tiles in `collideCallback` and then handle as you like.
+    *
+    * @method Phaser.Physics.Arcade#overlap
+    * @param {Phaser.Sprite|Phaser.Group|Phaser.Particles.Emitter|array} object1 - The first object or array of objects to check. Can be Phaser.Sprite, Phaser.Group or Phaser.Particles.Emitter.
+    * @param {Phaser.Sprite|Phaser.Group|Phaser.Particles.Emitter|array} object2 - The second object or array of objects to check. Can be Phaser.Sprite, Phaser.Group or Phaser.Particles.Emitter.
+    * @param {function} [overlapCallback=null] - An optional callback function that is called if the objects overlap. The two objects will be passed to this function in the same order in which you specified them, unless you are checking Group vs. Sprite, in which case Sprite will always be the first parameter.
+    * @param {function} [processCallback=null] - A callback function that lets you perform additional checks against the two objects if they overlap. If this is set then `overlapCallback` will only be called if this callback returns `true`.
+    * @param {object} [callbackContext] - The context in which to run the callbacks.
+    * @return {boolean} True if an overlap occurred otherwise false.
+    */
+    overlap: function (object1, object2, overlapCallback, processCallback, callbackContext) {
+
+        overlapCallback = overlapCallback || null;
+        processCallback = processCallback || null;
+        callbackContext = callbackContext || overlapCallback;
+
+        this._total = 0;
+
+        this.collideObjects(object1, object2, overlapCallback, processCallback, callbackContext, true);
+
+        return (this._total > 0);
+
+    },
+
+    /**
+    * Checks for collision between two game objects and separates them if colliding ({@link https://gist.github.com/samme/cbb81dd19f564dcfe2232761e575063d details}). If you don't require separation then use {@link #overlap} instead.
+    *
+    * You can perform Sprite vs. Sprite, Sprite vs. Group, Group vs. Group, Sprite vs. Tilemap Layer or Group vs. Tilemap Layer collisions.
+    * Both the `object1` and `object2` can be arrays of objects, of differing types.
+    *
+    * If two Groups or arrays are passed, each member of one will be tested against each member of the other.
+    *
+    * If one Group **only** is passed (as `object1`), each member of the Group will be collided against the other members.
+    *
+    * If either object is `null` the collision test will fail.
+    *
+    * Bodies with `enable = false` and Sprites with `exists = false` are skipped (ignored).
+    *
+    * An optional processCallback can be provided. If given this function will be called when two sprites are found to be colliding. It is called before any separation takes place, giving you the chance to perform additional checks. If the function returns true then the collision and separation is carried out. If it returns false it is skipped.
+    *
+    * The collideCallback is an optional function that is only called if two sprites collide. If a processCallback has been set then it needs to return true for collideCallback to be called.
+    *
+    * **This function is not recursive**, and will not test against children of objects passed (i.e. Groups or Tilemaps within other Groups).
+    *
+    * ##### Examples
+    *
+    * ```javascript
+    * collide(group);
+    * collide(group, undefined); // equivalent
+    *
+    * collide(sprite1, sprite2);
+    *
+    * collide(sprite, group);
+    *
+    * collide(group1, group2);
+    *
+    * collide([sprite1, sprite2], [sprite3, sprite4]); // 1 vs. 3, 1 vs. 4, 2 vs. 3, 2 vs. 4
+    * ```
+    *
+    * ##### Tilemaps
+    *
+    * Tiles marked via {@link Phaser.Tilemap#setCollision} (and similar methods) are "solid". If a Sprite collides with one of these tiles, the two are separated by moving the Sprite outside the tile's edges. Enable {@link Phaser.TilemapLayer#debug} to see the colliding edges of the Tilemap.
+    *
+    * Tiles with a callback attached via {@link Phaser.Tilemap#setTileIndexCallback} or {@link Phaser.Tilemap#setTileLocationCallback} invoke the callback if a Sprite collides with them. If a tile has a callback attached via both methods, only the location callback is invoked. The colliding Sprite is separated from the tile only if the callback returns `true`.
+    *
+    * @method Phaser.Physics.Arcade#collide
+    * @param {Phaser.Sprite|Phaser.Group|Phaser.Particles.Emitter|Phaser.TilemapLayer|array} object1 - The first object or array of objects to check. Can be Phaser.Sprite, Phaser.Group, Phaser.Particles.Emitter, or Phaser.TilemapLayer.
+    * @param {Phaser.Sprite|Phaser.Group|Phaser.Particles.Emitter|Phaser.TilemapLayer|array} object2 - The second object or array of objects to check. Can be Phaser.Sprite, Phaser.Group, Phaser.Particles.Emitter or Phaser.TilemapLayer.
+    * @param {function} [collideCallback=null] - An optional callback function that is called if the objects collide. The two objects will be passed to this function in the same order in which you specified them, unless you are colliding Group vs. Sprite, in which case Sprite will always be the first parameter.
+    * @param {function} [processCallback=null] - A callback function that lets you perform additional checks against the two objects if they overlap. If this is set then collision will only happen if processCallback returns true. The two objects will be passed to this function in the same order in which you specified them, unless you are colliding Group vs. Sprite, in which case Sprite will always be the first parameter.
+    * @param {object} [callbackContext] - The context in which to run the callbacks.
+    * @return {boolean} True if a collision occurred otherwise false.
+    */
+    collide: function (object1, object2, collideCallback, processCallback, callbackContext) {
+
+        collideCallback = collideCallback || null;
+        processCallback = processCallback || null;
+        callbackContext = callbackContext || collideCallback;
+
+        this._total = 0;
+
+        this.collideObjects(object1, object2, collideCallback, processCallback, callbackContext, false);
+
+        return (this._total > 0);
+
+    },
+
+    /**
+     * A Sort function for sorting two bodies based on a LEFT to RIGHT sort direction.
+     *
+     * This is called automatically by World.sort
+     *
+     * @method Phaser.Physics.Arcade#sortLeftRight
+     * @param {Phaser.Sprite} a - The first Sprite to test. The Sprite must have an Arcade Physics Body.
+     * @param {Phaser.Sprite} b - The second Sprite to test. The Sprite must have an Arcade Physics Body.
+     * @return {integer} A negative value if `a > b`, a positive value if `a < b` or 0 if `a === b` or the bodies are invalid.
+     */
+    sortLeftRight: function (a, b) {
+
+        if (!a.body || !b.body)
+        {
+            return 0;
+        }
+
+        return a.body.x - b.body.x;
+
+    },
+
+    /**
+     * A Sort function for sorting two bodies based on a RIGHT to LEFT sort direction.
+     *
+     * This is called automatically by World.sort
+     *
+     * @method Phaser.Physics.Arcade#sortRightLeft
+     * @param {Phaser.Sprite} a - The first Sprite to test. The Sprite must have an Arcade Physics Body.
+     * @param {Phaser.Sprite} b - The second Sprite to test. The Sprite must have an Arcade Physics Body.
+     * @return {integer} A negative value if `a > b`, a positive value if `a < b` or 0 if `a === b` or the bodies are invalid.
+     */
+    sortRightLeft: function (a, b) {
+
+        if (!a.body || !b.body)
+        {
+            return 0;
+        }
+
+        return b.body.x - a.body.x;
+
+    },
+
+    /**
+     * A Sort function for sorting two bodies based on a TOP to BOTTOM sort direction.
+     *
+     * This is called automatically by World.sort
+     *
+     * @method Phaser.Physics.Arcade#sortTopBottom
+     * @param {Phaser.Sprite} a - The first Sprite to test. The Sprite must have an Arcade Physics Body.
+     * @param {Phaser.Sprite} b - The second Sprite to test. The Sprite must have an Arcade Physics Body.
+     * @return {integer} A negative value if `a > b`, a positive value if `a < b` or 0 if `a === b` or the bodies are invalid.
+     */
+    sortTopBottom: function (a, b) {
+
+        if (!a.body || !b.body)
+        {
+            return 0;
+        }
+
+        return a.body.y - b.body.y;
+
+    },
+
+    /**
+     * A Sort function for sorting two bodies based on a BOTTOM to TOP sort direction.
+     *
+     * This is called automatically by World.sort
+     *
+     * @method Phaser.Physics.Arcade#sortBottomTop
+     * @param {Phaser.Sprite} a - The first Sprite to test. The Sprite must have an Arcade Physics Body.
+     * @param {Phaser.Sprite} b - The second Sprite to test. The Sprite must have an Arcade Physics Body.
+     * @return {integer} A negative value if `a > b`, a positive value if `a < b` or 0 if `a === b` or the bodies are invalid.
+     */
+    sortBottomTop: function (a, b) {
+
+        if (!a.body || !b.body)
+        {
+            return 0;
+        }
+
+        return b.body.y - a.body.y;
+
+    },
+
+    /**
+     * This method will sort a Groups hash array.
+     *
+     * If the Group has `physicsSortDirection` set it will use the sort direction defined.
+     *
+     * Otherwise if the sortDirection parameter is undefined, or Group.physicsSortDirection is null, it will use Phaser.Physics.Arcade.sortDirection.
+     *
+     * By changing Group.physicsSortDirection you can customise each Group to sort in a different order.
+     *
+     * @method Phaser.Physics.Arcade#sort
+     * @param {Phaser.Group} group - The Group to sort.
+     * @param {integer} [sortDirection] - The sort direction used to sort this Group.
+     */
+    sort: function (group, sortDirection) {
+
+        if (group.physicsSortDirection !== null)
+        {
+            sortDirection = group.physicsSortDirection;
+        }
+        else
+        {
+            if (sortDirection === undefined) { sortDirection = this.sortDirection; }
+        }
+
+        if (sortDirection === Phaser.Physics.Arcade.LEFT_RIGHT)
+        {
+            //  Game world is say 2000x600 and you start at 0
+            group.hash.sort(this.sortLeftRight);
+        }
+        else if (sortDirection === Phaser.Physics.Arcade.RIGHT_LEFT)
+        {
+            //  Game world is say 2000x600 and you start at 2000
+            group.hash.sort(this.sortRightLeft);
+        }
+        else if (sortDirection === Phaser.Physics.Arcade.TOP_BOTTOM)
+        {
+            //  Game world is say 800x2000 and you start at 0
+            group.hash.sort(this.sortTopBottom);
+        }
+        else if (sortDirection === Phaser.Physics.Arcade.BOTTOM_TOP)
+        {
+            //  Game world is say 800x2000 and you start at 2000
+            group.hash.sort(this.sortBottomTop);
+        }
+
+    },
+
+    /**
+    * Internal collision handler. Extracts objects for {@link #collideHandler}.
+    *
+    * @method Phaser.Physics.Arcade#collideObjects
+    * @private
+    */
+    collideObjects: function (object1, object2, collideCallback, processCallback, callbackContext, overlapOnly) {
+
+        if (!Array.isArray(object1) && Array.isArray(object2))
+        {
+            for (var i = 0; i < object2.length; i++)
+            {
+                if (!object2[i]) { continue; }
+
+                this.collideHandler(object1, object2[i], collideCallback, processCallback, callbackContext, overlapOnly);
+            }
+        }
+        else if (Array.isArray(object1) && !Array.isArray(object2))
+        {
+            for (var i = 0; i < object1.length; i++)
+            {
+                if (!object1[i]) { continue; }
+
+                this.collideHandler(object1[i], object2, collideCallback, processCallback, callbackContext, overlapOnly);
+            }
+        }
+        else if (Array.isArray(object1) && Array.isArray(object2))
+        {
+            for (var i = 0; i < object1.length; i++)
+            {
+                if (!object1[i]) { continue; }
+
+                for (var j = 0; j < object2.length; j++)
+                {
+                    if (!object2[j]) { continue; }
+
+                    this.collideHandler(object1[i], object2[j], collideCallback, processCallback, callbackContext, overlapOnly);
+                }
+            }
+        }
+        else
+        {
+            this.collideHandler(object1, object2, collideCallback, processCallback, callbackContext, overlapOnly);
+        }
+
+    },
+
+    /**
+    * Internal collision handler. Matches arguments to other handlers.
+    *
+    * @method Phaser.Physics.Arcade#collideHandler
+    * @private
+    * @param {Phaser.Sprite|Phaser.Group|Phaser.Particles.Emitter|Phaser.TilemapLayer} object1 - The first object to check. Can be an instance of Phaser.Sprite, Phaser.Group, Phaser.Particles.Emitter, or Phaser.TilemapLayer.
+    * @param {Phaser.Sprite|Phaser.Group|Phaser.Particles.Emitter|Phaser.TilemapLayer} object2 - The second object to check. Can be an instance of Phaser.Sprite, Phaser.Group, Phaser.Particles.Emitter or Phaser.TilemapLayer. Can also be an array of objects to check.
+    * @param {function} collideCallback - An optional callback function that is called if the objects collide. The two objects will be passed to this function in the same order in which you specified them.
+    * @param {function} processCallback - A callback function that lets you perform additional checks against the two objects if they overlap. If this is set then collision will only happen if processCallback returns true. The two objects will be passed to this function in the same order in which you specified them.
+    * @param {object} callbackContext - The context in which to run the callbacks.
+    * @param {boolean} overlapOnly - Just run an overlap or a full collision.
+    */
+    collideHandler: function (object1, object2, collideCallback, processCallback, callbackContext, overlapOnly) {
+
+        //  Only collide valid objects
+        if (object2 === undefined && object1.physicsType === Phaser.GROUP)
+        {
+            this.sort(object1);
+            this.collideGroupVsSelf(object1, collideCallback, processCallback, callbackContext, overlapOnly);
+            return;
+        }
+
+        //  If neither of the objects are set or exist then bail out
+        if (!object1 || !object2 || !object1.exists || !object2.exists)
+        {
+            return;
+        }
+
+        //  Groups? Sort them
+        if (this.sortDirection !== Phaser.Physics.Arcade.SORT_NONE)
+        {
+            if (object1.physicsType === Phaser.GROUP)
+            {
+                this.sort(object1);
+            }
+
+            if (object2.physicsType === Phaser.GROUP)
+            {
+                this.sort(object2);
+            }
+        }
+
+        //  SPRITES
+        if (object1.physicsType === Phaser.SPRITE)
+        {
+            if (object2.physicsType === Phaser.SPRITE)
+            {
+                this.collideSpriteVsSprite(object1, object2, collideCallback, processCallback, callbackContext, overlapOnly);
+            }
+            else if (object2.physicsType === Phaser.GROUP)
+            {
+                this.collideSpriteVsGroup(object1, object2, collideCallback, processCallback, callbackContext, overlapOnly);
+            }
+            else if (object2.physicsType === Phaser.TILEMAPLAYER)
+            {
+                this.collideSpriteVsTilemapLayer(object1, object2, collideCallback, processCallback, callbackContext, overlapOnly);
+            }
+        }
+        //  GROUPS
+        else if (object1.physicsType === Phaser.GROUP)
+        {
+            if (object2.physicsType === Phaser.SPRITE)
+            {
+                this.collideSpriteVsGroup(object2, object1, collideCallback, processCallback, callbackContext, overlapOnly);
+            }
+            else if (object2.physicsType === Phaser.GROUP)
+            {
+                this.collideGroupVsGroup(object1, object2, collideCallback, processCallback, callbackContext, overlapOnly);
+            }
+            else if (object2.physicsType === Phaser.TILEMAPLAYER)
+            {
+                this.collideGroupVsTilemapLayer(object1, object2, collideCallback, processCallback, callbackContext, overlapOnly);
+            }
+        }
+        //  TILEMAP LAYERS
+        else if (object1.physicsType === Phaser.TILEMAPLAYER)
+        {
+            if (object2.physicsType === Phaser.SPRITE)
+            {
+                this.collideSpriteVsTilemapLayer(object2, object1, collideCallback, processCallback, callbackContext, overlapOnly);
+            }
+            else if (object2.physicsType === Phaser.GROUP)
+            {
+                this.collideGroupVsTilemapLayer(object2, object1, collideCallback, processCallback, callbackContext, overlapOnly);
+            }
+        }
+
+    },
+
+    /**
+    * An internal function. Use Phaser.Physics.Arcade.collide instead.
+    *
+    * @method Phaser.Physics.Arcade#collideSpriteVsSprite
+    * @private
+    * @param {Phaser.Sprite} sprite1 - The first sprite to check.
+    * @param {Phaser.Sprite} sprite2 - The second sprite to check.
+    * @param {function} collideCallback - An optional callback function that is called if the objects collide. The two objects will be passed to this function in the same order in which you specified them.
+    * @param {function} processCallback - A callback function that lets you perform additional checks against the two objects if they overlap. If this is set then collision will only happen if processCallback returns true. The two objects will be passed to this function in the same order in which you specified them.
+    * @param {object} callbackContext - The context in which to run the callbacks.
+    * @param {boolean} overlapOnly - Just run an overlap or a full collision.
+    * @return {boolean} True if there was a collision, otherwise false.
+    */
+    collideSpriteVsSprite: function (sprite1, sprite2, collideCallback, processCallback, callbackContext, overlapOnly) {
+
+        if (!sprite1.body || !sprite2.body)
+        {
+            return false;
+        }
+
+        if (this.separate(sprite1.body, sprite2.body, processCallback, callbackContext, overlapOnly))
+        {
+            if (collideCallback)
+            {
+                collideCallback.call(callbackContext, sprite1, sprite2);
+            }
+
+            this._total++;
+        }
+
+        return true;
+
+    },
+
+    /**
+    * An internal function. Use Phaser.Physics.Arcade.collide instead.
+    *
+    * @method Phaser.Physics.Arcade#collideSpriteVsGroup
+    * @private
+    * @param {Phaser.Sprite} sprite - The sprite to check.
+    * @param {Phaser.Group} group - The Group to check.
+    * @param {function} collideCallback - An optional callback function that is called if the objects collide. The two objects will be passed to this function in the same order in which you specified them.
+    * @param {function} processCallback - A callback function that lets you perform additional checks against the two objects if they overlap. If this is set then collision will only happen if processCallback returns true. The two objects will be passed to this function in the same order in which you specified them.
+    * @param {object} callbackContext - The context in which to run the callbacks.
+    * @param {boolean} overlapOnly - Just run an overlap or a full collision.
+    */
+    collideSpriteVsGroup: function (sprite, group, collideCallback, processCallback, callbackContext, overlapOnly) {
+
+        if (group.length === 0 || !sprite.body)
+        {
+            return;
+        }
+
+        if (this.skipQuadTree || sprite.body.skipQuadTree)
+        {
+            var bounds = {};
+
+            for (var i = 0; i < group.hash.length; i++)
+            {
+                var object1 = group.hash[i];
+
+                //  Skip duff entries - we can't check a non-existent sprite or one with no body
+                if (!object1 || !object1.exists || !object1.body)
+                {
+                    continue;
+                }
+
+                //  Inject the Body bounds data into the bounds object
+                bounds = object1.body.getBounds(bounds);
+
+                //  Skip items either side of the sprite
+                if (this.sortDirection === Phaser.Physics.Arcade.LEFT_RIGHT)
+                {
+                    if (sprite.body.right < bounds.x)
+                    {
+                        break;
+                    }
+                    else if (bounds.right < sprite.body.x)
+                    {
+                        continue;
+                    }
+                }
+                else if (this.sortDirection === Phaser.Physics.Arcade.RIGHT_LEFT)
+                {
+                    if (sprite.body.x > bounds.right)
+                    {
+                        break;
+                    }
+                    else if (bounds.x > sprite.body.right)
+                    {
+                        continue;
+                    }
+                }
+                else if (this.sortDirection === Phaser.Physics.Arcade.TOP_BOTTOM)
+                {
+                    if (sprite.body.bottom < bounds.y)
+                    {
+                        break;
+                    }
+                    else if (bounds.bottom < sprite.body.y)
+                    {
+                        continue;
+                    }
+                }
+                else if (this.sortDirection === Phaser.Physics.Arcade.BOTTOM_TOP)
+                {
+                    if (sprite.body.y > bounds.bottom)
+                    {
+                        break;
+                    }
+                    else if (bounds.y > sprite.body.bottom)
+                    {
+                        continue;
+                    }
+                }
+
+                this.collideSpriteVsSprite(sprite, object1, collideCallback, processCallback, callbackContext, overlapOnly);
+            }
+        }
+        else
+        {
+            //  What is the sprite colliding with in the quadtree?
+            this.quadTree.clear();
+
+            this.quadTree.reset(this.game.world.bounds.x, this.game.world.bounds.y, this.game.world.bounds.width, this.game.world.bounds.height, this.maxObjects, this.maxLevels);
+
+            this.quadTree.populate(group);
+
+            var items = this.quadTree.retrieve(sprite);
+
+            for (var i = 0; i < items.length; i++)
+            {
+                //  We have our potential suspects, are they in this group?
+                if (this.separate(sprite.body, items[i], processCallback, callbackContext, overlapOnly))
+                {
+                    if (collideCallback)
+                    {
+                        collideCallback.call(callbackContext, sprite, items[i].sprite);
+                    }
+
+                    this._total++;
+                }
+            }
+        }
+
+    },
+
+    /**
+    * An internal function. Use Phaser.Physics.Arcade.collide instead.
+    *
+    * @method Phaser.Physics.Arcade#collideGroupVsSelf
+    * @private
+    * @param {Phaser.Group} group - The Group to check.
+    * @param {function} collideCallback - An optional callback function that is called if the objects collide. The two objects will be passed to this function in the same order in which you specified them.
+    * @param {function} processCallback - A callback function that lets you perform additional checks against the two objects if they overlap. If this is set then collision will only happen if processCallback returns true. The two objects will be passed to this function in the same order in which you specified them.
+    * @param {object} callbackContext - The context in which to run the callbacks.
+    * @param {boolean} overlapOnly - Just run an overlap or a full collision.
+    * @return {boolean} True if there was a collision, otherwise false.
+    */
+    collideGroupVsSelf: function (group, collideCallback, processCallback, callbackContext, overlapOnly) {
+
+        if (group.length === 0)
+        {
+            return;
+        }
+
+        for (var i = 0; i < group.hash.length; i++)
+        {
+            var bounds1 = {};
+            var object1 = group.hash[i];
+
+            //  Skip duff entries - we can't check a non-existent sprite or one with no body
+            if (!object1 || !object1.exists || !object1.body)
+            {
+                continue;
+            }
+
+            //  Inject the Body bounds data into the bounds1 object
+            bounds1 = object1.body.getBounds(bounds1);
+
+            for (var j = i + 1; j < group.hash.length; j++)
+            {
+                var bounds2 = {};
+                var object2 = group.hash[j];
+
+                //  Skip duff entries - we can't check a non-existent sprite or one with no body
+                if (!object2 || !object2.exists || !object2.body)
+                {
+                    continue;
+                }
+
+                //  Inject the Body bounds data into the bounds2 object
+                bounds2 = object2.body.getBounds(bounds2);
+
+                //  Skip items either side of the sprite
+                if (this.sortDirection === Phaser.Physics.Arcade.LEFT_RIGHT)
+                {
+                    if (bounds1.right < bounds2.x)
+                    {
+                        break;
+                    }
+                    else if (bounds2.right < bounds1.x)
+                    {
+                        continue;
+                    }
+                }
+                else if (this.sortDirection === Phaser.Physics.Arcade.RIGHT_LEFT)
+                {
+                    if (bounds1.x > bounds2.right)
+                    {
+                        continue;
+                    }
+                    else if (bounds2.x > bounds1.right)
+                    {
+                        break;
+                    }
+                }
+                else if (this.sortDirection === Phaser.Physics.Arcade.TOP_BOTTOM)
+                {
+                    if (bounds1.bottom < bounds2.y)
+                    {
+                        continue;
+                    }
+                    else if (bounds2.bottom < bounds1.y)
+                    {
+                        break;
+                    }
+                }
+                else if (this.sortDirection === Phaser.Physics.Arcade.BOTTOM_TOP)
+                {
+                    if (bounds1.y > bounds2.bottom)
+                    {
+                        continue;
+                    }
+                    else if (bounds2.y > object1.body.bottom)
+                    {
+                        break;
+                    }
+                }
+
+                this.collideSpriteVsSprite(object1, object2, collideCallback, processCallback, callbackContext, overlapOnly);
+            }
+        }
+
+    },
+
+    /**
+    * An internal function. Use Phaser.Physics.Arcade.collide instead.
+    *
+    * @method Phaser.Physics.Arcade#collideGroupVsGroup
+    * @private
+    * @param {Phaser.Group} group1 - The first Group to check.
+    * @param {Phaser.Group} group2 - The second Group to check.
+    * @param {function} collideCallback - An optional callback function that is called if the objects collide. The two objects will be passed to this function in the same order in which you specified them.
+    * @param {function} processCallback - A callback function that lets you perform additional checks against the two objects if they overlap. If this is set then collision will only happen if processCallback returns true. The two objects will be passed to this function in the same order in which you specified them.
+    * @param {object} callbackContext - The context in which to run the callbacks.
+    * @param {boolean} overlapOnly - Just run an overlap or a full collision.
+    */
+    collideGroupVsGroup: function (group1, group2, collideCallback, processCallback, callbackContext, overlapOnly) {
+
+        if (group1.length === 0 || group2.length === 0)
+        {
+            return;
+        }
+
+        for (var i = 0; i < group1.children.length; i++)
+        {
+            if (group1.children[i].exists)
+            {
+                if (group1.children[i].physicsType === Phaser.GROUP)
+                {
+                    this.collideGroupVsGroup(group1.children[i], group2, collideCallback, processCallback, callbackContext, overlapOnly);
+                }
+                else
+                {
+                    this.collideSpriteVsGroup(group1.children[i], group2, collideCallback, processCallback, callbackContext, overlapOnly);
+                }
+            }
+        }
+
+    },
+
+    /**
+    * The core separation function to separate two physics bodies.
+    *
+    * @private
+    * @method Phaser.Physics.Arcade#separate
+    * @param {Phaser.Physics.Arcade.Body} body1 - The first Body object to separate.
+    * @param {Phaser.Physics.Arcade.Body} body2 - The second Body object to separate.
+    * @param {function} [processCallback=null] - A callback function that lets you perform additional checks against the two objects if they overlap. If this function is set then the sprites will only be collided if it returns true.
+    * @param {object} [callbackContext] - The context in which to run the process callback.
+    * @param {boolean} overlapOnly - Just run an overlap or a full collision.
+    * @return {boolean} Returns true if the bodies collided, otherwise false.
+    */
+    separate: function (body1, body2, processCallback, callbackContext, overlapOnly) {
+
+        if (
+            !body1.enable ||
+            !body2.enable ||
+            body1.checkCollision.none ||
+            body2.checkCollision.none ||
+            !this.intersects(body1, body2))
+        {
+            return false;
+        }
+
+        //  They overlap. Is there a custom process callback? If it returns true then we can carry on, otherwise we should abort.
+        if (processCallback && processCallback.call(callbackContext, body1.sprite, body2.sprite) === false)
+        {
+            return false;
+        }
+
+        //  Circle vs. Circle quick bail out
+        if (body1.isCircle && body2.isCircle)
+        {
+            return this.separateCircle(body1, body2, overlapOnly);
+        }
+
+        // We define the behavior of bodies in a collision circle and rectangle
+        // If a collision occurs in the corner points of the rectangle, the body behave like circles
+
+        //  Either body1 or body2 is a circle
+        if (body1.isCircle !== body2.isCircle)
+        {
+            var bodyRect = (body1.isCircle) ? body2 : body1;
+            var bodyCircle = (body1.isCircle) ? body1 : body2;
+
+            var rect = {
+                x: bodyRect.x,
+                y: bodyRect.y,
+                right: bodyRect.right,
+                bottom: bodyRect.bottom
+            };
+
+            var circle = bodyCircle.center;
+
+            if (circle.y < rect.y || circle.y > rect.bottom)
+            {
+                if (circle.x < rect.x || circle.x > rect.right)
+                {
+                    return this.separateCircle(body1, body2, overlapOnly);
+                }
+            }
+        }
+
+        var resultX = false;
+        var resultY = false;
+
+        //  Do we separate on x or y first?
+        if (this.forceX || Math.abs(this.gravity.y + body1.gravity.y) < Math.abs(this.gravity.x + body1.gravity.x))
+        {
+            resultX = this.separateX(body1, body2, overlapOnly);
+
+            //  Are they still intersecting? Let's do the other axis then
+            if (this.intersects(body1, body2))
+            {
+                resultY = this.separateY(body1, body2, overlapOnly);
+            }
+        }
+        else
+        {
+            resultY = this.separateY(body1, body2, overlapOnly);
+
+            //  Are they still intersecting? Let's do the other axis then
+            if (this.intersects(body1, body2))
+            {
+                resultX = this.separateX(body1, body2, overlapOnly);
+            }
+        }
+
+        var result = (resultX || resultY);
+
+        if (result)
+        {
+            if (overlapOnly)
+            {
+                if (body1.onOverlap)
+                {
+                    body1.onOverlap.dispatch(body1.sprite, body2.sprite);
+                }
+
+                if (body2.onOverlap)
+                {
+                    body2.onOverlap.dispatch(body2.sprite, body1.sprite);
+                }
+            }
+            else
+            {
+                if (body1.onCollide)
+                {
+                    body1.onCollide.dispatch(body1.sprite, body2.sprite);
+                }
+
+                if (body2.onCollide)
+                {
+                    body2.onCollide.dispatch(body2.sprite, body1.sprite);
+                }
+            }
+        }
+
+        return result;
+
+    },
+
+    /**
+    * Check for intersection against two bodies.
+    *
+    * @method Phaser.Physics.Arcade#intersects
+    * @param {Phaser.Physics.Arcade.Body} body1 - The first Body object to check.
+    * @param {Phaser.Physics.Arcade.Body} body2 - The second Body object to check.
+    * @return {boolean} True if they intersect, otherwise false.
+    */
+    intersects: function (body1, body2) {
+
+        if (body1 === body2)
+        {
+            return false;
+        }
+
+        if (body1.isCircle)
+        {
+            if (body2.isCircle)
+            {
+                //  Circle vs. Circle
+                return Phaser.Math.distance(body1.center.x, body1.center.y, body2.center.x, body2.center.y) <= (body1.halfWidth + body2.halfWidth);
+            }
+            else
+            {
+                //  Circle vs. Rect
+                return this.circleBodyIntersects(body1, body2);
+            }
+        }
+        else
+        {
+            if (body2.isCircle)
+            {
+                //  Rect vs. Circle
+                return this.circleBodyIntersects(body2, body1);
+            }
+            else
+            {
+                //  Rect vs. Rect
+                if (body1.right <= body2.position.x)
+                {
+                    return false;
+                }
+
+                if (body1.bottom <= body2.position.y)
+                {
+                    return false;
+                }
+
+                if (body1.position.x >= body2.right)
+                {
+                    return false;
+                }
+
+                if (body1.position.y >= body2.bottom)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+    },
+
+    /**
+    * Checks to see if a circular Body intersects with a Rectangular Body.
+    *
+    * @method Phaser.Physics.Arcade#circleBodyIntersects
+    * @param {Phaser.Physics.Arcade.Body} circle - The Body with `isCircle` set.
+    * @param {Phaser.Physics.Arcade.Body} body - The Body with `isCircle` not set (i.e. uses Rectangle shape)
+    * @return {boolean} Returns true if the bodies intersect, otherwise false.
+    */
+    circleBodyIntersects: function (circle, body) {
+
+        var x = Phaser.Math.clamp(circle.center.x, body.left, body.right);
+        var y = Phaser.Math.clamp(circle.center.y, body.top, body.bottom);
+
+        var dx = (circle.center.x - x) * (circle.center.x - x);
+        var dy = (circle.center.y - y) * (circle.center.y - y);
+
+        return (dx + dy) <= (circle.halfWidth * circle.halfWidth);
+
+    },
+
+    /**
+    * The core separation function to separate two circular physics bodies.
+    *
+    * @method Phaser.Physics.Arcade#separateCircle
+    * @private
+    * @param {Phaser.Physics.Arcade.Body} body1 - The first Body to separate. Must have `Body.isCircle` true and a positive `radius`.
+    * @param {Phaser.Physics.Arcade.Body} body2 - The second Body to separate. Must have `Body.isCircle` true and a positive `radius`.
+    * @param {boolean} overlapOnly - If true the bodies will only have their overlap data set, no separation or exchange of velocity will take place.
+    * @return {boolean} Returns true if the bodies were separated or overlap, otherwise false.
+    */
+    separateCircle: function (body1, body2, overlapOnly) {
+
+        //  Set the bounding box overlap values
+        this.getOverlapX(body1, body2);
+        this.getOverlapY(body1, body2);
+
+        var dx = body2.center.x - body1.center.x;
+        var dy = body2.center.y - body1.center.y;
+
+        var angleCollision = Math.atan2(dy, dx);
+
+        var overlap = 0;
+
+        if (body1.isCircle !== body2.isCircle)
+        {
+            var rect = {
+                x: (body2.isCircle) ? body1.position.x : body2.position.x,
+                y: (body2.isCircle) ? body1.position.y : body2.position.y,
+                right: (body2.isCircle) ? body1.right : body2.right,
+                bottom: (body2.isCircle) ? body1.bottom : body2.bottom
+            };
+
+            var circle = {
+                x: (body1.isCircle) ? body1.center.x : body2.center.x,
+                y: (body1.isCircle) ? body1.center.y : body2.center.y,
+                radius: (body1.isCircle) ? body1.halfWidth : body2.halfWidth
+            };
+
+            if (circle.y < rect.y)
+            {
+                if (circle.x < rect.x)
+                {
+                    overlap = Phaser.Math.distance(circle.x, circle.y, rect.x, rect.y) - circle.radius;
+                }
+                else if (circle.x > rect.right)
+                {
+                    overlap = Phaser.Math.distance(circle.x, circle.y, rect.right, rect.y) - circle.radius;
+                }
+            }
+            else if (circle.y > rect.bottom)
+            {
+                if (circle.x < rect.x)
+                {
+                    overlap = Phaser.Math.distance(circle.x, circle.y, rect.x, rect.bottom) - circle.radius;
+                }
+                else if (circle.x > rect.right)
+                {
+                    overlap = Phaser.Math.distance(circle.x, circle.y, rect.right, rect.bottom) - circle.radius;
+                }
+            }
+
+            overlap *= -1;
+        }
+        else
+        {
+            overlap = (body1.halfWidth + body2.halfWidth) - Phaser.Math.distance(body1.center.x, body1.center.y, body2.center.x, body2.center.y);
+        }
+
+        //  Can't separate two immovable bodies, or a body with its own custom separation logic
+        if (overlapOnly || overlap === 0 || (body1.immovable && body2.immovable) || body1.customSeparateX || body2.customSeparateX)
+        {
+            if (overlap !== 0)
+            {
+                if (body1.onOverlap)
+                {
+                    body1.onOverlap.dispatch(body1.sprite, body2.sprite);
+                }
+
+                if (body2.onOverlap)
+                {
+                    body2.onOverlap.dispatch(body2.sprite, body1.sprite);
+                }
+            }
+
+            //  return true if there was some overlap, otherwise false
+            return (overlap !== 0);
+        }
+
+        // Transform the velocity vector to the coordinate system oriented along the direction of impact.
+        // This is done to eliminate the vertical component of the velocity
+        var v1 = {
+            x: body1.velocity.x * Math.cos(angleCollision) + body1.velocity.y * Math.sin(angleCollision),
+            y: body1.velocity.x * Math.sin(angleCollision) - body1.velocity.y * Math.cos(angleCollision)
+        };
+
+        var v2 = {
+            x: body2.velocity.x * Math.cos(angleCollision) + body2.velocity.y * Math.sin(angleCollision),
+            y: body2.velocity.x * Math.sin(angleCollision) - body2.velocity.y * Math.cos(angleCollision)
+        };
+
+        // We expect the new velocity after impact
+        var tempVel1 = ((body1.mass - body2.mass) * v1.x + 2 * body2.mass * v2.x) / (body1.mass + body2.mass);
+        var tempVel2 = (2 * body1.mass * v1.x + (body2.mass - body1.mass) * v2.x) / (body1.mass + body2.mass);
+
+        // We convert the vector to the original coordinate system and multiplied by factor of rebound
+        if (!body1.immovable)
+        {
+            body1.velocity.x = (tempVel1 * Math.cos(angleCollision) - v1.y * Math.sin(angleCollision)) * body1.bounce.x;
+            body1.velocity.y = (v1.y * Math.cos(angleCollision) + tempVel1 * Math.sin(angleCollision)) * body1.bounce.y;
+        }
+
+        if (!body2.immovable)
+        {
+            body2.velocity.x = (tempVel2 * Math.cos(angleCollision) - v2.y * Math.sin(angleCollision)) * body2.bounce.x;
+            body2.velocity.y = (v2.y * Math.cos(angleCollision) + tempVel2 * Math.sin(angleCollision)) * body2.bounce.y;
+        }
+
+        // When the collision angle is almost perpendicular to the total initial velocity vector
+        // (collision on a tangent) vector direction can be determined incorrectly.
+        // This code fixes the problem
+
+        if (Math.abs(angleCollision) < Math.PI / 2)
+        {
+            if ((body1.velocity.x > 0) && !body1.immovable && (body2.velocity.x > body1.velocity.x))
+            {
+                body1.velocity.x *= -1;
+            }
+            else if ((body2.velocity.x < 0) && !body2.immovable && (body1.velocity.x < body2.velocity.x))
+            {
+                body2.velocity.x *= -1;
+            }
+            else if ((body1.velocity.y > 0) && !body1.immovable && (body2.velocity.y > body1.velocity.y))
+            {
+                body1.velocity.y *= -1;
+            }
+            else if ((body2.velocity.y < 0) && !body2.immovable && (body1.velocity.y < body2.velocity.y))
+            {
+                body2.velocity.y *= -1;
+            }
+        }
+        else if (Math.abs(angleCollision) > Math.PI / 2)
+        {
+            if ((body1.velocity.x < 0) && !body1.immovable && (body2.velocity.x < body1.velocity.x))
+            {
+                body1.velocity.x *= -1;
+            }
+            else if ((body2.velocity.x > 0) && !body2.immovable && (body1.velocity.x > body2.velocity.x))
+            {
+                body2.velocity.x *= -1;
+            }
+            else if ((body1.velocity.y < 0) && !body1.immovable && (body2.velocity.y < body1.velocity.y))
+            {
+                body1.velocity.y *= -1;
+            }
+            else if ((body2.velocity.y > 0) && !body2.immovable && (body1.velocity.x > body2.velocity.y))
+            {
+                body2.velocity.y *= -1;
+            }
+        }
+
+        if (!body1.immovable)
+        {
+            body1.x += (body1.velocity.x * this.game.time.physicsElapsed) - overlap * Math.cos(angleCollision);
+            body1.y += (body1.velocity.y * this.game.time.physicsElapsed) - overlap * Math.sin(angleCollision);
+        }
+
+        if (!body2.immovable)
+        {
+            body2.x += (body2.velocity.x * this.game.time.physicsElapsed) + overlap * Math.cos(angleCollision);
+            body2.y += (body2.velocity.y * this.game.time.physicsElapsed) + overlap * Math.sin(angleCollision);
+        }
+
+        if (body1.onCollide)
+        {
+            body1.onCollide.dispatch(body1.sprite, body2.sprite);
+        }
+
+        if (body2.onCollide)
+        {
+            body2.onCollide.dispatch(body2.sprite, body1.sprite);
+        }
+
+        return true;
+
+    },
+
+    /**
+    * Calculates the horizontal overlap between two Bodies and sets their properties accordingly, including:
+    * `touching.left`, `touching.right` and `overlapX`.
+    *
+    * @method Phaser.Physics.Arcade#getOverlapX
+    * @param {Phaser.Physics.Arcade.Body} body1 - The first Body to separate.
+    * @param {Phaser.Physics.Arcade.Body} body2 - The second Body to separate.
+    * @param {boolean} overlapOnly - Is this an overlap only check, or part of separation?
+    * @return {float} Returns the amount of horizontal overlap between the two bodies.
+    */
+    getOverlapX: function (body1, body2, overlapOnly) {
+
+        var overlap = 0;
+        var maxOverlap = body1.deltaAbsX() + body2.deltaAbsX() + this.OVERLAP_BIAS;
+
+        if (body1.deltaX() === 0 && body2.deltaX() === 0)
+        {
+            //  They overlap but neither of them are moving
+            body1.embedded = true;
+            body2.embedded = true;
+        }
+        else if (body1.deltaX() > body2.deltaX())
+        {
+            //  Body1 is moving right and / or Body2 is moving left
+            overlap = body1.right - body2.x;
+
+            if ((overlap > maxOverlap && !overlapOnly) || body1.checkCollision.right === false || body2.checkCollision.left === false)
+            {
+                overlap = 0;
+            }
+            else
+            {
+                body1.touching.none = false;
+                body1.touching.right = true;
+                body2.touching.none = false;
+                body2.touching.left = true;
+            }
+        }
+        else if (body1.deltaX() < body2.deltaX())
+        {
+            //  Body1 is moving left and/or Body2 is moving right
+            overlap = body1.x - body2.width - body2.x;
+
+            if ((-overlap > maxOverlap && !overlapOnly) || body1.checkCollision.left === false || body2.checkCollision.right === false)
+            {
+                overlap = 0;
+            }
+            else
+            {
+                body1.touching.none = false;
+                body1.touching.left = true;
+                body2.touching.none = false;
+                body2.touching.right = true;
+            }
+        }
+
+        //  Resets the overlapX to zero if there is no overlap, or to the actual pixel value if there is
+        body1.overlapX = overlap;
+        body2.overlapX = overlap;
+
+        return overlap;
+
+    },
+
+    /**
+    * Calculates the vertical overlap between two Bodies and sets their properties accordingly, including:
+    * `touching.up`, `touching.down` and `overlapY`.
+    *
+    * @method Phaser.Physics.Arcade#getOverlapY
+    * @param {Phaser.Physics.Arcade.Body} body1 - The first Body to separate.
+    * @param {Phaser.Physics.Arcade.Body} body2 - The second Body to separate.
+    * @param {boolean} overlapOnly - Is this an overlap only check, or part of separation?
+    * @return {float} Returns the amount of vertical overlap between the two bodies.
+    */
+    getOverlapY: function (body1, body2, overlapOnly) {
+
+        var overlap = 0;
+        var maxOverlap = body1.deltaAbsY() + body2.deltaAbsY() + this.OVERLAP_BIAS;
+
+        if (body1.deltaY() === 0 && body2.deltaY() === 0)
+        {
+            //  They overlap but neither of them are moving
+            body1.embedded = true;
+            body2.embedded = true;
+        }
+        else if (body1.deltaY() > body2.deltaY())
+        {
+            //  Body1 is moving down and/or Body2 is moving up
+            overlap = body1.bottom - body2.y;
+
+            if ((overlap > maxOverlap && !overlapOnly) || body1.checkCollision.down === false || body2.checkCollision.up === false)
+            {
+                overlap = 0;
+            }
+            else
+            {
+                body1.touching.none = false;
+                body1.touching.down = true;
+                body2.touching.none = false;
+                body2.touching.up = true;
+            }
+        }
+        else if (body1.deltaY() < body2.deltaY())
+        {
+            //  Body1 is moving up and/or Body2 is moving down
+            overlap = body1.y - body2.bottom;
+
+            if ((-overlap > maxOverlap && !overlapOnly) || body1.checkCollision.up === false || body2.checkCollision.down === false)
+            {
+                overlap = 0;
+            }
+            else
+            {
+                body1.touching.none = false;
+                body1.touching.up = true;
+                body2.touching.none = false;
+                body2.touching.down = true;
+            }
+        }
+
+        //  Resets the overlapY to zero if there is no overlap, or to the actual pixel value if there is
+        body1.overlapY = overlap;
+        body2.overlapY = overlap;
+
+        return overlap;
+
+    },
+
+    /**
+    * The core separation function to separate two physics bodies on the x axis.
+    *
+    * @method Phaser.Physics.Arcade#separateX
+    * @private
+    * @param {Phaser.Physics.Arcade.Body} body1 - The first Body to separate.
+    * @param {Phaser.Physics.Arcade.Body} body2 - The second Body to separate.
+    * @param {boolean} overlapOnly - If true the bodies will only have their overlap data set, no separation or exchange of velocity will take place.
+    * @return {boolean} Returns true if the bodies were separated or overlap, otherwise false.
+    */
+    separateX: function (body1, body2, overlapOnly) {
+
+        var overlap = this.getOverlapX(body1, body2, overlapOnly);
+
+        //  Can't separate two immovable bodies, or a body with its own custom separation logic
+        if (overlapOnly || overlap === 0 || (body1.immovable && body2.immovable) || body1.customSeparateX || body2.customSeparateX)
+        {
+            //  return true if there was some overlap, otherwise false
+            return (overlap !== 0) || (body1.embedded && body2.embedded);
+        }
+
+        //  Adjust their positions and velocities accordingly (if there was any overlap)
+        var v1 = body1.velocity.x;
+        var v2 = body2.velocity.x;
+
+        if (!body1.immovable && !body2.immovable)
+        {
+            overlap *= 0.5;
+
+            body1.x -= overlap;
+            body2.x += overlap;
+
+            var nv1 = Math.sqrt((v2 * v2 * body2.mass) / body1.mass) * ((v2 > 0) ? 1 : -1);
+            var nv2 = Math.sqrt((v1 * v1 * body1.mass) / body2.mass) * ((v1 > 0) ? 1 : -1);
+            var avg = (nv1 + nv2) * 0.5;
+
+            nv1 -= avg;
+            nv2 -= avg;
+
+            body1.velocity.x = avg + nv1 * body1.bounce.x;
+            body2.velocity.x = avg + nv2 * body2.bounce.x;
+        }
+        else if (!body1.immovable)
+        {
+            body1.x -= overlap;
+            body1.velocity.x = v2 - v1 * body1.bounce.x;
+
+            //  This is special case code that handles things like vertically moving platforms you can ride
+            if (body2.moves)
+            {
+                body1.y += (body2.y - body2.prev.y) * body2.friction.y;
+            }
+        }
+        else
+        {
+            body2.x += overlap;
+            body2.velocity.x = v1 - v2 * body2.bounce.x;
+
+            //  This is special case code that handles things like vertically moving platforms you can ride
+            if (body1.moves)
+            {
+                body2.y += (body1.y - body1.prev.y) * body1.friction.y;
+            }
+        }
+
+        //  If we got this far then there WAS overlap, and separation is complete, so return true
+        return true;
+
+    },
+
+    /**
+    * The core separation function to separate two physics bodies on the y axis.
+    *
+    * @private
+    * @method Phaser.Physics.Arcade#separateY
+    * @param {Phaser.Physics.Arcade.Body} body1 - The first Body to separate.
+    * @param {Phaser.Physics.Arcade.Body} body2 - The second Body to separate.
+    * @param {boolean} overlapOnly - If true the bodies will only have their overlap data set, no separation or exchange of velocity will take place.
+    * @return {boolean} Returns true if the bodies were separated or overlap, otherwise false.
+    */
+    separateY: function (body1, body2, overlapOnly) {
+
+        var overlap = this.getOverlapY(body1, body2, overlapOnly);
+
+        //  Can't separate two immovable bodies, or a body with its own custom separation logic
+        if (overlapOnly || overlap === 0 || (body1.immovable && body2.immovable) || body1.customSeparateY || body2.customSeparateY)
+        {
+            //  return true if there was some overlap, otherwise false
+            return (overlap !== 0) || (body1.embedded && body2.embedded);
+        }
+
+        //  Adjust their positions and velocities accordingly (if there was any overlap)
+        var v1 = body1.velocity.y;
+        var v2 = body2.velocity.y;
+
+        if (!body1.immovable && !body2.immovable)
+        {
+            overlap *= 0.5;
+
+            body1.y -= overlap;
+            body2.y += overlap;
+
+            var nv1 = Math.sqrt((v2 * v2 * body2.mass) / body1.mass) * ((v2 > 0) ? 1 : -1);
+            var nv2 = Math.sqrt((v1 * v1 * body1.mass) / body2.mass) * ((v1 > 0) ? 1 : -1);
+            var avg = (nv1 + nv2) * 0.5;
+
+            nv1 -= avg;
+            nv2 -= avg;
+
+            body1.velocity.y = avg + nv1 * body1.bounce.y;
+            body2.velocity.y = avg + nv2 * body2.bounce.y;
+        }
+        else if (!body1.immovable)
+        {
+            body1.y -= overlap;
+            body1.velocity.y = v2 - v1 * body1.bounce.y;
+
+            //  This is special case code that handles things like horizontal moving platforms you can ride
+            if (body2.moves)
+            {
+                body1.x += (body2.x - body2.prev.x) * body2.friction.x;
+            }
+        }
+        else
+        {
+            body2.y += overlap;
+            body2.velocity.y = v1 - v2 * body2.bounce.y;
+
+            //  This is special case code that handles things like horizontal moving platforms you can ride
+            if (body1.moves)
+            {
+                body2.x += (body1.x - body1.prev.x) * body1.friction.x;
+            }
+        }
+
+        //  If we got this far then there WAS overlap, and separation is complete, so return true
+        return true;
+
+    },
+
+    /**
+    * Given a Group and a Pointer this will check to see which Group children overlap with the Pointer coordinates.
+    * Each child will be sent to the given callback for further processing.
+    * Note that the children are not checked for depth order, but simply if they overlap the Pointer or not.
+    *
+    * @method Phaser.Physics.Arcade#getObjectsUnderPointer
+    * @param {Phaser.Pointer} pointer - The Pointer to check.
+    * @param {Phaser.Group} group - The Group to check.
+    * @param {function} [callback] - A callback function that is called if the object overlaps with the Pointer. The callback will be sent two parameters: the Pointer and the Object that overlapped with it.
+    * @param {object} [callbackContext] - The context in which to run the callback.
+    * @return {PIXI.DisplayObject[]} An array of the Sprites from the Group that overlapped the Pointer coordinates.
+    */
+    getObjectsUnderPointer: function (pointer, group, callback, callbackContext) {
+
+        if (group.length === 0 || !pointer.exists)
+        {
+            return;
+        }
+
+        return this.getObjectsAtLocation(pointer.x, pointer.y, group, callback, callbackContext, pointer);
+
+    },
+
+    /**
+    * Given a Group and a location this will check to see which Group children overlap with the coordinates.
+    * Each child will be sent to the given callback for further processing.
+    * Note that the children are not checked for depth order, but simply if they overlap the coordinate or not.
+    *
+    * @method Phaser.Physics.Arcade#getObjectsAtLocation
+    * @param {number} x - The x coordinate to check.
+    * @param {number} y - The y coordinate to check.
+    * @param {Phaser.Group} group - The Group to check.
+    * @param {function} [callback] - A callback function that is called if the object overlaps the coordinates. The callback will be sent two parameters: the callbackArg and the Object that overlapped the location.
+    * @param {object} [callbackContext] - The context in which to run the callback.
+    * @param {object} [callbackArg] - An argument to pass to the callback.
+    * @return {PIXI.DisplayObject[]} An array of the Sprites from the Group that overlapped the coordinates.
+    */
+    getObjectsAtLocation: function (x, y, group, callback, callbackContext, callbackArg) {
+
+        this.quadTree.clear();
+
+        this.quadTree.reset(this.game.world.bounds.x, this.game.world.bounds.y, this.game.world.bounds.width, this.game.world.bounds.height, this.maxObjects, this.maxLevels);
+
+        this.quadTree.populate(group);
+
+        var rect = new Phaser.Rectangle(x, y, 1, 1);
+        var output = [];
+
+        var items = this.quadTree.retrieve(rect);
+
+        for (var i = 0; i < items.length; i++)
+        {
+            if (items[i].hitTest(x, y))
+            {
+                if (callback)
+                {
+                    callback.call(callbackContext, callbackArg, items[i].sprite);
+                }
+
+                output.push(items[i].sprite);
+            }
+        }
+
+        return output;
+
+    },
+
+    /**
+    * Move the given display object towards the destination object at a steady velocity.
+    * If you specify a maxTime then it will adjust the speed (overwriting what you set) so it arrives at the destination in that number of seconds.
+    * Timings are approximate due to the way browser timers work. Allow for a variance of +- 50ms.
+    * Note: The display object does not continuously track the target. If the target changes location during transit the display object will not modify its course.
+    * Note: The display object doesn't stop moving once it reaches the destination coordinates.
+    * Note: Doesn't take into account acceleration, maxVelocity or drag (if you've set drag or acceleration too high this object may not move at all)
+    *
+    * @method Phaser.Physics.Arcade#moveToObject
+    * @param {any} displayObject - The display object to move.
+    * @param {any} destination - The display object to move towards. Can be any object but must have visible x/y properties.
+    * @param {number} [speed=60] - The speed it will move, in pixels per second (default is 60 pixels/sec)
+    * @param {number} [maxTime=0] - Time given in milliseconds (1000 = 1 sec). If set the speed is adjusted so the object will arrive at destination in the given number of ms.
+    * @return {number} The angle (in radians) that the object should be visually set to in order to match its new velocity.
+    */
+    moveToObject: function (displayObject, destination, speed, maxTime) {
+
+        if (speed === undefined) { speed = 60; }
+        if (maxTime === undefined) { maxTime = 0; }
+
+        var angle = Math.atan2(destination.y - displayObject.y, destination.x - displayObject.x);
+
+        if (maxTime > 0)
+        {
+            //  We know how many pixels we need to move, but how fast?
+            speed = this.distanceBetween(displayObject, destination) / (maxTime / 1000);
+        }
+
+        displayObject.body.velocity.setToPolar(angle, speed);
+
+        return angle;
+
+    },
+
+    /**
+    * Move the given display object towards the pointer at a steady velocity. If no pointer is given it will use Phaser.Input.activePointer.
+    * If you specify a maxTime then it will adjust the speed (over-writing what you set) so it arrives at the destination in that number of seconds.
+    * Timings are approximate due to the way browser timers work. Allow for a variance of +- 50ms.
+    * Note: The display object does not continuously track the target. If the target changes location during transit the display object will not modify its course.
+    * Note: The display object doesn't stop moving once it reaches the destination coordinates.
+    *
+    * @method Phaser.Physics.Arcade#moveToPointer
+    * @param {any} displayObject - The display object to move.
+    * @param {number} [speed=60] - The speed it will move, in pixels per second (default is 60 pixels/sec)
+    * @param {Phaser.Pointer} [pointer] - The pointer to move towards. Defaults to Phaser.Input.activePointer.
+    * @param {number} [maxTime=0] - Time given in milliseconds (1000 = 1 sec). If set the speed is adjusted so the object will arrive at destination in the given number of ms.
+    * @return {number} The angle (in radians) that the object should be visually set to in order to match its new velocity.
+    */
+    moveToPointer: function (displayObject, speed, pointer, maxTime) {
+
+        if (speed === undefined) { speed = 60; }
+        pointer = pointer || this.game.input.activePointer;
+        if (maxTime === undefined) { maxTime = 0; }
+
+        var angle = this.angleToPointer(displayObject, pointer);
+
+        if (maxTime > 0)
+        {
+            //  We know how many pixels we need to move, but how fast?
+            speed = this.distanceToPointer(displayObject, pointer) / (maxTime / 1000);
+        }
+
+        displayObject.body.velocity.setToPolar(angle, speed);
+
+        return angle;
+
+    },
+
+    /**
+    * Move the given display object towards the x/y coordinates at a steady velocity.
+    * If you specify a maxTime then it will adjust the speed (over-writing what you set) so it arrives at the destination in that number of seconds.
+    * Timings are approximate due to the way browser timers work. Allow for a variance of +- 50ms.
+    * Note: The display object does not continuously track the target. If the target changes location during transit the display object will not modify its course.
+    * Note: The display object doesn't stop moving once it reaches the destination coordinates.
+    * Note: Doesn't take into account acceleration, maxVelocity or drag (if you've set drag or acceleration too high this object may not move at all)
+    *
+    * @method Phaser.Physics.Arcade#moveToXY
+    * @param {any} displayObject - The display object to move.
+    * @param {number} x - The x coordinate to move towards.
+    * @param {number} y - The y coordinate to move towards.
+    * @param {number} [speed=60] - The speed it will move, in pixels per second (default is 60 pixels/sec)
+    * @param {number} [maxTime=0] - Time given in milliseconds (1000 = 1 sec). If set the speed is adjusted so the object will arrive at destination in the given number of ms.
+    * @return {number} The angle (in radians) that the object should be visually set to in order to match its new velocity.
+    */
+    moveToXY: function (displayObject, x, y, speed, maxTime) {
+
+        if (speed === undefined) { speed = 60; }
+        if (maxTime === undefined) { maxTime = 0; }
+
+        var angle = Math.atan2(y - displayObject.y, x - displayObject.x);
+
+        if (maxTime > 0)
+        {
+            //  We know how many pixels we need to move, but how fast?
+            speed = this.distanceToXY(displayObject, x, y) / (maxTime / 1000);
+        }
+
+        displayObject.body.velocity.setToPolar(angle, speed);
+
+        return angle;
+
+    },
+
+    /**
+    * Given the angle (in degrees) and speed calculate the velocity and return it as a Point object, or set it to the given point object.
+    * One way to use this is: velocityFromAngle(angle, 200, sprite.velocity) which will set the values directly to the sprites velocity and not create a new Point object.
+    *
+    * @method Phaser.Physics.Arcade#velocityFromAngle
+    * @param {number} angle - The angle in degrees calculated in clockwise positive direction (down = 90 degrees positive, right = 0 degrees positive, up = 90 degrees negative)
+    * @param {number} [speed=60] - The speed it will move, in pixels per second sq.
+    * @param {Phaser.Point|object} [point] - The Point object in which the x and y properties will be set to the calculated velocity.
+    * @return {Phaser.Point} - A Point where point.x contains the velocity x value and point.y contains the velocity y value.
+    */
+    velocityFromAngle: function (angle, speed, point) {
+
+        if (speed === undefined) { speed = 60; }
+        point = point || new Phaser.Point();
+
+        return point.setToPolar(angle, speed, true);
+
+    },
+
+    /**
+    * Given the rotation (in radians) and speed calculate the velocity and return it as a Point object, or set it to the given point object.
+    * One way to use this is: velocityFromRotation(rotation, 200, sprite.velocity) which will set the values directly to the sprites velocity and not create a new Point object.
+    *
+    * @method Phaser.Physics.Arcade#velocityFromRotation
+    * @param {number} rotation - The angle in radians.
+    * @param {number} [speed=60] - The speed it will move, in pixels per second sq.
+    * @param {Phaser.Point|object} [point] - The Point object in which the x and y properties will be set to the calculated velocity.
+    * @return {Phaser.Point} - A Point where point.x contains the velocity x value and point.y contains the velocity y value.
+    */
+    velocityFromRotation: function (rotation, speed, point) {
+
+        if (speed === undefined) { speed = 60; }
+        point = point || new Phaser.Point();
+
+        return point.setToPolar(rotation, speed);
+
+    },
+
+    /**
+    * Given the rotation (in radians) and speed calculate the acceleration and return it as a Point object, or set it to the given point object.
+    * One way to use this is: accelerationFromRotation(rotation, 200, sprite.acceleration) which will set the values directly to the sprites acceleration and not create a new Point object.
+    *
+    * @method Phaser.Physics.Arcade#accelerationFromRotation
+    * @param {number} rotation - The angle in radians.
+    * @param {number} [speed=60] - The speed it will move, in pixels per second sq.
+    * @param {Phaser.Point|object} [point] - The Point object in which the x and y properties will be set to the calculated acceleration.
+    * @return {Phaser.Point} - A Point where point.x contains the acceleration x value and point.y contains the acceleration y value.
+    */
+    accelerationFromRotation: function (rotation, speed, point) {
+
+        if (speed === undefined) { speed = 60; }
+        point = point || new Phaser.Point();
+
+        return point.setToPolar(rotation, speed);
+
+    },
+
+    /**
+    * Sets the acceleration.x/y property on the display object so it will move towards the target at the given speed (in pixels per second sq.)
+    * You must give a maximum speed value, beyond which the display object won't go any faster.
+    * Note: The display object does not continuously track the target. If the target changes location during transit the display object will not modify its course.
+    * Note: The display object doesn't stop moving once it reaches the destination coordinates.
+    *
+    * @method Phaser.Physics.Arcade#accelerateToObject
+    * @param {any} displayObject - The display object to move.
+    * @param {any} destination - The display object to move towards. Can be any object but must have visible x/y properties.
+    * @param {number} [speed=60] - The speed it will accelerate in pixels per second.
+    * @param {number} [xSpeedMax=500] - The maximum x velocity the display object can reach.
+    * @param {number} [ySpeedMax=500] - The maximum y velocity the display object can reach.
+    * @return {number} The angle (in radians) that the object should be visually set to in order to match its new trajectory.
+    */
+    accelerateToObject: function (displayObject, destination, speed, xSpeedMax, ySpeedMax) {
+
+        if (speed === undefined) { speed = 60; }
+        if (xSpeedMax === undefined) { xSpeedMax = 1000; }
+        if (ySpeedMax === undefined) { ySpeedMax = 1000; }
+
+        var angle = this.angleBetween(displayObject, destination);
+
+        displayObject.body.acceleration.setToPolar(angle, speed);
+        displayObject.body.maxVelocity.setTo(xSpeedMax, ySpeedMax);
+
+        return angle;
+
+    },
+
+    /**
+    * Sets the acceleration.x/y property on the display object so it will move towards the target at the given speed (in pixels per second sq.)
+    * You must give a maximum speed value, beyond which the display object won't go any faster.
+    * Note: The display object does not continuously track the target. If the target changes location during transit the display object will not modify its course.
+    * Note: The display object doesn't stop moving once it reaches the destination coordinates.
+    *
+    * @method Phaser.Physics.Arcade#accelerateToPointer
+    * @param {any} displayObject - The display object to move.
+    * @param {Phaser.Pointer} [pointer] - The pointer to move towards. Defaults to Phaser.Input.activePointer.
+    * @param {number} [speed=60] - The speed it will accelerate in pixels per second.
+    * @param {number} [xSpeedMax=500] - The maximum x velocity the display object can reach.
+    * @param {number} [ySpeedMax=500] - The maximum y velocity the display object can reach.
+    * @return {number} The angle (in radians) that the object should be visually set to in order to match its new trajectory.
+    */
+    accelerateToPointer: function (displayObject, pointer, speed, xSpeedMax, ySpeedMax) {
+
+        if (speed === undefined) { speed = 60; }
+        if (pointer === undefined) { pointer = this.game.input.activePointer; }
+        if (xSpeedMax === undefined) { xSpeedMax = 1000; }
+        if (ySpeedMax === undefined) { ySpeedMax = 1000; }
+
+        var angle = this.angleToPointer(displayObject, pointer);
+
+        displayObject.body.acceleration.setToPolar(angle, speed);
+        displayObject.body.maxVelocity.setTo(xSpeedMax, ySpeedMax);
+
+        return angle;
+
+    },
+
+    /**
+    * Sets the acceleration.x/y property on the display object so it will move towards the x/y coordinates at the given speed (in pixels per second sq.)
+    * You must give a maximum speed value, beyond which the display object won't go any faster.
+    * Note: The display object does not continuously track the target. If the target changes location during transit the display object will not modify its course.
+    * Note: The display object doesn't stop moving once it reaches the destination coordinates.
+    *
+    * @method Phaser.Physics.Arcade#accelerateToXY
+    * @param {any} displayObject - The display object to move.
+    * @param {number} x - The x coordinate to accelerate towards.
+    * @param {number} y - The y coordinate to accelerate towards.
+    * @param {number} [speed=60] - The speed it will accelerate in pixels per second.
+    * @param {number} [xSpeedMax=500] - The maximum x velocity the display object can reach.
+    * @param {number} [ySpeedMax=500] - The maximum y velocity the display object can reach.
+    * @return {number} The angle (in radians) that the object should be visually set to in order to match its new trajectory.
+    */
+    accelerateToXY: function (displayObject, x, y, speed, xSpeedMax, ySpeedMax) {
+
+        if (speed === undefined) { speed = 60; }
+        if (xSpeedMax === undefined) { xSpeedMax = 1000; }
+        if (ySpeedMax === undefined) { ySpeedMax = 1000; }
+
+        var angle = this.angleToXY(displayObject, x, y);
+
+        displayObject.body.acceleration.setTo(angle, speed);
+        displayObject.body.maxVelocity.setTo(xSpeedMax, ySpeedMax);
+
+        return angle;
+
+    },
+
+    /**
+    * Find the distance between two display objects (like Sprites).
+    *
+    * The optional `world` argument allows you to return the result based on the Game Objects `world` property,
+    * instead of its `x` and `y` values. This is useful of the object has been nested inside an offset Group,
+    * or parent Game Object.
+    *
+    * @method Phaser.Physics.Arcade#distanceBetween
+    * @param {any} source - The Display Object to test from.
+    * @param {any} target - The Display Object to test to.
+    * @param {boolean} [world=false] - Calculate the distance using World coordinates (true), or Object coordinates (false, the default)
+    * @return {number} The distance between the source and target objects.
+    */
+    distanceBetween: function (source, target, world) {
+
+        if (world === undefined) { world = false; }
+
+        var dx = (world) ? source.world.x - target.world.x : source.x - target.x;
+        var dy = (world) ? source.world.y - target.world.y : source.y - target.y;
+
+        return Math.sqrt(dx * dx + dy * dy);
+
+    },
+
+    /**
+    * Find the distance between a display object (like a Sprite) and the given x/y coordinates.
+    * The calculation is made from the display objects x/y coordinate. This may be the top-left if its anchor hasn't been changed.
+    * If you need to calculate from the center of a display object instead use the method distanceBetweenCenters()
+    *
+    * The optional `world` argument allows you to return the result based on the Game Objects `world` property,
+    * instead of its `x` and `y` values. This is useful of the object has been nested inside an offset Group,
+    * or parent Game Object.
+    *
+    * @method Phaser.Physics.Arcade#distanceToXY
+    * @param {any} displayObject - The Display Object to test from.
+    * @param {number} x - The x coordinate to move towards.
+    * @param {number} y - The y coordinate to move towards.
+    * @param {boolean} [world=false] - Calculate the distance using World coordinates (true), or Object coordinates (false, the default)
+    * @return {number} The distance between the object and the x/y coordinates.
+    */
+    distanceToXY: function (displayObject, x, y, world) {
+
+        if (world === undefined) { world = false; }
+
+        var dx = (world) ? displayObject.world.x - x : displayObject.x - x;
+        var dy = (world) ? displayObject.world.y - y : displayObject.y - y;
+
+        return Math.sqrt(dx * dx + dy * dy);
+
+    },
+
+    /**
+    * Find the distance between a display object (like a Sprite) and a Pointer. If no Pointer is given the Input.activePointer is used.
+    * The calculation is made from the display objects x/y coordinate. This may be the top-left if its anchor hasn't been changed.
+    * If you need to calculate from the center of a display object instead use the method distanceBetweenCenters()
+    *
+    * The optional `world` argument allows you to return the result based on the Game Objects `world` property,
+    * instead of its `x` and `y` values. This is useful of the object has been nested inside an offset Group,
+    * or parent Game Object.
+    *
+    * @method Phaser.Physics.Arcade#distanceToPointer
+    * @param {any} displayObject - The Display Object to test from.
+    * @param {Phaser.Pointer} [pointer] - The Phaser.Pointer to test to. If none is given then Input.activePointer is used.
+    * @param {boolean} [world=false] - Calculate the distance using World coordinates (true), or Object coordinates (false, the default)
+    * @return {number} The distance between the object and the Pointer.
+    */
+    distanceToPointer: function (displayObject, pointer, world) {
+
+        if (pointer === undefined) { pointer = this.game.input.activePointer; }
+        if (world === undefined) { world = false; }
+
+        var dx = (world) ? displayObject.world.x - pointer.worldX : displayObject.x - pointer.worldX;
+        var dy = (world) ? displayObject.world.y - pointer.worldY : displayObject.y - pointer.worldY;
+
+        return Math.sqrt(dx * dx + dy * dy);
+
+    },
+
+    /**
+    * Find the angle in radians between two display objects (like Sprites).
+    *
+    * The optional `world` argument allows you to return the result based on the Game Objects `world` property,
+    * instead of its `x` and `y` values. This is useful of the object has been nested inside an offset Group,
+    * or parent Game Object.
+    *
+    * @method Phaser.Physics.Arcade#angleBetween
+    * @param {any} source - The Display Object to test from.
+    * @param {any} target - The Display Object to test to.
+    * @param {boolean} [world=false] - Calculate the angle using World coordinates (true), or Object coordinates (false, the default)
+    * @return {number} The angle in radians between the source and target display objects.
+    */
+    angleBetween: function (source, target, world) {
+
+        if (world === undefined) { world = false; }
+
+        if (world)
+        {
+            return Math.atan2(target.world.y - source.world.y, target.world.x - source.world.x);
+        }
+        else
+        {
+            return Math.atan2(target.y - source.y, target.x - source.x);
+        }
+
+    },
+
+    /**
+    * Find the angle in radians between centers of two display objects (like Sprites).
+    *
+    * @method Phaser.Physics.Arcade#angleBetweenCenters
+    * @param {any} source - The Display Object to test from.
+    * @param {any} target - The Display Object to test to.
+    * @return {number} The angle in radians between the source and target display objects.
+    */
+    angleBetweenCenters: function (source, target) {
+
+        var dx = target.centerX - source.centerX;
+        var dy = target.centerY - source.centerY;
+
+        return Math.atan2(dy, dx);
+
+    },
+
+    /**
+    * Find the angle in radians between a display object (like a Sprite) and the given x/y coordinate.
+    *
+    * The optional `world` argument allows you to return the result based on the Game Objects `world` property,
+    * instead of its `x` and `y` values. This is useful of the object has been nested inside an offset Group,
+    * or parent Game Object.
+    *
+    * @method Phaser.Physics.Arcade#angleToXY
+    * @param {any} displayObject - The Display Object to test from.
+    * @param {number} x - The x coordinate to get the angle to.
+    * @param {number} y - The y coordinate to get the angle to.
+    * @param {boolean} [world=false] - Calculate the angle using World coordinates (true), or Object coordinates (false, the default)
+    * @return {number} The angle in radians between displayObject.x/y to Pointer.x/y
+    */
+    angleToXY: function (displayObject, x, y, world) {
+
+        if (world === undefined) { world = false; }
+
+        if (world)
+        {
+            return Math.atan2(y - displayObject.world.y, x - displayObject.world.x);
+        }
+        else
+        {
+            return Math.atan2(y - displayObject.y, x - displayObject.x);
+        }
+
+    },
+
+    /**
+    * Find the angle in radians between a display object (like a Sprite) and a Pointer, taking their x/y and center into account.
+    *
+    * The optional `world` argument allows you to return the result based on the Game Objects `world` property,
+    * instead of its `x` and `y` values. This is useful of the object has been nested inside an offset Group,
+    * or parent Game Object.
+    *
+    * @method Phaser.Physics.Arcade#angleToPointer
+    * @param {any} displayObject - The Display Object to test from.
+    * @param {Phaser.Pointer} [pointer] - The Phaser.Pointer to test to. If none is given then Input.activePointer is used.
+    * @param {boolean} [world=false] - Calculate the angle using World coordinates (true), or Object coordinates (false, the default)
+    * @return {number} The angle in radians between displayObject.x/y to Pointer.x/y
+    */
+    angleToPointer: function (displayObject, pointer, world) {
+
+        if (pointer === undefined) { pointer = this.game.input.activePointer; }
+        if (world === undefined) { world = false; }
+
+        if (world)
+        {
+            return Math.atan2(pointer.worldY - displayObject.world.y, pointer.worldX - displayObject.world.x);
+        }
+        else
+        {
+            return Math.atan2(pointer.worldY - displayObject.y, pointer.worldX - displayObject.x);
+        }
+
+    },
+
+    /**
+    * Find the angle in radians between a display object (like a Sprite) and a Pointer,
+    * taking their x/y and center into account relative to the world.
+    *
+    * @method Phaser.Physics.Arcade#worldAngleToPointer
+    * @param {any} displayObject - The DisplayObjerct to test from.
+    * @param {Phaser.Pointer} [pointer] - The Phaser.Pointer to test to. If none is given then Input.activePointer is used.
+    * @return {number} The angle in radians between displayObject.world.x/y to Pointer.worldX / worldY
+    */
+    worldAngleToPointer: function (displayObject, pointer) {
+
+        return this.angleToPointer(displayObject, pointer, true);
+
+    }
+
+};
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
+* The Physics Body is linked to a single Sprite. All physics operations should be performed against the body rather than
+* the Sprite itself. For example you can set the velocity, acceleration, bounce values etc all on the Body.
+*
+* @class Phaser.Physics.Arcade.Body
+* @constructor
+* @param {Phaser.Sprite} sprite - The Sprite object this physics body belongs to.
+*/
+Phaser.Physics.Arcade.Body = function (sprite) {
+
+    /**
+    * @property {Phaser.Sprite} sprite - Reference to the parent Sprite.
+    */
+    this.sprite = sprite;
+
+    /**
+    * @property {Phaser.Game} game - Local reference to game.
+    */
+    this.game = sprite.game;
+
+    /**
+    * @property {number} type - The type of physics system this body belongs to.
+    */
+    this.type = Phaser.Physics.ARCADE;
+
+    /**
+    * @property {boolean} enable - A disabled body won't be checked for any form of collision or overlap or have its pre/post updates run.
+    * @default
+    */
+    this.enable = true;
+
+    /**
+    * If `true` this Body is using circular collision detection. If `false` it is using rectangular.
+    * Use `Body.setCircle` to control the collision shape this Body uses.
+    * @property {boolean} isCircle
+    * @default
+    * @readOnly
+    */
+    this.isCircle = false;
+
+    /**
+    * The radius of the circular collision shape this Body is using if Body.setCircle has been enabled, relative to the Sprite's _texture_.
+    * If you wish to change the radius then call {@link #setCircle} again with the new value.
+    * If you wish to stop the Body using a circle then call {@link #setCircle} with a radius of zero (or undefined).
+    * The actual radius of the Body (at any Sprite scale) is equal to {@link #halfWidth} and the diameter is equal to {@link #width}.
+    * @property {number} radius
+    * @default
+    * @readOnly
+    */
+    this.radius = 0;
+
+    /**
+    * @property {Phaser.Point} offset - The offset of the Physics Body from the Sprite's texture.
+    */
+    this.offset = new Phaser.Point();
+
+    /**
+    * @property {Phaser.Point} position - The position of the physics body, equivalent to ({@link #left}, {@link #top}).
+    * @readonly
+    */
+    this.position = new Phaser.Point(sprite.x, sprite.y);
+
+    /**
+    * @property {Phaser.Point} prev - The previous position of the physics body.
+    * @readonly
+    */
+    this.prev = new Phaser.Point(this.position.x, this.position.y);
+
+    /**
+    * @property {boolean} allowRotation - Allow this Body to be rotated? (via angularVelocity, etc)
+    * @default
+    */
+    this.allowRotation = true;
+
+    /**
+    * The Body's rotation in degrees, as calculated by its angularVelocity and angularAcceleration. Please understand that the collision Body
+    * itself never rotates, it is always axis-aligned. However these values are passed up to the parent Sprite and updates its rotation.
+    * @property {number} rotation
+    */
+    this.rotation = sprite.angle;
+
+    /**
+    * @property {number} preRotation - The previous rotation of the physics body, in degrees.
+    * @readonly
+    */
+    this.preRotation = sprite.angle;
+
+    /**
+    * @property {number} width - The calculated width of the physics body.
+    * @readonly
+    */
+    this.width = sprite.width;
+
+    /**
+    * @property {number} height - The calculated height of the physics body.
+    * @readonly
+    */
+    this.height = sprite.height;
+
+    /**
+    * @property {number} sourceWidth - The un-scaled original size.
+    * @readonly
+    */
+    this.sourceWidth = sprite.width;
+
+    /**
+    * @property {number} sourceHeight - The un-scaled original size.
+    * @readonly
+    */
+    this.sourceHeight = sprite.height;
+
+    if (sprite.texture)
+    {
+        this.sourceWidth = sprite.texture.frame.width;
+        this.sourceHeight = sprite.texture.frame.height;
+    }
+
+    /**
+    * @property {number} halfWidth - The calculated width / 2 of the physics body.
+    * @readonly
+    */
+    this.halfWidth = Math.abs(sprite.width / 2);
+
+    /**
+    * @property {number} halfHeight - The calculated height / 2 of the physics body.
+    * @readonly
+    */
+    this.halfHeight = Math.abs(sprite.height / 2);
+
+    /**
+    * @property {Phaser.Point} center - The center coordinate of the Physics Body.
+    * @readonly
+    */
+    this.center = new Phaser.Point(sprite.x + this.halfWidth, sprite.y + this.halfHeight);
+
+    /**
+    * @property {Phaser.Point} velocity - The velocity, or rate of change the Body's position. Measured in pixels per second.
+    */
+    this.velocity = new Phaser.Point();
+
+    /**
+    * @property {Phaser.Point} newVelocity - The distanced traveled during the last update, equal to `velocity * physicsElapsed`. Calculated during the Body.preUpdate and applied to its position.
+    * @readonly
+    */
+    this.newVelocity = new Phaser.Point();
+
+    /**
+    * @property {Phaser.Point} deltaMax - The Sprite position is updated based on the delta x/y values. You can set a cap on those (both +-) using deltaMax.
+    */
+    this.deltaMax = new Phaser.Point();
+
+    /**
+    * @property {Phaser.Point} acceleration - The acceleration is the rate of change of the velocity. Measured in pixels per second squared.
+    */
+    this.acceleration = new Phaser.Point();
+
+    /**
+     * @property {boolean} allowDrag - Allow this Body to be influenced by {@link #drag}?
+     * @default
+     */
+     this.allowDrag = true;
+
+    /**
+    * @property {Phaser.Point} drag - The drag applied to the motion of the Body (when {@link #allowDrag} is enabled). Measured in pixels per second squared.
+    */
+    this.drag = new Phaser.Point();
+
+    /**
+    * @property {boolean} allowGravity - Allow this Body to be influenced by gravity? Either world or local.
+    * @default
+    */
+    this.allowGravity = true;
+
+    /**
+    * @property {Phaser.Point} gravity - This Body's local gravity, **added** to any world gravity, unless Body.allowGravity is set to false.
+    */
+    this.gravity = new Phaser.Point();
+
+    /**
+    * @property {Phaser.Point} bounce - The elasticity of the Body when colliding. bounce.x/y = 1 means full rebound, bounce.x/y = 0.5 means 50% rebound velocity.
+    */
+    this.bounce = new Phaser.Point();
+
+    /**
+    * The elasticity of the Body when colliding with the World bounds.
+    * By default this property is `null`, in which case `Body.bounce` is used instead. Set this property
+    * to a Phaser.Point object in order to enable a World bounds specific bounce value.
+    * @property {Phaser.Point} worldBounce
+    */
+    this.worldBounce = null;
+
+    /**
+    * A Signal that is dispatched when this Body collides with the world bounds.
+    * Due to the potentially high volume of signals this could create it is disabled by default.
+    * To use this feature set this property to a Phaser.Signal: `sprite.body.onWorldBounds = new Phaser.Signal()`
+    * and it will be called when a collision happens, passing five arguments:
+    * `onWorldBounds(sprite, up, down, left, right)`
+    * where the Sprite is a reference to the Sprite that owns this Body, and the other arguments are booleans
+    * indicating on which side of the world the Body collided.
+    * @property {Phaser.Signal} onWorldBounds
+    */
+    this.onWorldBounds = null;
+
+    /**
+    * A Signal that is dispatched when this Body collides with another Body.
+    *
+    * You still need to call `game.physics.arcade.collide` in your `update` method in order
+    * for this signal to be dispatched.
+    *
+    * Usually you'd pass a callback to the `collide` method, but this signal provides for
+    * a different level of notification.
+    *
+    * Due to the potentially high volume of signals this could create it is disabled by default.
+    *
+    * To use this feature set this property to a Phaser.Signal: `sprite.body.onCollide = new Phaser.Signal()`
+    * and it will be called when a collision happens, passing two arguments: the sprites which collided.
+    * The first sprite in the argument is always the owner of this Body.
+    *
+    * If two Bodies with this Signal set collide, both will dispatch the Signal.
+    * @property {Phaser.Signal} onCollide
+    */
+    this.onCollide = null;
+
+    /**
+    * A Signal that is dispatched when this Body overlaps with another Body.
+    *
+    * You still need to call `game.physics.arcade.overlap` in your `update` method in order
+    * for this signal to be dispatched.
+    *
+    * Usually you'd pass a callback to the `overlap` method, but this signal provides for
+    * a different level of notification.
+    *
+    * Due to the potentially high volume of signals this could create it is disabled by default.
+    *
+    * To use this feature set this property to a Phaser.Signal: `sprite.body.onOverlap = new Phaser.Signal()`
+    * and it will be called when a collision happens, passing two arguments: the sprites which collided.
+    * The first sprite in the argument is always the owner of this Body.
+    *
+    * If two Bodies with this Signal set collide, both will dispatch the Signal.
+    * @property {Phaser.Signal} onOverlap
+    */
+    this.onOverlap = null;
+
+    /**
+    * @property {Phaser.Point} maxVelocity - The maximum velocity (in pixels per second squared) that the Body can reach.
+    * @default
+    */
+    this.maxVelocity = new Phaser.Point(10000, 10000);
+
+    /**
+    * @property {Phaser.Point} friction - If this Body is {@link #immovable} and moving, and another Body is 'riding' this one, this is the amount of motion the riding Body receives on each axis.
+    */
+    this.friction = new Phaser.Point(1, 0);
+
+    /**
+    * @property {number} angularVelocity - The angular velocity is the rate of change of the Body's rotation. It is measured in degrees per second.
+    * @default
+    */
+    this.angularVelocity = 0;
+
+    /**
+    * @property {number} angularAcceleration - The angular acceleration is the rate of change of the angular velocity. Measured in degrees per second squared.
+    * @default
+    */
+    this.angularAcceleration = 0;
+
+    /**
+    * @property {number} angularDrag - The drag applied during the rotation of the Body. Measured in degrees per second squared.
+    * @default
+    */
+    this.angularDrag = 0;
+
+    /**
+    * @property {number} maxAngular - The maximum angular velocity in degrees per second that the Body can reach.
+    * @default
+    */
+    this.maxAngular = 1000;
+
+    /**
+    * @property {number} mass - The mass of the Body. When two bodies collide their mass is used in the calculation to determine the exchange of velocity.
+    * @default
+    */
+    this.mass = 1;
+
+    /**
+    * @property {number} angle - The angle of the Body's **velocity** in radians.
+    * @readonly
+    */
+    this.angle = 0;
+
+    /**
+    * @property {number} speed - The speed of the Body in pixels per second, equal to the magnitude of the velocity.
+    * @readonly
+    */
+    this.speed = 0;
+
+    /**
+    * @property {number} facing - A const reference to the direction the Body is traveling or facing: Phaser.NONE, Phaser.LEFT, Phaser.RIGHT, Phaser.UP, or Phaser.DOWN. If the Body is moving on both axes, UP and DOWN take precedence.
+    * @default
+    */
+    this.facing = Phaser.NONE;
+
+    /**
+    * @property {boolean} immovable - An immovable Body will not receive any impacts from other bodies. **Two** immovable Bodies can't separate or exchange momentum and will pass through each other.
+    * @default
+    */
+    this.immovable = false;
+
+    /**
+    * Whether the physics system should update the Body's position and rotation based on its velocity, acceleration, drag, and gravity.
+    *
+    * If you have a Body that is being moved around the world via a tween or a Group motion, but its local x/y position never
+    * actually changes, then you should set Body.moves = false. Otherwise it will most likely fly off the screen.
+    * If you want the physics system to move the body around, then set moves to true.
+    *
+    * A Body with moves = false can still be moved slightly (but not accelerated) during collision separation unless you set {@link #immovable} as well.
+    *
+    * @property {boolean} moves - Set to true to allow the Physics system to move this Body, otherwise false to move it manually.
+    * @default
+    */
+    this.moves = true;
+
+    /**
+    * This flag allows you to disable the custom x separation that takes place by Physics.Arcade.separate.
+    * Used in combination with your own collision processHandler you can create whatever type of collision response you need.
+    * @property {boolean} customSeparateX - Use a custom separation system or the built-in one?
+    * @default
+    */
+    this.customSeparateX = false;
+
+    /**
+    * This flag allows you to disable the custom y separation that takes place by Physics.Arcade.separate.
+    * Used in combination with your own collision processHandler you can create whatever type of collision response you need.
+    * @property {boolean} customSeparateY - Use a custom separation system or the built-in one?
+    * @default
+    */
+    this.customSeparateY = false;
+
+    /**
+    * When this body collides with another, the amount of overlap is stored here.
+    * @property {number} overlapX - The amount of horizontal overlap during the collision.
+    */
+    this.overlapX = 0;
+
+    /**
+    * When this body collides with another, the amount of overlap is stored here.
+    * @property {number} overlapY - The amount of vertical overlap during the collision.
+    */
+    this.overlapY = 0;
+
+    /**
+    * If `Body.isCircle` is true, and this body collides with another circular body, the amount of overlap is stored here.
+    * @property {number} overlapR - The amount of overlap during the collision.
+    */
+    this.overlapR = 0;
+
+    /**
+    * If a body is overlapping with another body, but neither of them are moving (maybe they spawned on-top of each other?) this is set to true.
+    * @property {boolean} embedded - Body embed value.
+    */
+    this.embedded = false;
+
+    /**
+    * A Body can be set to collide against the World bounds automatically and rebound back into the World if this is set to true. Otherwise it will leave the World.
+    * @property {boolean} collideWorldBounds - Should the Body collide with the World bounds?
+    */
+    this.collideWorldBounds = false;
+
+    /**
+    * Set the checkCollision properties to control which directions collision is processed for this Body.
+    * For example checkCollision.up = false means it won't collide when the collision happened while moving up.
+    * If you need to disable a Body entirely, use `body.enable = false`, this will also disable motion.
+    * If you need to disable just collision and/or overlap checks, but retain motion, set `checkCollision.none = true`.
+    * @property {object} checkCollision - An object containing allowed collision (none, up, down, left, right).
+    */
+    this.checkCollision = { none: false, up: true, down: true, left: true, right: true };
+
+    /**
+    * This object is populated with boolean values when the Body collides with another.
+    * touching.up = true means the collision happened to the top of this Body for example.
+    * @property {object} touching - An object containing touching results (none, up, down, left, right).
+    */
+    this.touching = { none: true, up: false, down: false, left: false, right: false };
+
+    /**
+    * This object is populated with previous touching values from the bodies previous collision.
+    * @property {object} wasTouching - An object containing previous touching results (none, up, down, left, right).
+    */
+    this.wasTouching = { none: true, up: false, down: false, left: false, right: false };
+
+    /**
+    * This object is populated with boolean values when the Body collides with the World bounds or a Tile.
+    * For example if blocked.up is true then the Body cannot move up.
+    * @property {object} blocked - An object containing on which faces this Body is blocked from moving, if any (none, up, down, left, right).
+    */
+    this.blocked = { none: true, up: false, down: false, left: false, right: false };
+
+    /**
+    * If this is an especially small or fast moving object then it can sometimes skip over tilemap collisions if it moves through a tile in a step.
+    * Set this padding value to add extra padding to its bounds. tilePadding.x applied to its width, y to its height.
+    * @property {Phaser.Point} tilePadding - Extra padding to be added to this sprite's dimensions when checking for tile collision.
+    */
+    this.tilePadding = new Phaser.Point();
+
+    /**
+    * @property {boolean} dirty - If this Body in a preUpdate (true) or postUpdate (false) state?
+    */
+    this.dirty = false;
+
+    /**
+    * @property {boolean} skipQuadTree - If true and you collide this Sprite against a Group, it will disable the collision check from using a QuadTree.
+    */
+    this.skipQuadTree = false;
+
+    /**
+    * If true the Body will check itself against the Sprite.getBounds() dimensions and adjust its width and height accordingly.
+    * If false it will compare its dimensions against the Sprite scale instead, and adjust its width height if the scale has changed.
+    * Typically you would need to enable syncBounds if your sprite is the child of a responsive display object such as a FlexLayer,
+    * or in any situation where the Sprite scale doesn't change, but its parents scale is effecting the dimensions regardless.
+    * @property {boolean} syncBounds
+    * @default
+    */
+    this.syncBounds = false;
+
+    /**
+    * @property {boolean} isMoving - Set by the `moveTo` and `moveFrom` methods.
+    */
+    this.isMoving = false;
+
+    /**
+    * @property {boolean} stopVelocityOnCollide - Set by the `moveTo` and `moveFrom` methods.
+    */
+    this.stopVelocityOnCollide = true;
+
+    /**
+    * @property {integer} moveTimer - Internal time used by the `moveTo` and `moveFrom` methods.
+    * @private
+    */
+    this.moveTimer = 0;
+
+    /**
+    * @property {integer} moveDistance - Internal distance value, used by the `moveTo` and `moveFrom` methods.
+    * @private
+    */
+    this.moveDistance = 0;
+
+    /**
+    * @property {integer} moveDuration - Internal duration value, used by the `moveTo` and `moveFrom` methods.
+    * @private
+    */
+    this.moveDuration = 0;
+
+    /**
+    * @property {Phaser.Line} moveTarget - Set by the `moveTo` method, and updated each frame.
+    * @private
+    */
+    this.moveTarget = null;
+
+    /**
+    * @property {Phaser.Point} moveEnd - Set by the `moveTo` method, and updated each frame.
+    * @private
+    */
+    this.moveEnd = null;
+
+    /**
+    * @property {Phaser.Signal} onMoveComplete - Listen for the completion of `moveTo` or `moveFrom` events.
+    */
+    this.onMoveComplete = new Phaser.Signal();
+
+    /**
+    * @property {function} movementCallback - Optional callback. If set, invoked during the running of `moveTo` or `moveFrom` events.
+    */
+    this.movementCallback = null;
+
+    /**
+    * @property {object} movementCallbackContext - Context in which to call the movementCallback.
+    */
+    this.movementCallbackContext = null;
+
+    /**
+    * @property {boolean} _reset - Internal cache var.
+    * @private
+    */
+    this._reset = true;
+
+    /**
+    * @property {number} _sx - Internal cache var.
+    * @private
+    */
+    this._sx = sprite.scale.x;
+
+    /**
+    * @property {number} _sy - Internal cache var.
+    * @private
+    */
+    this._sy = sprite.scale.y;
+
+    /**
+    * @property {number} _dx - Internal cache var.
+    * @private
+    */
+    this._dx = 0;
+
+    /**
+    * @property {number} _dy - Internal cache var.
+    * @private
+    */
+    this._dy = 0;
+
+};
+
+Phaser.Physics.Arcade.Body.prototype = {
+
+    /**
+    * Internal method.
+    *
+    * @method Phaser.Physics.Arcade.Body#updateBounds
+    * @protected
+    */
+    updateBounds: function () {
+
+        if (this.syncBounds)
+        {
+            var b = this.sprite.getBounds();
+            b.ceilAll();
+
+            if (b.width !== this.width || b.height !== this.height)
+            {
+                this.width = b.width;
+                this.height = b.height;
+                this._reset = true;
+            }
+        }
+        else
+        {
+            var asx = Math.abs(this.sprite.scale.x);
+            var asy = Math.abs(this.sprite.scale.y);
+
+            if (asx !== this._sx || asy !== this._sy)
+            {
+                this.width = this.sourceWidth * asx;
+                this.height = this.sourceHeight * asy;
+                this._sx = asx;
+                this._sy = asy;
+                this._reset = true;
+            }
+        }
+
+        if (this._reset)
+        {
+            this.halfWidth = Math.floor(this.width / 2);
+            this.halfHeight = Math.floor(this.height / 2);
+            this.updateCenter();
+        }
+
+    },
+
+    /**
+    * Update the Body's center from its position.
+    *
+    * @method Phaser.Physics.Arcade.Body#updateCenter
+    * @protected
+    */
+    updateCenter: function () {
+
+        this.center.setTo(this.position.x + this.halfWidth, this.position.y + this.halfHeight);
+
+    },
+
+    /**
+    * Internal method.
+    *
+    * @method Phaser.Physics.Arcade.Body#preUpdate
+    * @protected
+    */
+    preUpdate: function () {
+
+        if (!this.enable || this.game.physics.arcade.isPaused)
+        {
+            return;
+        }
+
+        this.dirty = true;
+
+        //  Store and reset collision flags
+        this.wasTouching.none = this.touching.none;
+        this.wasTouching.up = this.touching.up;
+        this.wasTouching.down = this.touching.down;
+        this.wasTouching.left = this.touching.left;
+        this.wasTouching.right = this.touching.right;
+
+        this.touching.none = true;
+        this.touching.up = false;
+        this.touching.down = false;
+        this.touching.left = false;
+        this.touching.right = false;
+
+        this.blocked.none = true;
+        this.blocked.up = false;
+        this.blocked.down = false;
+        this.blocked.left = false;
+        this.blocked.right = false;
+
+        this.overlapR = 0;
+        this.overlapX = 0;
+        this.overlapY = 0;
+
+        this.embedded = false;
+
+        this.updateBounds();
+
+        this.position.x = (this.sprite.world.x - (this.sprite.anchor.x * this.sprite.width)) + this.sprite.scale.x * this.offset.x;
+        this.position.x -= this.sprite.scale.x < 0 ? this.width : 0;
+
+        this.position.y = (this.sprite.world.y - (this.sprite.anchor.y * this.sprite.height)) + this.sprite.scale.y * this.offset.y;
+        this.position.y -= this.sprite.scale.y < 0 ? this.height : 0;
+
+        this.updateCenter();
+
+        this.rotation = this.sprite.angle;
+
+        this.preRotation = this.rotation;
+
+        if (this._reset || this.sprite.fresh)
+        {
+            this.prev.x = this.position.x;
+            this.prev.y = this.position.y;
+        }
+
+        if (this.moves)
+        {
+            this.game.physics.arcade.updateMotion(this);
+
+            this.newVelocity.set(this.velocity.x * this.game.time.physicsElapsed, this.velocity.y * this.game.time.physicsElapsed);
+
+            this.position.x += this.newVelocity.x;
+            this.position.y += this.newVelocity.y;
+            this.updateCenter();
+
+            if (this.position.x !== this.prev.x || this.position.y !== this.prev.y)
+            {
+                this.angle = Math.atan2(this.velocity.y, this.velocity.x);
+            }
+
+            this.speed = Math.sqrt(this.velocity.x * this.velocity.x + this.velocity.y * this.velocity.y);
+
+            //  Now the State update will throw collision checks at the Body
+            //  And finally we'll integrate the new position back to the Sprite in postUpdate
+
+            if (this.collideWorldBounds)
+            {
+                if (this.checkWorldBounds() && this.onWorldBounds)
+                {
+                    this.onWorldBounds.dispatch(this.sprite, this.blocked.up, this.blocked.down, this.blocked.left, this.blocked.right);
+                }
+            }
+        }
+
+        this._dx = this.deltaX();
+        this._dy = this.deltaY();
+
+        this._reset = false;
+
+    },
+
+    /**
+    * Internal method.
+    *
+    * @method Phaser.Physics.Arcade.Body#updateMovement
+    * @protected
+    */
+    updateMovement: function () {
+
+        var percent = 0;
+        var collided = (this.overlapX !== 0 || this.overlapY !== 0);
+
+        //  Duration or Distance based?
+
+        if (this.moveDuration > 0)
+        {
+            this.moveTimer += this.game.time.elapsedMS;
+
+            percent = this.moveTimer / this.moveDuration;
+        }
+        else
+        {
+            this.moveTarget.end.set(this.position.x, this.position.y);
+
+            percent = this.moveTarget.length / this.moveDistance;
+        }
+
+        if (this.movementCallback)
+        {
+            var result = this.movementCallback.call(this.movementCallbackContext, this, this.velocity, percent);
+        }
+
+        if (collided || percent >= 1 || (result !== undefined && result !== true))
+        {
+            this.stopMovement((percent >= 1) || (this.stopVelocityOnCollide && collided));
+            return false;
+        }
+
+        return true;
+
+    },
+
+    /**
+    * If this Body is moving as a result of a call to `moveTo` or `moveFrom` (i.e. it
+    * has Body.isMoving true), then calling this method will stop the movement before
+    * either the duration or distance counters expire.
+    *
+    * The `onMoveComplete` signal is dispatched.
+    *
+    * @method Phaser.Physics.Arcade.Body#stopMovement
+    * @param {boolean} [stopVelocity] - Should the Body.velocity be set to zero?
+    */
+    stopMovement: function (stopVelocity) {
+
+        if (this.isMoving)
+        {
+            this.isMoving = false;
+
+            if (stopVelocity)
+            {
+                this.velocity.set(0);
+            }
+
+            //  Send the Sprite this Body belongs to
+            //  and a boolean indicating if it stopped because of a collision or not
+            this.onMoveComplete.dispatch(this.sprite, (this.overlapX !== 0 || this.overlapY !== 0));
+        }
+
+    },
+
+    /**
+    * Internal method.
+    *
+    * @method Phaser.Physics.Arcade.Body#postUpdate
+    * @protected
+    */
+    postUpdate: function () {
+
+        //  Only allow postUpdate to be called once per frame
+        if (!this.enable || !this.dirty)
+        {
+            return;
+        }
+
+        //  Moving?
+        if (this.isMoving)
+        {
+            this.updateMovement();
+        }
+
+        this.dirty = false;
+
+        if (this.deltaX() < 0)
+        {
+            this.facing = Phaser.LEFT;
+        }
+        else if (this.deltaX() > 0)
+        {
+            this.facing = Phaser.RIGHT;
+        }
+
+        if (this.deltaY() < 0)
+        {
+            this.facing = Phaser.UP;
+        }
+        else if (this.deltaY() > 0)
+        {
+            this.facing = Phaser.DOWN;
+        }
+
+        if (this.moves)
+        {
+            this._dx = this.deltaX();
+            this._dy = this.deltaY();
+
+            if (this.deltaMax.x !== 0 && this._dx !== 0)
+            {
+                if (this._dx < 0 && this._dx < -this.deltaMax.x)
+                {
+                    this._dx = -this.deltaMax.x;
+                }
+                else if (this._dx > 0 && this._dx > this.deltaMax.x)
+                {
+                    this._dx = this.deltaMax.x;
+                }
+            }
+
+            if (this.deltaMax.y !== 0 && this._dy !== 0)
+            {
+                if (this._dy < 0 && this._dy < -this.deltaMax.y)
+                {
+                    this._dy = -this.deltaMax.y;
+                }
+                else if (this._dy > 0 && this._dy > this.deltaMax.y)
+                {
+                    this._dy = this.deltaMax.y;
+                }
+            }
+
+            this.sprite.position.x += this._dx;
+            this.sprite.position.y += this._dy;
+            this._reset = true;
+        }
+
+        this.updateCenter();
+
+        if (this.allowRotation)
+        {
+            this.sprite.angle += this.deltaZ();
+        }
+
+        this.prev.x = this.position.x;
+        this.prev.y = this.position.y;
+
+    },
+
+    /**
+    * Internal method.
+    *
+    * @method Phaser.Physics.Arcade.Body#checkWorldBounds
+    * @protected
+    * @return {boolean} True if the Body collided with the world bounds, otherwise false.
+    */
+    checkWorldBounds: function () {
+
+        var pos = this.position;
+        var bounds = this.game.physics.arcade.bounds;
+        var check = this.game.physics.arcade.checkCollision;
+
+        var bx = (this.worldBounce) ? -this.worldBounce.x : -this.bounce.x;
+        var by = (this.worldBounce) ? -this.worldBounce.y : -this.bounce.y;
+
+        if (pos.x < bounds.x && check.left)
+        {
+            pos.x = bounds.x;
+            this.velocity.x *= bx;
+            this.blocked.left = true;
+            this.blocked.none = false;
+        }
+        else if (this.right > bounds.right && check.right)
+        {
+            pos.x = bounds.right - this.width;
+            this.velocity.x *= bx;
+            this.blocked.right = true;
+            this.blocked.none = false;
+        }
+
+        if (pos.y < bounds.y && check.up)
+        {
+            pos.y = bounds.y;
+            this.velocity.y *= by;
+            this.blocked.up = true;
+            this.blocked.none = false;
+        }
+        else if (this.bottom > bounds.bottom && check.down)
+        {
+            pos.y = bounds.bottom - this.height;
+            this.velocity.y *= by;
+            this.blocked.down = true;
+            this.blocked.none = false;
+        }
+
+        return !this.blocked.none;
+
+    },
+
+    /**
+    * Note: This method is experimental, and may be changed or removed in a future release.
+    *
+    * This method moves the Body in the given direction, for the duration specified.
+    * It works by setting the velocity on the Body, and an internal timer, and then
+    * monitoring the duration each frame. When the duration is up the movement is
+    * stopped and the `Body.onMoveComplete` signal is dispatched.
+    *
+    * Movement also stops if the Body collides or overlaps with any other Body.
+    *
+    * You can control if the velocity should be reset to zero on collision, by using
+    * the property `Body.stopVelocityOnCollide`.
+    *
+    * Stop the movement at any time by calling `Body.stopMovement`.
+    *
+    * You can optionally set a speed in pixels per second. If not specified it
+    * will use the current `Body.speed` value. If this is zero, the function will return false.
+    *
+    * Please note that due to browser timings you should allow for a variance in
+    * when the duration will actually expire. Depending on system it may be as much as
+    * +- 50ms. Also this method doesn't take into consideration any other forces acting
+    * on the Body, such as Gravity, drag or maxVelocity, all of which may impact the
+    * movement.
+    *
+    * @method Phaser.Physics.Arcade.Body#moveFrom
+    * @param  {integer} duration  - The duration of the movement, in ms.
+    * @param  {integer} [speed] - The speed of the movement, in pixels per second. If not provided `Body.speed` is used.
+    * @param  {integer} [direction] - The angle of movement. If not provided `Body.angle` is used.
+    * @return {boolean} True if the movement successfully started, otherwise false.
+    */
+    moveFrom: function (duration, speed, direction) {
+
+        if (speed === undefined) { speed = this.speed; }
+
+        if (speed === 0)
+        {
+            return false;
+        }
+
+        var angle;
+
+        if (direction === undefined)
+        {
+            angle = this.angle;
+            direction = this.game.math.radToDeg(angle);
+        }
+        else
+        {
+            angle = this.game.math.degToRad(direction);
+        }
+
+        this.moveTimer = 0;
+        this.moveDuration = duration;
+
+        //  Avoid sin/cos
+        if (direction === 0 || direction === 180)
+        {
+            this.velocity.set(Math.cos(angle) * speed, 0);
+        }
+        else if (direction === 90 || direction === 270)
+        {
+            this.velocity.set(0, Math.sin(angle) * speed);
+        }
+        else
+        {
+            this.velocity.setToPolar(angle, speed);
+        }
+
+        this.isMoving = true;
+
+        return true;
+
+    },
+
+    /**
+    * Note: This method is experimental, and may be changed or removed in a future release.
+    *
+    * This method moves the Body in the given direction, for the duration specified.
+    * It works by setting the velocity on the Body, and an internal distance counter.
+    * The distance is monitored each frame. When the distance equals the distance
+    * specified in this call, the movement is stopped, and the `Body.onMoveComplete`
+    * signal is dispatched.
+    *
+    * Movement also stops if the Body collides or overlaps with any other Body.
+    *
+    * You can control if the velocity should be reset to zero on collision, by using
+    * the property `Body.stopVelocityOnCollide`.
+    *
+    * Stop the movement at any time by calling `Body.stopMovement`.
+    *
+    * Please note that due to browser timings you should allow for a variance in
+    * when the distance will actually expire.
+    *
+    * Note: This method doesn't take into consideration any other forces acting
+    * on the Body, such as Gravity, drag or maxVelocity, all of which may impact the
+    * movement.
+    *
+    * @method Phaser.Physics.Arcade.Body#moveTo
+    * @param  {integer} duration - The duration of the movement, in ms.
+    * @param  {integer} distance - The distance, in pixels, the Body will move.
+    * @param  {integer} [direction] - The angle of movement. If not provided `Body.angle` is used.
+    * @return {boolean} True if the movement successfully started, otherwise false.
+    */
+    moveTo: function (duration, distance, direction) {
+
+        var speed = distance / (duration / 1000);
+
+        if (speed === 0)
+        {
+            return false;
+        }
+
+        var angle;
+
+        if (direction === undefined)
+        {
+            angle = this.angle;
+            direction = this.game.math.radToDeg(angle);
+        }
+        else
+        {
+            angle = this.game.math.degToRad(direction);
+        }
+
+        distance = Math.abs(distance);
+
+        this.moveDuration = 0;
+        this.moveDistance = distance;
+
+        if (this.moveTarget === null)
+        {
+            this.moveTarget = new Phaser.Line();
+            this.moveEnd = new Phaser.Point();
+        }
+
+        this.moveTarget.fromAngle(this.x, this.y, angle, distance);
+
+        this.moveEnd.set(this.moveTarget.end.x, this.moveTarget.end.y);
+
+        this.moveTarget.setTo(this.x, this.y, this.x, this.y);
+
+        //  Avoid sin/cos
+        if (direction === 0 || direction === 180)
+        {
+            this.velocity.set(Math.cos(angle) * speed, 0);
+        }
+        else if (direction === 90 || direction === 270)
+        {
+            this.velocity.set(0, Math.sin(angle) * speed);
+        }
+        else
+        {
+            this.velocity.setToPolar(angle, speed);
+        }
+
+        this.isMoving = true;
+
+        return true;
+
+    },
+
+    /**
+    * You can modify the size of the physics Body to be any dimension you need.
+    * This allows you to make it smaller, or larger, than the parent Sprite. You
+    * can also control the x and y offset of the Body.
+    *
+    * The width, height, and offset arguments are relative to the Sprite
+    * _texture_ and are scaled with the Sprite's {@link Phaser.Sprite#scale}
+    * (but **not** the scale of any ancestors or the {@link Phaser.Camera#scale
+    * Camera scale}).
+    *
+    * For example: If you have a Sprite with a texture that is 80x100 in size,
+    * and you want the physics body to be 32x32 pixels in the middle of the
+    * texture, you would do:
+    *
+    * `setSize(32 / Math.abs(this.scale.x), 32 / Math.abs(this.scale.y), 24,
+    * 34)`
+    *
+    * Where the first two parameters are the new Body size (32x32 pixels)
+    * relative to the Sprite's scale. 24 is the horizontal offset of the Body
+    * from the top-left of the Sprites texture, and 34 is the vertical offset.
+    *
+    * If you've scaled a Sprite by altering its `width`, `height`, or `scale`
+    * and you want to position the Body relative to the Sprite's dimensions
+    * (which will differ from its texture's dimensions), you should divide these
+    * arguments by the Sprite's current scale:
+    *
+    * `setSize(32 / sprite.scale.x, 32 / sprite.scale.y)`
+    *
+    * Calling `setSize` on a Body that has already had `setCircle` will reset
+    * all of the Circle properties, making this Body rectangular again.
+    * @method Phaser.Physics.Arcade.Body#setSize
+    * @param {number} width - The width of the Body, relative to the Sprite's
+    * texture.
+    * @param {number} height - The height of the Body, relative to the Sprite's
+    * texture.
+    * @param {number} [offsetX] - The X offset of the Body from the left of the
+    * Sprite's texture.
+    * @param {number} [offsetY] - The Y offset of the Body from the top of the
+    * Sprite's texture.
+    */
+    setSize: function (width, height, offsetX, offsetY) {
+
+        if (offsetX === undefined) { offsetX = this.offset.x; }
+        if (offsetY === undefined) { offsetY = this.offset.y; }
+
+        this.sourceWidth = width;
+        this.sourceHeight = height;
+        this.width = this.sourceWidth * this._sx;
+        this.height = this.sourceHeight * this._sy;
+        this.halfWidth = Math.floor(this.width / 2);
+        this.halfHeight = Math.floor(this.height / 2);
+        this.offset.setTo(offsetX, offsetY);
+
+        this.updateCenter();
+
+        this.isCircle = false;
+        this.radius = 0;
+
+    },
+
+    /**
+    * Sets this Body as using a circle, of the given radius, for all collision detection instead of a rectangle.
+    * The radius is given in pixels (relative to the Sprite's _texture_) and is the distance from the center of the circle to the edge.
+    *
+    * You can also control the x and y offset, which is the position of the Body relative to the top-left of the Sprite's texture.
+    *
+    * To change a Body back to being rectangular again call `Body.setSize`.
+    *
+    * Note: Circular collision only happens with other Arcade Physics bodies, it does not
+    * work against tile maps, where rectangular collision is the only method supported.
+    *
+    * @method Phaser.Physics.Arcade.Body#setCircle
+    * @param {number} [radius] - The radius of the Body in pixels. Pass a value of zero / undefined, to stop the Body using a circle for collision.
+    * @param {number} [offsetX] - The X offset of the Body from the left of the Sprite's texture.
+    * @param {number} [offsetY] - The Y offset of the Body from the top of the Sprite's texture.
+    */
+    setCircle: function (radius, offsetX, offsetY) {
+
+        if (offsetX === undefined) { offsetX = this.offset.x; }
+        if (offsetY === undefined) { offsetY = this.offset.y; }
+
+        if (radius > 0)
+        {
+            this.isCircle = true;
+            this.radius = radius;
+
+            this.sourceWidth = radius * 2;
+            this.sourceHeight = radius * 2;
+
+            this.width = this.sourceWidth * this._sx;
+            this.height = this.sourceHeight * this._sy;
+
+            this.halfWidth = Math.floor(this.width / 2);
+            this.halfHeight = Math.floor(this.height / 2);
+
+            this.offset.setTo(offsetX, offsetY);
+
+            this.updateCenter();
+        }
+        else
+        {
+            this.isCircle = false;
+        }
+
+    },
+
+    /**
+    * Resets all Body values (velocity, acceleration, rotation, etc)
+    *
+    * @method Phaser.Physics.Arcade.Body#reset
+    * @param {number} x - The new x position of the Body.
+    * @param {number} y - The new y position of the Body.
+    */
+    reset: function (x, y) {
+
+        this.stop();
+
+        this.position.x = (x - (this.sprite.anchor.x * this.sprite.width)) + this.sprite.scale.x * this.offset.x;
+        this.position.x -= this.sprite.scale.x < 0 ? this.width : 0;
+
+        this.position.y = (y - (this.sprite.anchor.y * this.sprite.height)) + this.sprite.scale.y * this.offset.y;
+        this.position.y -= this.sprite.scale.y < 0 ? this.height : 0;
+
+        this.prev.x = this.position.x;
+        this.prev.y = this.position.y;
+
+        this.rotation = this.sprite.angle;
+        this.preRotation = this.rotation;
+
+        this.updateBounds();
+
+        this.updateCenter();
+
+    },
+
+    /**
+     * Sets acceleration, velocity, and {@link #speed} to 0.
+     *
+     * @method Phaser.Physics.Arcade.Body#stop
+     */
+    stop: function () {
+
+        this.velocity.set(0);
+        this.acceleration.set(0);
+        this.speed = 0;
+        this.angularVelocity = 0;
+        this.angularAcceleration = 0;
+
+    },
+
+    /**
+    * Returns the bounds of this physics body.
+    *
+    * Only used internally by the World collision methods.
+    *
+    * @method Phaser.Physics.Arcade.Body#getBounds
+    * @param {object} obj - The object in which to set the bounds values.
+    * @return {object} The object that was given to this method.
+    */
+    getBounds: function (obj) {
+
+        obj.x = this.x;
+        obj.y = this.y;
+        obj.right = this.right;
+        obj.bottom = this.bottom;
+
+        return obj;
+
+    },
+
+    /**
+    * Tests if a world point lies within this Body.
+    *
+    * @method Phaser.Physics.Arcade.Body#hitTest
+    * @param {number} x - The world x coordinate to test.
+    * @param {number} y - The world y coordinate to test.
+    * @return {boolean} True if the given coordinates are inside this Body, otherwise false.
+    */
+    hitTest: function (x, y) {
+
+        return (this.isCircle) ? Phaser.Circle.contains(this, x, y) : Phaser.Rectangle.contains(this, x, y);
+
+    },
+
+    /**
+    * Returns true if the bottom of this Body is in contact with either the world bounds or a tile.
+    *
+    * @method Phaser.Physics.Arcade.Body#onFloor
+    * @return {boolean} True if in contact with either the world bounds or a tile.
+    */
+    onFloor: function () {
+
+        return this.blocked.down;
+
+    },
+
+    /**
+    * Returns true if the top of this Body is in contact with either the world bounds or a tile.
+    *
+    * @method Phaser.Physics.Arcade.Body#onCeiling
+    * @return {boolean} True if in contact with either the world bounds or a tile.
+    */
+    onCeiling: function(){
+
+        return this.blocked.up;
+
+    },
+
+    /**
+    * Returns true if either side of this Body is in contact with either the world bounds or a tile.
+    *
+    * @method Phaser.Physics.Arcade.Body#onWall
+    * @return {boolean} True if in contact with either the world bounds or a tile.
+    */
+    onWall: function () {
+
+        return (this.blocked.left || this.blocked.right);
+
+    },
+
+    /**
+    * Returns the absolute delta x value.
+    *
+    * @method Phaser.Physics.Arcade.Body#deltaAbsX
+    * @return {number} The absolute delta value.
+    */
+    deltaAbsX: function () {
+
+        return (this.deltaX() > 0 ? this.deltaX() : -this.deltaX());
+
+    },
+
+    /**
+    * Returns the absolute delta y value.
+    *
+    * @method Phaser.Physics.Arcade.Body#deltaAbsY
+    * @return {number} The absolute delta value.
+    */
+    deltaAbsY: function () {
+
+        return (this.deltaY() > 0 ? this.deltaY() : -this.deltaY());
+
+    },
+
+    /**
+    * Returns the delta x value. The difference between Body.x now and in the previous step.
+    *
+    * @method Phaser.Physics.Arcade.Body#deltaX
+    * @return {number} The delta value. Positive if the motion was to the right, negative if to the left.
+    */
+    deltaX: function () {
+
+        return this.position.x - this.prev.x;
+
+    },
+
+    /**
+    * Returns the delta y value. The difference between Body.y now and in the previous step.
+    *
+    * @method Phaser.Physics.Arcade.Body#deltaY
+    * @return {number} The delta value. Positive if the motion was downwards, negative if upwards.
+    */
+    deltaY: function () {
+
+        return this.position.y - this.prev.y;
+
+    },
+
+    /**
+    * Returns the delta z value. The difference between Body.rotation now and in the previous step.
+    *
+    * @method Phaser.Physics.Arcade.Body#deltaZ
+    * @return {number} The delta value. Positive if the motion was clockwise, negative if anti-clockwise.
+    */
+    deltaZ: function () {
+
+        return this.rotation - this.preRotation;
+
+    },
+
+    /**
+    * Destroys this Body.
+    *
+    * First it calls Group.removeFromHash if the Game Object this Body belongs to is part of a Group.
+    * Then it nulls the Game Objects body reference, and nulls this Body.sprite reference.
+    *
+    * @method Phaser.Physics.Arcade.Body#destroy
+    */
+    destroy: function () {
+
+        if (this.sprite.parent && this.sprite.parent instanceof Phaser.Group)
+        {
+            this.sprite.parent.removeFromHash(this.sprite);
+        }
+
+        this.sprite.body = null;
+        this.sprite = null;
+
+    }
+
+};
+
+/**
+* @name Phaser.Physics.Arcade.Body#left
+* @property {number} left - The x position of the Body. The same as `Body.x`.
+*/
+Object.defineProperty(Phaser.Physics.Arcade.Body.prototype, "left", {
+
+    get: function () {
+
+        return this.position.x;
+
+    }
+
+});
+
+/**
+* @name Phaser.Physics.Arcade.Body#right
+* @property {number} right - The right value of this Body (same as Body.x + Body.width)
+* @readonly
+*/
+Object.defineProperty(Phaser.Physics.Arcade.Body.prototype, "right", {
+
+    get: function () {
+
+        return this.position.x + this.width;
+
+    }
+
+});
+
+/**
+* @name Phaser.Physics.Arcade.Body#top
+* @property {number} top - The y position of the Body. The same as `Body.y`.
+*/
+Object.defineProperty(Phaser.Physics.Arcade.Body.prototype, "top", {
+
+    get: function () {
+
+        return this.position.y;
+
+    }
+
+});
+
+/**
+* @name Phaser.Physics.Arcade.Body#bottom
+* @property {number} bottom - The bottom value of this Body (same as Body.y + Body.height)
+* @readonly
+*/
+Object.defineProperty(Phaser.Physics.Arcade.Body.prototype, "bottom", {
+
+    get: function () {
+
+        return this.position.y + this.height;
+
+    }
+
+});
+
+/**
+* @name Phaser.Physics.Arcade.Body#x
+* @property {number} x - The x position.
+*/
+Object.defineProperty(Phaser.Physics.Arcade.Body.prototype, "x", {
+
+    get: function () {
+
+        return this.position.x;
+
+    },
+
+    set: function (value) {
+
+        this.position.x = value;
+    }
+
+});
+
+/**
+* @name Phaser.Physics.Arcade.Body#y
+* @property {number} y - The y position.
+*/
+Object.defineProperty(Phaser.Physics.Arcade.Body.prototype, "y", {
+
+    get: function () {
+
+        return this.position.y;
+
+    },
+
+    set: function (value) {
+
+        this.position.y = value;
+
+    }
+
+});
+
+/**
+* Render Sprite Body.
+*
+* @method Phaser.Physics.Arcade.Body#render
+* @param {object} context - The context to render to.
+* @param {Phaser.Physics.Arcade.Body} body - The Body to render the info of.
+* @param {string} [color='rgba(0,255,0,0.4)'] - color of the debug info to be rendered. (format is css color string).
+* @param {boolean} [filled=true] - Render the objected as a filled (default, true) or a stroked (false)
+* @param {number} [lineWidth=1] - The width of the stroke when unfilled.
+*/
+Phaser.Physics.Arcade.Body.render = function (context, body, color, filled, lineWidth) {
+
+    if (filled === undefined) { filled = true; }
+
+    color = color || 'rgba(0,255,0,0.4)';
+
+    context.fillStyle = color;
+    context.strokeStyle = color;
+    context.lineWidth = lineWidth || 1;
+
+    if (body.isCircle)
+    {
+        context.beginPath();
+        context.arc(body.center.x - body.game.camera.x, body.center.y - body.game.camera.y, body.halfWidth, 0, 2 * Math.PI);
+
+        if (filled)
+        {
+            context.fill();
+        }
+        else
+        {
+            context.stroke();
+        }
+    }
+    else
+    {
+        if (filled)
+        {
+            context.fillRect(body.position.x - body.game.camera.x, body.position.y - body.game.camera.y, body.width, body.height);
+        }
+        else
+        {
+            context.strokeRect(body.position.x - body.game.camera.x, body.position.y - body.game.camera.y, body.width, body.height);
+        }
+    }
+
+};
+
+/**
+* Render Sprite Body Physics Data as text.
+*
+* @method Phaser.Physics.Arcade.Body#renderBodyInfo
+* @param {Phaser.Physics.Arcade.Body} body - The Body to render the info of.
+* @param {number} x - X position of the debug info to be rendered.
+* @param {number} y - Y position of the debug info to be rendered.
+* @param {string} [color='rgb(255,255,255)'] - color of the debug info to be rendered. (format is css color string).
+*/
+Phaser.Physics.Arcade.Body.renderBodyInfo = function (debug, body) {
+
+    debug.line('x: ' + body.x.toFixed(2), 'y: ' + body.y.toFixed(2), 'width: ' + body.width, 'height: ' + body.height);
+    debug.line('velocity x: ' + body.velocity.x.toFixed(2), 'y: ' + body.velocity.y.toFixed(2), 'deltaX: ' + body._dx.toFixed(2), 'deltaY: ' + body._dy.toFixed(2));
+    debug.line('acceleration x: ' + body.acceleration.x.toFixed(2), 'y: ' + body.acceleration.y.toFixed(2), 'speed: ' + body.speed.toFixed(2), 'angle: ' + body.angle.toFixed(2));
+    debug.line('gravity x: ' + body.gravity.x, 'y: ' + body.gravity.y, 'bounce x: ' + body.bounce.x.toFixed(2), 'y: ' + body.bounce.y.toFixed(2));
+    debug.line('touching left: ' + body.touching.left, 'right: ' + body.touching.right, 'up: ' + body.touching.up, 'down: ' + body.touching.down);
+    debug.line('blocked left: ' + body.blocked.left, 'right: ' + body.blocked.right, 'up: ' + body.blocked.up, 'down: ' + body.blocked.down);
+
+};
+
+Phaser.Physics.Arcade.Body.prototype.constructor = Phaser.Physics.Arcade.Body;
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
+* The Arcade Physics Tile map collision methods.
+*
+* @class Phaser.Physics.Arcade.TilemapCollision
+* @constructor
+*/
+Phaser.Physics.Arcade.TilemapCollision = function () {};
+
+Phaser.Physics.Arcade.TilemapCollision.prototype = {
+
+    /**
+    * @property {number} TILE_BIAS - A value added to the delta values during collision with tiles. Adjust this if you get tunneling.
+    */
+    TILE_BIAS: 16,
+
+    /**
+    * An internal function. Use Phaser.Physics.Arcade.collide instead.
+    *
+    * @method Phaser.Physics.Arcade#collideSpriteVsTilemapLayer
+    * @private
+    * @param {Phaser.Sprite} sprite - The sprite to check.
+    * @param {Phaser.TilemapLayer} tilemapLayer - The layer to check.
+    * @param {function} collideCallback - An optional callback function that is called if the objects collide. The two objects will be passed to this function in the same order in which you specified them.
+    * @param {function} processCallback - A callback function that lets you perform additional checks against the two objects if they overlap. If this is set then collision will only happen if processCallback returns true. The two objects will be passed to this function in the same order in which you specified them.
+    * @param {object} callbackContext - The context in which to run the callbacks.
+    * @param {boolean} overlapOnly - Just run an overlap or a full collision.
+    */
+    collideSpriteVsTilemapLayer: function (sprite, tilemapLayer, collideCallback, processCallback, callbackContext, overlapOnly) {
+
+        if (!sprite.body)
+        {
+            return;
+        }
+
+        var mapData = tilemapLayer.getTiles(
+            sprite.body.position.x - sprite.body.tilePadding.x - tilemapLayer.getTileOffsetX(),
+            sprite.body.position.y - sprite.body.tilePadding.y - tilemapLayer.getTileOffsetY(),
+            sprite.body.width + sprite.body.tilePadding.x,
+            sprite.body.height + sprite.body.tilePadding.y,
+            false, false);
+
+        if (mapData.length === 0)
+        {
+            return;
+        }
+
+        for (var i = 0; i < mapData.length; i++)
+        {
+            if (processCallback)
+            {
+                if (processCallback.call(callbackContext, sprite, mapData[i]))
+                {
+                    if (this.separateTile(i, sprite.body, mapData[i], tilemapLayer, overlapOnly))
+                    {
+                        this._total++;
+
+                        if (collideCallback)
+                        {
+                            collideCallback.call(callbackContext, sprite, mapData[i]);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (this.separateTile(i, sprite.body, mapData[i], tilemapLayer, overlapOnly))
+                {
+                    this._total++;
+
+                    if (collideCallback)
+                    {
+                        collideCallback.call(callbackContext, sprite, mapData[i]);
+                    }
+                }
+            }
+        }
+
+    },
+
+    /**
+    * An internal function. Use Phaser.Physics.Arcade.collide instead.
+    *
+    * @private
+    * @method Phaser.Physics.Arcade#collideGroupVsTilemapLayer
+    * @param {Phaser.Group} group - The Group to check.
+    * @param {Phaser.TilemapLayer} tilemapLayer - The layer to check.
+    * @param {function} collideCallback - An optional callback function that is called if the objects collide. The two objects will be passed to this function in the same order in which you specified them.
+    * @param {function} processCallback - A callback function that lets you perform additional checks against the two objects if they overlap. If this is set then collision will only happen if processCallback returns true. The two objects will be passed to this function in the same order in which you specified them.
+    * @param {object} callbackContext - The context in which to run the callbacks.
+    * @param {boolean} overlapOnly - Just run an overlap or a full collision.
+    */
+    collideGroupVsTilemapLayer: function (group, tilemapLayer, collideCallback, processCallback, callbackContext, overlapOnly) {
+
+        if (group.length === 0)
+        {
+            return;
+        }
+
+        for (var i = 0; i < group.children.length; i++)
+        {
+            if (group.children[i].exists)
+            {
+                this.collideSpriteVsTilemapLayer(group.children[i], tilemapLayer, collideCallback, processCallback, callbackContext, overlapOnly);
+            }
+        }
+
+    },
+
+    /**
+    * The core separation function to separate a physics body and a tile.
+    *
+    * @private
+    * @method Phaser.Physics.Arcade#separateTile
+    * @param {Phaser.Physics.Arcade.Body} body - The Body object to separate.
+    * @param {Phaser.Tile} tile - The tile to collide against.
+    * @param {Phaser.TilemapLayer} tilemapLayer - The tilemapLayer to collide against.
+    * @return {boolean} Returns true if the body was separated, otherwise false.
+    */
+    separateTile: function (i, body, tile, tilemapLayer, overlapOnly) {
+
+        if (!body.enable)
+        {
+            return false;
+        }
+        
+        var tilemapLayerOffsetX = tilemapLayer.getTileOffsetX();
+        var tilemapLayerOffsetY = tilemapLayer.getTileOffsetY();
+
+        //  We re-check for collision in case body was separated in a previous step
+        if (!tile.intersects((body.position.x - tilemapLayerOffsetX), (body.position.y - tilemapLayerOffsetY), (body.right - tilemapLayerOffsetX), (body.bottom - tilemapLayerOffsetY)))
+        {
+            //  no collision so bail out (separated in a previous step)
+            return false;
+        }
+        else if (overlapOnly)
+        {
+            //  There is an overlap, and we don't need to separate. Bail.
+            return true;
+        }
+
+        //  They overlap. Any custom callbacks?
+
+        //  A local callback always takes priority over a layer level callback
+        if (tile.collisionCallback && !tile.collisionCallback.call(tile.collisionCallbackContext, body.sprite, tile))
+        {
+            //  If it returns true then we can carry on, otherwise we should abort.
+            return false;
+        }
+        else if (typeof tile.layer.callbacks !== 'undefined' && tile.layer.callbacks[tile.index] && !tile.layer.callbacks[tile.index].callback.call(tile.layer.callbacks[tile.index].callbackContext, body.sprite, tile))
+        {
+            //  If it returns true then we can carry on, otherwise we should abort.
+            return false;
+        }
+
+        //  We don't need to go any further if this tile doesn't actually separate
+        if (!tile.faceLeft && !tile.faceRight && !tile.faceTop && !tile.faceBottom)
+        {
+            //   This could happen if the tile was meant to be collided with re: a callback, but otherwise isn't needed for separation
+            return false;
+        }
+
+        var ox = 0;
+        var oy = 0;
+        var minX = 0;
+        var minY = 1;
+
+        if (body.deltaAbsX() > body.deltaAbsY())
+        {
+            //  Moving faster horizontally, check X axis first
+            minX = -1;
+        }
+        else if (body.deltaAbsX() < body.deltaAbsY())
+        {
+            //  Moving faster vertically, check Y axis first
+            minY = -1;
+        }
+
+        if (body.deltaX() !== 0 && body.deltaY() !== 0 && (tile.faceLeft || tile.faceRight) && (tile.faceTop || tile.faceBottom))
+        {
+            //  We only need do this if both axis have checking faces AND we're moving in both directions
+            minX = Math.min(Math.abs((body.position.x - tilemapLayerOffsetX) - tile.right), Math.abs((body.right - tilemapLayerOffsetX) - tile.left));
+            minY = Math.min(Math.abs((body.position.y - tilemapLayerOffsetY) - tile.bottom), Math.abs((body.bottom - tilemapLayerOffsetY) - tile.top));
+        }
+
+        if (minX < minY)
+        {
+            if (tile.faceLeft || tile.faceRight)
+            {
+                ox = this.tileCheckX(body, tile, tilemapLayer);
+
+                //  That's horizontal done, check if we still intersects? If not then we can return now
+                if (ox !== 0 && !tile.intersects((body.position.x - tilemapLayerOffsetX), (body.position.y - tilemapLayerOffsetY), (body.right - tilemapLayerOffsetX), (body.bottom - tilemapLayerOffsetY)))
+                {
+                    return true;
+                }
+            }
+
+            if (tile.faceTop || tile.faceBottom)
+            {
+                oy = this.tileCheckY(body, tile, tilemapLayer);
+            }
+        }
+        else
+        {
+            if (tile.faceTop || tile.faceBottom)
+            {
+                oy = this.tileCheckY(body, tile, tilemapLayer);
+
+                //  That's vertical done, check if we still intersects? If not then we can return now
+                if (oy !== 0 && !tile.intersects((body.position.x - tilemapLayerOffsetX), (body.position.y - tilemapLayerOffsetY), (body.right - tilemapLayerOffsetX), (body.bottom - tilemapLayerOffsetY)))
+                {
+                    return true;
+                }
+            }
+
+            if (tile.faceLeft || tile.faceRight)
+            {
+                ox = this.tileCheckX(body, tile, tilemapLayer);
+            }
+        }
+
+        return (ox !== 0 || oy !== 0);
+
+    },
+
+    /**
+    * Check the body against the given tile on the X axis.
+    *
+    * @private
+    * @method Phaser.Physics.Arcade#tileCheckX
+    * @param {Phaser.Physics.Arcade.Body} body - The Body object to separate.
+    * @param {Phaser.Tile} tile - The tile to check.
+    * @param {Phaser.TilemapLayer} tilemapLayer - The tilemapLayer to collide against.
+    * @return {number} The amount of separation that occurred.
+    */
+    tileCheckX: function (body, tile, tilemapLayer) {
+
+        var ox = 0;
+        var tilemapLayerOffsetX = tilemapLayer.getTileOffsetX();
+
+        if (body.deltaX() < 0 && !body.blocked.left && tile.collideRight && body.checkCollision.left)
+        {
+            //  Body is moving LEFT
+            if (tile.faceRight && (body.x - tilemapLayerOffsetX) < tile.right)
+            {
+                ox = (body.x - tilemapLayerOffsetX) - tile.right;
+
+                if (ox < -this.TILE_BIAS)
+                {
+                    ox = 0;
+                }
+            }
+        }
+        else if (body.deltaX() > 0 && !body.blocked.right && tile.collideLeft && body.checkCollision.right)
+        {
+            //  Body is moving RIGHT
+            if (tile.faceLeft && (body.right - tilemapLayerOffsetX) > tile.left)
+            {
+                ox = (body.right - tilemapLayerOffsetX) - tile.left;
+
+                if (ox > this.TILE_BIAS)
+                {
+                    ox = 0;
+                }
+            }
+        }
+
+        if (ox !== 0)
+        {
+            if (body.customSeparateX)
+            {
+                body.overlapX = ox;
+            }
+            else
+            {
+                this.processTileSeparationX(body, ox);
+            }
+        }
+
+        return ox;
+
+    },
+
+    /**
+    * Check the body against the given tile on the Y axis.
+    *
+    * @private
+    * @method Phaser.Physics.Arcade#tileCheckY
+    * @param {Phaser.Physics.Arcade.Body} body - The Body object to separate.
+    * @param {Phaser.Tile} tile - The tile to check.
+    * @param {Phaser.TilemapLayer} tilemapLayer - The tilemapLayer to collide against.
+    * @return {number} The amount of separation that occurred.
+    */
+    tileCheckY: function (body, tile, tilemapLayer) {
+
+        var oy = 0;
+        var tilemapLayerOffsetY = tilemapLayer.getTileOffsetY();
+
+        if (body.deltaY() < 0 && !body.blocked.up && tile.collideDown && body.checkCollision.up)
+        {
+            //  Body is moving UP
+            if (tile.faceBottom && (body.y - tilemapLayerOffsetY) < tile.bottom)
+            {
+                oy = (body.y - tilemapLayerOffsetY) - tile.bottom;
+
+                if (oy < -this.TILE_BIAS)
+                {
+                    oy = 0;
+                }
+            }
+        }
+        else if (body.deltaY() > 0 && !body.blocked.down && tile.collideUp && body.checkCollision.down)
+        {
+            //  Body is moving DOWN
+            if (tile.faceTop && (body.bottom - tilemapLayerOffsetY) > tile.top)
+            {
+                oy = (body.bottom - tilemapLayerOffsetY) - tile.top;
+
+                if (oy > this.TILE_BIAS)
+                {
+                    oy = 0;
+                }
+            }
+        }
+
+        if (oy !== 0)
+        {
+            if (body.customSeparateY)
+            {
+                body.overlapY = oy;
+            }
+            else
+            {
+                this.processTileSeparationY(body, oy);
+            }
+        }
+
+        return oy;
+
+    },
+
+    /**
+    * Internal function to process the separation of a physics body from a tile.
+    *
+    * @private
+    * @method Phaser.Physics.Arcade#processTileSeparationX
+    * @param {Phaser.Physics.Arcade.Body} body - The Body object to separate.
+    * @param {number} x - The x separation amount.
+    */
+    processTileSeparationX: function (body, x) {
+
+        if (x < 0)
+        {
+            body.blocked.left = true;
+            body.blocked.none = false;
+        }
+        else if (x > 0)
+        {
+            body.blocked.right = true;
+            body.blocked.none = false;
+        }
+
+        body.position.x -= x;
+
+        if (body.bounce.x === 0)
+        {
+            body.velocity.x = 0;
+        }
+        else
+        {
+            body.velocity.x = -body.velocity.x * body.bounce.x;
+        }
+
+    },
+
+    /**
+    * Internal function to process the separation of a physics body from a tile.
+    *
+    * @private
+    * @method Phaser.Physics.Arcade#processTileSeparationY
+    * @param {Phaser.Physics.Arcade.Body} body - The Body object to separate.
+    * @param {number} y - The y separation amount.
+    */
+    processTileSeparationY: function (body, y) {
+
+        if (y < 0)
+        {
+            body.blocked.up = true;
+            body.blocked.none = false;
+        }
+        else if (y > 0)
+        {
+            body.blocked.down = true;
+            body.blocked.none = false;
+        }
+
+        body.position.y -= y;
+
+        if (body.bounce.y === 0)
+        {
+            body.velocity.y = 0;
+        }
+        else
+        {
+            body.velocity.y = -body.velocity.y * body.bounce.y;
+        }
+
+    }
+
+};
+
+//  Merge this with the Arcade Physics prototype
+Phaser.Utils.mixinPrototype(Phaser.Physics.Arcade.prototype, Phaser.Physics.Arcade.TilemapCollision.prototype);
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
+* An Image Collection is a special tileset containing mulitple images, with no slicing into each image.
+*
+* Image Collections are normally created automatically when Tiled data is loaded.
+*
+* @class Phaser.ImageCollection
+* @constructor
+* @param {string} name - The name of the image collection in the map data.
+* @param {integer} firstgid - The first image index this image collection contains.
+* @param {integer} [width=32] - Width of widest image (in pixels).
+* @param {integer} [height=32] - Height of tallest image (in pixels).
+* @param {integer} [margin=0] - The margin around all images in the collection (in pixels).
+* @param {integer} [spacing=0] - The spacing between each image in the collection (in pixels).
+* @param {object} [properties={}] - Custom Image Collection properties.
+*/
+Phaser.ImageCollection = function (name, firstgid, width, height, margin, spacing, properties) {
+
+    if (width === undefined || width <= 0) { width = 32; }
+    if (height === undefined || height <= 0) { height = 32; }
+    if (margin === undefined) { margin = 0; }
+    if (spacing === undefined) { spacing = 0; }
+
+    /**
+    * The name of the Image Collection.
+    * @property {string} name
+    */
+    this.name = name;
+
+    /**
+    * The Tiled firstgid value.
+    * This is the starting index of the first image index this Image Collection contains.
+    * @property {integer} firstgid
+    */
+    this.firstgid = firstgid | 0;
+
+    /**
+    * The width of the widest image (in pixels).
+    * @property {integer} imageWidth
+    * @readonly
+    */
+    this.imageWidth = width | 0;
+
+    /**
+    * The height of the tallest image (in pixels).
+    * @property {integer} imageHeight
+    * @readonly
+    */
+    this.imageHeight = height | 0;
+
+    /**
+    * The margin around the images in the collection (in pixels).
+    * Use `setSpacing` to change.
+    * @property {integer} imageMarge
+    * @readonly
+    */
+    // Modified internally
+    this.imageMargin = margin | 0;
+
+    /**
+    * The spacing between each image in the collection (in pixels).
+    * Use `setSpacing` to change.
+    * @property {integer} imageSpacing
+    * @readonly
+    */
+    this.imageSpacing = spacing | 0;
+
+    /**
+    * Image Collection-specific properties that are typically defined in the Tiled editor.
+    * @property {object} properties
+    */
+    this.properties = properties || {};
+
+    /**
+    * The cached images that are a part of this collection.
+    * @property {array} images
+    * @readonly
+    */
+    // Modified internally
+    this.images = [];
+
+    /**
+    * The total number of images in the image collection.
+    * @property {integer} total
+    * @readonly
+    */
+    // Modified internally
+    this.total = 0;
+};
+
+Phaser.ImageCollection.prototype = {
+
+    /**
+    * Returns true if and only if this image collection contains the given image index.
+    *
+    * @method Phaser.ImageCollection#containsImageIndex
+    * @param {integer} imageIndex - The image index to search for.
+    * @return {boolean} True if this Image Collection contains the given index.
+    */
+    containsImageIndex: function (imageIndex) {
+
+        return (
+            imageIndex >= this.firstgid &&
+            imageIndex < (this.firstgid + this.total)
+        );
+
+    },
+
+    /**
+    * Add an image to this Image Collection.
+    *
+    * @method Phaser.ImageCollection#addImage
+    * @param {integer} gid - The gid of the image in the Image Collection.
+    * @param {string} image - The the key of the image in the Image Collection and in the cache.
+    */
+    addImage: function (gid, image) {
+
+        this.images.push({ gid: gid, image: image });
+        this.total++;
+
+    }
+
+};
+
+Phaser.ImageCollection.prototype.constructor = Phaser.ImageCollection;
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
+* A Tile is a representation of a single tile within the Tilemap.
+*
+* @class Phaser.Tile
+* @constructor
+* @param {object} layer - The layer in the Tilemap data that this tile belongs to.
+* @param {number} index - The index of this tile type in the core map data.
+* @param {number} x - The x coordinate of this tile.
+* @param {number} y - The y coordinate of this tile.
+* @param {number} width - Width of the tile.
+* @param {number} height - Height of the tile.
+*/
+Phaser.Tile = function (layer, index, x, y, width, height) {
+
+    /**
+    * @property {object} layer - The layer in the Tilemap data that this tile belongs to.
+    */
+    this.layer = layer;
+
+    /**
+    * @property {number} index - The index of this tile within the map data corresponding to the tileset, or -1 if this represents a blank/null tile.
+    */
+    this.index = index;
+
+    /**
+    * @property {number} x - The x map coordinate of this tile.
+    */
+    this.x = x;
+
+    /**
+    * @property {number} y - The y map coordinate of this tile.
+    */
+    this.y = y;
+    
+    /**
+    * @property {number} rotation - The rotation angle of this tile.
+    */
+    this.rotation = 0;
+
+    /**
+    * @property {boolean} flipped - Whether this tile is flipped (mirrored) or not.
+    */
+    this.flipped = false;
+    
+    /**
+    * @property {number} x - The x map coordinate of this tile.
+    */
+    this.worldX = x * width;
+
+    /**
+    * @property {number} y - The y map coordinate of this tile.
+    */
+    this.worldY = y * height;
+
+    /**
+    * @property {number} width - The width of the tile in pixels.
+    */
+    this.width = width;
+
+    /**
+    * @property {number} height - The height of the tile in pixels.
+    */
+    this.height = height;
+
+    /**
+    * @property {number} width - The width of the tile in pixels.
+    */
+    this.centerX = Math.abs(width / 2);
+
+    /**
+    * @property {number} height - The height of the tile in pixels.
+    */
+    this.centerY = Math.abs(height / 2);
+
+    /**
+    * @property {number} alpha - The alpha value at which this tile is drawn to the canvas.
+    */
+    this.alpha = 1;
+
+    /**
+    * @property {object} properties - Tile specific properties.
+    */
+    this.properties = {};
+
+    /**
+    * @property {boolean} scanned - Has this tile been walked / turned into a poly?
+    */
+    this.scanned = false;
+
+    /**
+    * @property {boolean} faceTop - Is the top of this tile an interesting edge?
+    */
+    this.faceTop = false;
+
+    /**
+    * @property {boolean} faceBottom - Is the bottom of this tile an interesting edge?
+    */
+    this.faceBottom = false;
+
+    /**
+    * @property {boolean} faceLeft - Is the left of this tile an interesting edge?
+    */
+    this.faceLeft = false;
+
+    /**
+    * @property {boolean} faceRight - Is the right of this tile an interesting edge?
+    */
+    this.faceRight = false;
+
+    /**
+    * @property {boolean} collideLeft - Indicating collide with any object on the left.
+    * @default
+    */
+    this.collideLeft = false;
+
+    /**
+    * @property {boolean} collideRight - Indicating collide with any object on the right.
+    * @default
+    */
+    this.collideRight = false;
+
+    /**
+    * @property {boolean} collideUp - Indicating collide with any object on the top.
+    * @default
+    */
+    this.collideUp = false;
+
+    /**
+    * @property {boolean} collideDown - Indicating collide with any object on the bottom.
+    * @default
+    */
+    this.collideDown = false;
+
+    /**
+    * @property {function} collisionCallback - Tile collision callback.
+    * @default
+    */
+    this.collisionCallback = null;
+
+    /**
+    * @property {object} collisionCallbackContext - The context in which the collision callback will be called.
+    * @default
+    */
+    this.collisionCallbackContext = this;
+
+};
+
+Phaser.Tile.prototype = {
+
+    /**
+    * Check if the given x and y world coordinates are within this Tile.
+    *
+    * @method Phaser.Tile#containsPoint
+    * @param {number} x - The x coordinate to test.
+    * @param {number} y - The y coordinate to test.
+    * @return {boolean} True if the coordinates are within this Tile, otherwise false.
+    */
+    containsPoint: function (x, y) {
+
+        return !(x < this.worldX || y < this.worldY || x > this.right || y > this.bottom);
+
+    },
+
+    /**
+    * Check for intersection with this tile.
+    *
+    * @method Phaser.Tile#intersects
+    * @param {number} x - The x axis in pixels.
+    * @param {number} y - The y axis in pixels.
+    * @param {number} right - The right point.
+    * @param {number} bottom - The bottom point.
+    */
+    intersects: function (x, y, right, bottom) {
+
+        if (right <= this.worldX)
+        {
+            return false;
+        }
+
+        if (bottom <= this.worldY)
+        {
+            return false;
+        }
+
+        if (x >= this.worldX + this.width)
+        {
+            return false;
+        }
+
+        if (y >= this.worldY + this.height)
+        {
+            return false;
+        }
+
+        return true;
+
+    },
+
+    /**
+    * Set a callback to be called when this tile is hit by an object.
+    * The callback must true true for collision processing to take place.
+    *
+    * @method Phaser.Tile#setCollisionCallback
+    * @param {function} callback - Callback function.
+    * @param {object} context - Callback will be called within this context.
+    */
+    setCollisionCallback: function (callback, context) {
+
+        this.collisionCallback = callback;
+        this.collisionCallbackContext = context;
+
+    },
+
+    /**
+    * Clean up memory.
+    *
+    * @method Phaser.Tile#destroy
+    */
+    destroy: function () {
+
+        this.collisionCallback = null;
+        this.collisionCallbackContext = null;
+        this.properties = null;
+
+    },
+
+    /**
+    * Sets the collision flags for each side of this tile and updates the interesting faces list.
+    *
+    * @method Phaser.Tile#setCollision
+    * @param {boolean} left - Indicating collide with any object on the left.
+    * @param {boolean} right - Indicating collide with any object on the right.
+    * @param {boolean} up - Indicating collide with any object on the top.
+    * @param {boolean} down - Indicating collide with any object on the bottom.
+    */
+    setCollision: function (left, right, up, down) {
+
+        this.collideLeft = left;
+        this.collideRight = right;
+        this.collideUp = up;
+        this.collideDown = down;
+
+        this.faceLeft = left;
+        this.faceRight = right;
+        this.faceTop = up;
+        this.faceBottom = down;
+
+    },
+
+    /**
+    * Reset collision status flags.
+    *
+    * @method Phaser.Tile#resetCollision
+    */
+    resetCollision: function () {
+
+        this.collideLeft = false;
+        this.collideRight = false;
+        this.collideUp = false;
+        this.collideDown = false;
+
+        this.faceTop = false;
+        this.faceBottom = false;
+        this.faceLeft = false;
+        this.faceRight = false;
+
+    },
+
+    /**
+    * Is this tile interesting?
+    *
+    * @method Phaser.Tile#isInteresting
+    * @param {boolean} collides - If true will check any collides value.
+    * @param {boolean} faces - If true will check any face value.
+    * @return {boolean} True if the Tile is interesting, otherwise false.
+    */
+    isInteresting: function (collides, faces) {
+
+        if (collides && faces)
+        {
+            //  Does this tile have any collide flags OR interesting face?
+            return (this.collideLeft || this.collideRight || this.collideUp || this.collideDown || this.faceTop || this.faceBottom || this.faceLeft || this.faceRight || this.collisionCallback);
+        }
+        else if (collides)
+        {
+            //  Does this tile collide?
+            return (this.collideLeft || this.collideRight || this.collideUp || this.collideDown);
+        }
+        else if (faces)
+        {
+            //  Does this tile have an interesting face?
+            return (this.faceTop || this.faceBottom || this.faceLeft || this.faceRight);
+        }
+
+        return false;
+
+    },
+
+    /**
+    * Copies the tile data and properties from the given tile to this tile.
+    *
+    * @method Phaser.Tile#copy
+    * @param {Phaser.Tile} tile - The tile to copy from.
+    */
+    copy: function (tile) {
+
+        this.index = tile.index;
+        this.alpha = tile.alpha;
+        this.properties = tile.properties;
+
+        this.collideUp = tile.collideUp;
+        this.collideDown = tile.collideDown;
+        this.collideLeft = tile.collideLeft;
+        this.collideRight = tile.collideRight;
+
+        this.collisionCallback = tile.collisionCallback;
+        this.collisionCallbackContext = tile.collisionCallbackContext;
+
+    }
+
+};
+
+Phaser.Tile.prototype.constructor = Phaser.Tile;
+
+/**
+* @name Phaser.Tile#collides
+* @property {boolean} collides - True if this tile can collide on any of its faces.
+* @readonly
+*/
+Object.defineProperty(Phaser.Tile.prototype, "collides", {
+
+    get: function () {
+        return (this.collideLeft || this.collideRight || this.collideUp || this.collideDown);
+    }
+
+});
+
+/**
+* @name Phaser.Tile#canCollide
+* @property {boolean} canCollide - True if this tile can collide on any of its faces or has a collision callback set.
+* @readonly
+*/
+Object.defineProperty(Phaser.Tile.prototype, "canCollide", {
+
+    get: function () {
+        return (this.collideLeft || this.collideRight || this.collideUp || this.collideDown || this.collisionCallback);
+    }
+
+});
+
+/**
+* @name Phaser.Tile#left
+* @property {number} left - The x value in pixels.
+* @readonly
+*/
+Object.defineProperty(Phaser.Tile.prototype, "left", {
+
+    get: function () {
+        return this.worldX;
+    }
+
+});
+
+/**
+* @name Phaser.Tile#right
+* @property {number} right - The sum of the x and width properties.
+* @readonly
+*/
+Object.defineProperty(Phaser.Tile.prototype, "right", {
+
+    get: function () {
+        return this.worldX + this.width;
+    }
+
+});
+
+/**
+* @name Phaser.Tile#top
+* @property {number} top - The y value.
+* @readonly
+*/
+Object.defineProperty(Phaser.Tile.prototype, "top", {
+
+    get: function () {
+        return this.worldY;
+    }
+
+});
+
+/**
+* @name Phaser.Tile#bottom
+* @property {number} bottom - The sum of the y and height properties.
+* @readonly
+*/
+Object.defineProperty(Phaser.Tile.prototype, "bottom", {
+
+    get: function () {
+        return this.worldY + this.height;
+    }
+
+});
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
+* Creates a new Phaser.Tilemap object. The map can either be populated with data from a Tiled JSON file or from a CSV file.
+*
+* Tiled is a free software package specifically for creating tile maps, and is available from http://www.mapeditor.org
+*
+* To do this pass the Cache key as the first parameter. When using Tiled data you need only provide the key.
+* When using CSV data you must provide the key and the tileWidth and tileHeight parameters.
+* If creating a blank tilemap to be populated later, you can either specify no parameters at all and then use `Tilemap.create` or pass the map and tile dimensions here.
+* Note that all Tilemaps use a base tile size to calculate dimensions from, but that a TilemapLayer may have its own unique tile size that overrides it.
+* A Tile map is rendered to the display using a TilemapLayer. It is not added to the display list directly itself.
+* A map may have multiple layers. You can perform operations on the map data such as copying, pasting, filling and shuffling the tiles around.
+*
+* @class Phaser.Tilemap
+* @constructor
+* @param {Phaser.Game} game - Game reference to the currently running game.
+* @param {string} [key] - The key of the tilemap data as stored in the Cache. If you're creating a blank map either leave this parameter out or pass `null`.
+* @param {number} [tileWidth=32] - The pixel width of a single map tile. If using CSV data you must specify this. Not required if using Tiled map data.
+* @param {number} [tileHeight=32] - The pixel height of a single map tile. If using CSV data you must specify this. Not required if using Tiled map data.
+* @param {number} [width=10] - The width of the map in tiles. If this map is created from Tiled or CSV data you don't need to specify this.
+* @param {number} [height=10] - The height of the map in tiles. If this map is created from Tiled or CSV data you don't need to specify this.
+*/
+Phaser.Tilemap = function (game, key, tileWidth, tileHeight, width, height) {
+
+    /**
+    * @property {Phaser.Game} game - A reference to the currently running Game.
+    */
+    this.game = game;
+
+    /**
+    * @property {string} key - The key of this map data in the Phaser.Cache.
+    */
+    this.key = key;
+
+    var data = Phaser.TilemapParser.parse(this.game, key, tileWidth, tileHeight, width, height);
+
+    if (data === null)
+    {
+        return;
+    }
+
+    /**
+    * @property {number} width - The width of the map (in tiles).
+    */
+    this.width = data.width;
+
+    /**
+    * @property {number} height - The height of the map (in tiles).
+    */
+    this.height = data.height;
+
+    /**
+    * @property {number} tileWidth - The base width of the tiles in the map (in pixels).
+    */
+    this.tileWidth = data.tileWidth;
+
+    /**
+    * @property {number} tileHeight - The base height of the tiles in the map (in pixels).
+    */
+    this.tileHeight = data.tileHeight;
+
+    /**
+    * @property {string} orientation - The orientation of the map data (as specified in Tiled), usually 'orthogonal'.
+    */
+    this.orientation = data.orientation;
+
+    /**
+    * @property {number} format - The format of the map data, either Phaser.Tilemap.CSV or Phaser.Tilemap.TILED_JSON.
+    */
+    this.format = data.format;
+
+    /**
+    * @property {number} version - The version of the map data (as specified in Tiled, usually 1).
+    */
+    this.version = data.version;
+
+    /**
+    * @property {object} properties - Map specific properties as specified in Tiled.
+    */
+    this.properties = data.properties;
+
+    /**
+    * @property {number} widthInPixels - The width of the map in pixels based on width * tileWidth.
+    */
+    this.widthInPixels = data.widthInPixels;
+
+    /**
+    * @property {number} heightInPixels - The height of the map in pixels based on height * tileHeight.
+    */
+    this.heightInPixels = data.heightInPixels;
+
+    /**
+    * @property {array} layers - An array of Tilemap layer data.
+    */
+    this.layers = data.layers;
+
+    /**
+    * @property {array} tilesets - An array of Tilesets.
+    */
+    this.tilesets = data.tilesets;
+
+    /**
+    * @property {array} imagecollections - An array of Image Collections.
+    */
+    this.imagecollections = data.imagecollections;
+
+    /**
+    * @property {array} tiles - The super array of Tiles.
+    */
+    this.tiles = data.tiles;
+
+    /**
+    * @property {array} objects - An array of Tiled Object Layers.
+    */
+    this.objects = data.objects;
+
+    /**
+    * @property {array} collideIndexes - An array of tile indexes that collide.
+    */
+    this.collideIndexes = [];
+
+    /**
+    * @property {array} collision - An array of collision data (polylines, etc).
+    */
+    this.collision = data.collision;
+
+    /**
+    * @property {array} images - An array of Tiled Image Layers.
+    */
+    this.images = data.images;
+
+    /**
+    * @property {boolean} enableDebug - If set then console.log is used to dump out useful layer creation debug data.
+    */
+    this.enableDebug = false;
+
+    /**
+    * @property {number} currentLayer - The current layer.
+    */
+    this.currentLayer = 0;
+
+    /**
+    * @property {array} debugMap - Map data used for debug values only.
+    */
+    this.debugMap = [];
+
+    /**
+    * @property {array} _results - Internal var.
+    * @private
+    */
+    this._results = [];
+
+    /**
+    * @property {number} _tempA - Internal var.
+    * @private
+    */
+    this._tempA = 0;
+
+    /**
+    * @property {number} _tempB - Internal var.
+    * @private
+    */
+    this._tempB = 0;
+
+};
+
+/**
+* @constant
+* @type {number}
+*/
+Phaser.Tilemap.CSV = 0;
+
+/**
+* @constant
+* @type {number}
+*/
+Phaser.Tilemap.TILED_JSON = 1;
+
+/**
+* @constant
+* @type {number}
+*/
+Phaser.Tilemap.NORTH = 0;
+
+/**
+* @constant
+* @type {number}
+*/
+Phaser.Tilemap.EAST = 1;
+
+/**
+* @constant
+* @type {number}
+*/
+Phaser.Tilemap.SOUTH = 2;
+
+/**
+* @constant
+* @type {number}
+*/
+Phaser.Tilemap.WEST = 3;
+
+Phaser.Tilemap.prototype = {
+
+    /**
+    * Creates an empty map of the given dimensions and one blank layer. If layers already exist they are erased.
+    *
+    * @method Phaser.Tilemap#create
+    * @param {string} name - The name of the default layer of the map.
+    * @param {number} width - The width of the map in tiles.
+    * @param {number} height - The height of the map in tiles.
+    * @param {number} tileWidth - The width of the tiles the map uses for calculations.
+    * @param {number} tileHeight - The height of the tiles the map uses for calculations.
+    * @param {Phaser.Group} [group] - Optional Group to add the layer to. If not specified it will be added to the World group.
+    * @return {Phaser.TilemapLayer} The TilemapLayer object. This is an extension of Phaser.Image and can be moved around the display list accordingly.
+    */
+    create: function (name, width, height, tileWidth, tileHeight, group) {
+
+        if (group === undefined) { group = this.game.world; }
+
+        this.width = width;
+        this.height = height;
+
+        this.setTileSize(tileWidth, tileHeight);
+
+        this.layers.length = 0;
+
+        return this.createBlankLayer(name, width, height, tileWidth, tileHeight, group);
+
+    },
+
+    /**
+    * Sets the base tile size for the map.
+    *
+    * @method Phaser.Tilemap#setTileSize
+    * @param {number} tileWidth - The width of the tiles the map uses for calculations.
+    * @param {number} tileHeight - The height of the tiles the map uses for calculations.
+    */
+    setTileSize: function (tileWidth, tileHeight) {
+
+        this.tileWidth = tileWidth;
+        this.tileHeight = tileHeight;
+        this.widthInPixels = this.width * tileWidth;
+        this.heightInPixels = this.height * tileHeight;
+
+    },
+
+    /**
+    * Adds an image to the map to be used as a tileset. A single map may use multiple tilesets.
+    * Note that the tileset name can be found in the JSON file exported from Tiled, or in the Tiled editor.
+    *
+    * @method Phaser.Tilemap#addTilesetImage
+    * @param {string} tileset - The name of the tileset as specified in the map data.
+    * @param {string|Phaser.BitmapData} [key] - The key of the Phaser.Cache image used for this tileset.
+    *     If `undefined` or `null` it will look for an image with a key matching the tileset parameter.
+    *     You can also pass in a BitmapData which can be used instead of an Image.
+    * @param {number} [tileWidth=32] - The width of the tiles in the Tileset Image. If not given it will default to the map.tileWidth value, if that isn't set then 32.
+    * @param {number} [tileHeight=32] - The height of the tiles in the Tileset Image. If not given it will default to the map.tileHeight value, if that isn't set then 32.
+    * @param {number} [tileMargin=0] - The width of the tiles in the Tileset Image.
+    * @param {number} [tileSpacing=0] - The height of the tiles in the Tileset Image.
+    * @param {number} [gid=0] - If adding multiple tilesets to a blank/dynamic map, specify the starting GID the set will use here.
+    * @return {Phaser.Tileset} Returns the Tileset object that was created or updated, or null if it failed.
+    */
+    addTilesetImage: function (tileset, key, tileWidth, tileHeight, tileMargin, tileSpacing, gid) {
+
+        if (tileset === undefined) { return null; }
+        if (tileWidth === undefined) { tileWidth = this.tileWidth; }
+        if (tileHeight === undefined) { tileHeight = this.tileHeight; }
+        if (tileMargin === undefined) { tileMargin = 0; }
+        if (tileSpacing === undefined) { tileSpacing = 0; }
+        if (gid === undefined) { gid = 0; }
+
+        //  In-case we're working from a blank map
+        if (tileWidth === 0)
+        {
+            tileWidth = 32;
+        }
+
+        if (tileHeight === 0)
+        {
+            tileHeight = 32;
+        }
+
+        var img = null;
+
+        if (key === undefined || key === null)
+        {
+            key = tileset;
+        }
+
+        if (key instanceof Phaser.BitmapData)
+        {
+            img = key.canvas;
+        }
+        else
+        {
+            if (!this.game.cache.checkImageKey(key))
+            {
+                console.warn('Phaser.Tilemap.addTilesetImage: Invalid image key given: "' + key + '"');
+                return null;
+            }
+
+            img = this.game.cache.getImage(key);
+        }
+
+        var idx = this.getTilesetIndex(tileset);
+
+        if (idx === null && this.format === Phaser.Tilemap.TILED_JSON)
+        {
+            console.warn('Phaser.Tilemap.addTilesetImage: No data found in the JSON matching the tileset name: "' + tileset + '"');
+            return null;
+        }
+
+        if (this.tilesets[idx])
+        {
+            this.tilesets[idx].setImage(img);
+            return this.tilesets[idx];
+        }
+        else
+        {
+            var newSet = new Phaser.Tileset(tileset, gid, tileWidth, tileHeight, tileMargin, tileSpacing, {});
+
+            newSet.setImage(img);
+
+            this.tilesets.push(newSet);
+
+            var i = this.tilesets.length - 1;
+            var x = tileMargin;
+            var y = tileMargin;
+
+            var count = 0;
+            var countX = 0;
+            var countY = 0;
+
+            for (var t = gid; t < gid + newSet.total; t++)
+            {
+                this.tiles[t] = [x, y, i];
+
+                x += tileWidth + tileSpacing;
+
+                count++;
+
+                if (count === newSet.total)
+                {
+                    break;
+                }
+
+                countX++;
+
+                if (countX === newSet.columns)
+                {
+                    x = tileMargin;
+                    y += tileHeight + tileSpacing;
+
+                    countX = 0;
+                    countY++;
+
+                    if (countY === newSet.rows)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return newSet;
+
+        }
+
+        return null;
+
+    },
+
+    /**
+    * Creates a Sprite for every {@link http://doc.mapeditor.org/reference/tmx-map-format/#object object} matching the `gid` argument. You can optionally specify the group that the Sprite will be created in. If none is
+    * given it will be created in the World. All properties from the map data objectgroup are copied across to the Sprite, so you can use this as an easy way to
+    * configure Sprite properties from within the map editor. For example giving an object a property of `alpha: 0.5` in the map editor will duplicate that when the
+    * Sprite is created. You could also give it a value like: `body.velocity.x: 100` to set it moving automatically.
+    *
+    * The `gid` argument is matched against:
+    *
+    * 1. For a tile object, the tile identifier (`gid`); or
+    * 2. The object's unique ID (`id`); or
+    * 3. The object's `name` (a string)
+    *
+    * @method Phaser.Tilemap#createFromObjects
+    * @param {string} name - The name of the Object Group to create Sprites from.
+    * @param {number|string} gid - The object's tile reference (gid), unique ID (id) or name.
+    * @param {string} key - The Game.cache key of the image that this Sprite will use.
+    * @param {number|string} [frame] - If the Sprite image contains multiple frames you can specify which one to use here.
+    * @param {boolean} [exists=true] - The default exists state of the Sprite.
+    * @param {boolean} [autoCull=false] - The default autoCull state of the Sprite. Sprites that are autoCulled are culled from the camera if out of its range.
+    * @param {Phaser.Group} [group=Phaser.World] - Group to add the Sprite to. If not specified it will be added to the World group.
+    * @param {object} [CustomClass=Phaser.Sprite] - If you wish to create your own class, rather than Phaser.Sprite, pass the class here. Your class must extend Phaser.Sprite and have the same constructor parameters.
+    * @param {boolean} [adjustY=true] - By default the Tiled map editor uses a bottom-left coordinate system. Phaser uses top-left. So most objects will appear too low down. This parameter moves them up by their height.
+    */
+    createFromObjects: function (name, gid, key, frame, exists, autoCull, group, CustomClass, adjustY) {
+
+        if (exists === undefined) { exists = true; }
+        if (autoCull === undefined) { autoCull = false; }
+        if (group === undefined) { group = this.game.world; }
+        if (CustomClass === undefined) { CustomClass = Phaser.Sprite; }
+        if (adjustY === undefined) { adjustY = true; }
+
+        if (!this.objects[name])
+        {
+            console.warn('Tilemap.createFromObjects: Invalid objectgroup name given: ' + name);
+            return;
+        }
+
+        for (var i = 0; i < this.objects[name].length; i++)
+        {
+            var found = false;
+            var obj = this.objects[name][i];
+
+            if (obj.gid !== undefined && typeof gid === 'number' && obj.gid === gid)
+            {
+                found = true;
+            }
+            else if (obj.id !== undefined && typeof gid === 'number' && obj.id === gid)
+            {
+                found = true;
+            }
+            else if (obj.name !== undefined && typeof gid === 'string' && obj.name === gid)
+            {
+                found = true;
+            }
+
+            if (found)
+            {
+                var sprite = new CustomClass(this.game, parseFloat(obj.x, 10), parseFloat(obj.y, 10), key, frame);
+
+                sprite.name = obj.name;
+                sprite.visible = obj.visible;
+                sprite.autoCull = autoCull;
+                sprite.exists = exists;
+
+                if (obj.width)
+                {
+                    sprite.width = obj.width;
+                }
+
+                if (obj.height)
+                {
+                    sprite.height = obj.height;
+                }
+
+                if (obj.rotation)
+                {
+                    sprite.angle = obj.rotation;
+                }
+
+                if (adjustY)
+                {
+                    sprite.y -= sprite.height;
+                }
+
+                group.add(sprite);
+
+                for (var property in obj.properties)
+                {
+                    group.set(sprite, property, obj.properties[property], false, false, 0, true);
+                }
+            }
+        }
+
+    },
+
+    /**
+    * Creates a Sprite for every object matching the given tile indexes in the map data.
+    * You can specify the group that the Sprite will be created in. If none is given it will be created in the World.
+    * You can optional specify if the tile will be replaced with another after the Sprite is created. This is useful if you want to lay down special
+    * tiles in a level that are converted to Sprites, but want to replace the tile itself with a floor tile or similar once converted.
+    *
+    * @method Phaser.Tilemap#createFromTiles
+    * @param {integer|Array} tiles - The tile index, or array of indexes, to create Sprites from.
+    * @param {integer|Array} replacements - The tile index, or array of indexes, to change a converted tile to. Set to `null` to not change.
+    * @param {string} key - The Game.cache key of the image that this Sprite will use.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to operate on.
+    * @param {Phaser.Group} [group=Phaser.World] - Group to add the Sprite to. If not specified it will be added to the World group.
+    * @param {object} [properties] - An object that contains the default properties for your newly created Sprite. This object will be iterated and any matching Sprite property will be set.
+    * @return {integer} The number of Sprites that were created.
+    */
+    createFromTiles: function (tiles, replacements, key, layer, group, properties) {
+
+        if (typeof tiles === 'number') { tiles = [tiles]; }
+
+        if (replacements === undefined || replacements === null)
+        {
+            replacements = [];
+        }
+        else if (typeof replacements === 'number')
+        {
+            replacements = [replacements];
+        }
+
+        layer = this.getLayer(layer);
+
+        if (group === undefined) { group = this.game.world; }
+        if (properties === undefined) { properties = {}; }
+
+        if (properties.customClass === undefined)
+        {
+            properties.customClass = Phaser.Sprite;
+        }
+
+        if (properties.adjustY === undefined)
+        {
+            properties.adjustY = true;
+        }
+
+        var lw = this.layers[layer].width;
+        var lh = this.layers[layer].height;
+
+        this.copy(0, 0, lw, lh, layer);
+
+        if (this._results.length < 2)
+        {
+            return 0;
+        }
+
+        var total = 0;
+        var sprite;
+
+        for (var i = 1, len = this._results.length; i < len; i++)
+        {
+            if (tiles.indexOf(this._results[i].index) !== -1)
+            {
+                sprite = new properties.customClass(this.game, this._results[i].worldX, this._results[i].worldY, key);
+
+                for (var property in properties)
+                {
+                    sprite[property] = properties[property];
+                }
+
+                group.add(sprite);
+                total++;
+            }
+
+        }
+
+        if (replacements.length === 1)
+        {
+            //  Assume 1 replacement for all types of tile given
+            for (i = 0; i < tiles.length; i++)
+            {
+                this.replace(tiles[i], replacements[0], 0, 0, lw, lh, layer);
+            }
+        }
+        else if (replacements.length > 1)
+        {
+            //  Assume 1 for 1 mapping
+            for (i = 0; i < tiles.length; i++)
+            {
+                this.replace(tiles[i], replacements[i], 0, 0, lw, lh, layer);
+            }
+        }
+
+        return total;
+
+    },
+
+    /**
+    * Creates a new TilemapLayer object. By default TilemapLayers are fixed to the camera.
+    * The `layer` parameter is important. If you've created your map in Tiled then you can get this by looking in Tiled and looking at the Layer name.
+    * Or you can open the JSON file it exports and look at the layers[].name value. Either way it must match.
+    * If you wish to create a blank layer to put your own tiles on then see Tilemap.createBlankLayer.
+    *
+    * @method Phaser.Tilemap#createLayer
+    * @param {number|string} layer - The layer array index value, or if a string is given the layer name, within the map data that this TilemapLayer represents.
+    * @param {number} [width] - The rendered width of the layer, should never be wider than Game.width. If not given it will be set to Game.width.
+    * @param {number} [height] - The rendered height of the layer, should never be wider than Game.height. If not given it will be set to Game.height.
+    * @param {Phaser.Group} [group] - Optional Group to add the object to. If not specified it will be added to the World group.
+    * @return {Phaser.TilemapLayer} The TilemapLayer object. This is an extension of Phaser.Sprite and can be moved around the display list accordingly.
+    */
+    createLayer: function (layer, width, height, group) {
+
+        //  Add Buffer support for the left of the canvas
+
+        if (width === undefined) { width = this.game.width; }
+        if (height === undefined) { height = this.game.height; }
+        if (group === undefined) { group = this.game.world; }
+
+        var index = layer;
+
+        if (typeof layer === 'string')
+        {
+            index = this.getLayerIndex(layer);
+        }
+
+        if (index === null || index > this.layers.length)
+        {
+            console.warn('Tilemap.createLayer: Invalid layer ID given: "' + layer + '"');
+            return;
+        }
+
+        //  Sort out the display dimensions, so they never render too much, or too little.
+
+        if (width === undefined || width <= 0)
+        {
+            width = Math.min(this.game.width, this.layers[index].widthInPixels);
+        }
+        else if (width > this.game.width)
+        {
+            width = this.game.width;
+        }
+
+        if (height === undefined || height <= 0)
+        {
+            height = Math.min(this.game.height, this.layers[index].heightInPixels);
+        }
+        else if (height > this.game.height)
+        {
+            height = this.game.height;
+        }
+
+        if (this.enableDebug)
+        {
+            console.group('Tilemap.createLayer');
+            console.log('Name:', this.layers[index].name);
+            console.log('Size:', width, 'x', height);
+            console.log('Tileset:', this.tilesets[0].name, 'index:', index);
+        }
+
+        var rootLayer = group.add(new Phaser.TilemapLayer(this.game, this, index, width, height));
+
+        if (this.enableDebug)
+        {
+            console.groupEnd();
+        }
+
+        return rootLayer;
+
+    },
+
+
+    /**
+    * Creates a new and empty layer on this Tilemap. By default TilemapLayers are fixed to the camera.
+    *
+    * @method Phaser.Tilemap#createBlankLayer
+    * @param {string} name - The name of this layer. Must be unique within the map.
+    * @param {number} width - The width of the layer in tiles.
+    * @param {number} height - The height of the layer in tiles.
+    * @param {number} tileWidth - The width of the tiles the layer uses for calculations.
+    * @param {number} tileHeight - The height of the tiles the layer uses for calculations.
+    * @param {Phaser.Group} [group] - Optional Group to add the layer to. If not specified it will be added to the World group.
+    * @return {Phaser.TilemapLayer} The TilemapLayer object. This is an extension of Phaser.Image and can be moved around the display list accordingly.
+    */
+    createBlankLayer: function (name, width, height, tileWidth, tileHeight, group) {
+
+        if (group === undefined) { group = this.game.world; }
+
+        if (this.getLayerIndex(name) !== null)
+        {
+            console.warn('Tilemap.createBlankLayer: Layer with matching name already exists: ' + name);
+            return;
+        }
+
+        var layer = {
+
+            name: name,
+            x: 0,
+            y: 0,
+            width: width,
+            height: height,
+            widthInPixels: width * tileWidth,
+            heightInPixels: height * tileHeight,
+            alpha: 1,
+            visible: true,
+            properties: {},
+            indexes: [],
+            callbacks: [],
+            bodies: [],
+            data: null
+
+        };
+
+        var row;
+        var output = [];
+
+        for (var y = 0; y < height; y++)
+        {
+            row = [];
+
+            for (var x = 0; x < width; x++)
+            {
+                row.push(new Phaser.Tile(layer, -1, x, y, tileWidth, tileHeight));
+            }
+
+            output.push(row);
+        }
+
+        layer.data = output;
+
+        this.layers.push(layer);
+
+        this.currentLayer = this.layers.length - 1;
+
+        var w = layer.widthInPixels;
+        var h = layer.heightInPixels;
+
+        if (w > this.game.width)
+        {
+            w = this.game.width;
+        }
+
+        if (h > this.game.height)
+        {
+            h = this.game.height;
+        }
+
+        var output = new Phaser.TilemapLayer(this.game, this, this.layers.length - 1, w, h);
+        output.name = name;
+
+        return group.add(output);
+
+    },
+
+    /**
+    * Gets the layer index based on the layers name.
+    *
+    * @method Phaser.Tilemap#getIndex
+    * @protected
+    * @param {array} location - The local array to search.
+    * @param {string} name - The name of the array element to get.
+    * @return {number} The index of the element in the array, or null if not found.
+    */
+    getIndex: function (location, name) {
+
+        for (var i = 0; i < location.length; i++)
+        {
+            if (location[i].name === name)
+            {
+                return i;
+            }
+        }
+
+        return null;
+
+    },
+
+    /**
+    * Gets the layer index based on its name.
+    *
+    * @method Phaser.Tilemap#getLayerIndex
+    * @param {string} name - The name of the layer to get.
+    * @return {number} The index of the layer in this tilemap, or null if not found.
+    */
+    getLayerIndex: function (name) {
+
+        return this.getIndex(this.layers, name);
+
+    },
+
+    /**
+    * Gets the tileset index based on its name.
+    *
+    * @method Phaser.Tilemap#getTilesetIndex
+    * @param {string} name - The name of the tileset to get.
+    * @return {number} The index of the tileset in this tilemap, or null if not found.
+    */
+    getTilesetIndex: function (name) {
+
+        return this.getIndex(this.tilesets, name);
+
+    },
+
+    /**
+    * Gets the image index based on its name.
+    *
+    * @method Phaser.Tilemap#getImageIndex
+    * @param {string} name - The name of the image to get.
+    * @return {number} The index of the image in this tilemap, or null if not found.
+    */
+    getImageIndex: function (name) {
+
+        return this.getIndex(this.images, name);
+
+    },
+
+    /**
+    * Sets a global collision callback for the given tile index within the layer. This will affect all tiles on this layer that have the same index.
+    * If a callback is already set for the tile index it will be replaced. Set the callback to null to remove it.
+    * If you want to set a callback for a tile at a specific location on the map then see setTileLocationCallback.
+    *
+    * Return `true` from the callback to continue separating the tile and colliding object, or `false` to cancel the collision for the current tile (see {@link Phaser.Physics.Arcade#separateTile}).
+    *
+    * @method Phaser.Tilemap#setTileIndexCallback
+    * @param {number|array} indexes - Either a single tile index, or an array of tile indexes to have a collision callback set for.
+    * @param {function} callback - The callback that will be invoked when the tile is collided with (via {@link Phaser.Physics.Arcade#collide}).
+    * @param {object} callbackContext - The context under which the callback is called.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to operate on. If not given will default to this.currentLayer.
+    */
+    setTileIndexCallback: function (indexes, callback, callbackContext, layer) {
+
+        layer = this.getLayer(layer);
+
+        if (typeof indexes === 'number')
+        {
+            //  This may seem a bit wasteful, because it will cause empty array elements to be created, but the look-up cost is much
+            //  less than having to iterate through the callbacks array hunting down tile indexes each frame, so I'll take the small memory hit.
+            this.layers[layer].callbacks[indexes] = { callback: callback, callbackContext: callbackContext };
+        }
+        else
+        {
+            for (var i = 0, len = indexes.length; i < len; i++)
+            {
+                this.layers[layer].callbacks[indexes[i]] = { callback: callback, callbackContext: callbackContext };
+            }
+        }
+
+    },
+
+    /**
+    * Sets a global collision callback for the given map location within the layer. This will affect all tiles on this layer found in the given area.
+    * If a callback is already set for the tile index it will be replaced. Set the callback to null to remove it.
+    * If you want to set a callback for a tile at a specific location on the map then see setTileLocationCallback.
+    *
+    * Return `true` from the callback to continue separating the tile and colliding object, or `false` to cancel the collision for the current tile (see {@link Phaser.Physics.Arcade#separateTile}).
+    *
+    * @method Phaser.Tilemap#setTileLocationCallback
+    * @param {number} x - X position of the top left of the area to copy (given in tiles, not pixels)
+    * @param {number} y - Y position of the top left of the area to copy (given in tiles, not pixels)
+    * @param {number} width - The width of the area to copy (given in tiles, not pixels)
+    * @param {number} height - The height of the area to copy (given in tiles, not pixels)
+    * @param {function} callback - The callback that will be invoked when the tile is collided with (via {@link Phaser.Physics.Arcade#collide}).
+    * @param {object} callbackContext - The context under which the callback is called.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to operate on. If not given will default to this.currentLayer.
+    */
+    setTileLocationCallback: function (x, y, width, height, callback, callbackContext, layer) {
+
+        layer = this.getLayer(layer);
+
+        this.copy(x, y, width, height, layer);
+
+        if (this._results.length < 2)
+        {
+            return;
+        }
+
+        for (var i = 1; i < this._results.length; i++)
+        {
+            this._results[i].setCollisionCallback(callback, callbackContext);
+        }
+
+    },
+
+    /**
+    * Sets collision on the given tile or tiles. You can pass in either a single numeric index or an array of indexes: [2, 3, 15, 20].
+    * The `collides` parameter controls if collision will be enabled (true) or disabled (false).
+    *
+    * Collision-enabled tiles can be collided against Sprites using {@link Phaser.Physics.Arcade#collide}.
+    *
+    * @method Phaser.Tilemap#setCollision
+    * @param {number|array} indexes - Either a single tile index, or an array of tile IDs to be checked for collision.
+    * @param {boolean} [collides=true] - If true it will enable collision. If false it will clear collision.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to operate on. If not given will default to this.currentLayer.
+    * @param {boolean} [recalculate=true] - Recalculates the tile faces after the update.
+    */
+    setCollision: function (indexes, collides, layer, recalculate) {
+
+        if (collides === undefined) { collides = true; }
+        if (recalculate === undefined) { recalculate = true; }
+
+        layer = this.getLayer(layer);
+
+        if (typeof indexes === 'number')
+        {
+            return this.setCollisionByIndex(indexes, collides, layer, true);
+        }
+        else if (Array.isArray(indexes))
+        {
+            //  Collide all of the IDs given in the indexes array
+            for (var i = 0; i < indexes.length; i++)
+            {
+                this.setCollisionByIndex(indexes[i], collides, layer, false);
+            }
+
+            if (recalculate)
+            {
+                //  Now re-calculate interesting faces
+                this.calculateFaces(layer);
+            }
+        }
+
+    },
+
+    /**
+    * Sets collision on a range of tiles where the tile IDs increment sequentially.
+    * Calling this with a start value of 10 and a stop value of 14 would set collision for tiles 10, 11, 12, 13 and 14.
+    * The `collides` parameter controls if collision will be enabled (true) or disabled (false).
+    *
+    * @method Phaser.Tilemap#setCollisionBetween
+    * @param {number} start - The first index of the tile to be set for collision.
+    * @param {number} stop - The last index of the tile to be set for collision.
+    * @param {boolean} [collides=true] - If true it will enable collision. If false it will clear collision.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to operate on. If not given will default to this.currentLayer.
+    * @param {boolean} [recalculate=true] - Recalculates the tile faces after the update.
+    */
+    setCollisionBetween: function (start, stop, collides, layer, recalculate) {
+
+        if (collides === undefined) { collides = true; }
+        if (recalculate === undefined) { recalculate = true; }
+
+        layer = this.getLayer(layer);
+
+        if (start > stop)
+        {
+            return;
+        }
+
+        for (var index = start; index <= stop; index++)
+        {
+            this.setCollisionByIndex(index, collides, layer, false);
+        }
+
+        if (recalculate)
+        {
+            //  Now re-calculate interesting faces
+            this.calculateFaces(layer);
+        }
+
+    },
+
+    /**
+    * Sets collision on all tiles in the given layer, except for the IDs of those in the given array.
+    * The `collides` parameter controls if collision will be enabled (true) or disabled (false).
+    *
+    * @method Phaser.Tilemap#setCollisionByExclusion
+    * @param {array} indexes - An array of the tile IDs to not be counted for collision.
+    * @param {boolean} [collides=true] - If true it will enable collision. If false it will clear collision.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to operate on. If not given will default to this.currentLayer.
+    * @param {boolean} [recalculate=true] - Recalculates the tile faces after the update.
+    */
+    setCollisionByExclusion: function (indexes, collides, layer, recalculate) {
+
+        if (collides === undefined) { collides = true; }
+        if (recalculate === undefined) { recalculate = true; }
+
+        layer = this.getLayer(layer);
+
+        //  Collide everything, except the IDs given in the indexes array
+        for (var i = 0, len = this.tiles.length; i < len; i++)
+        {
+            if (indexes.indexOf(i) === -1)
+            {
+                this.setCollisionByIndex(i, collides, layer, false);
+            }
+        }
+
+        if (recalculate)
+        {
+            //  Now re-calculate interesting faces
+            this.calculateFaces(layer);
+        }
+
+    },
+
+    /**
+    * Sets collision values on a tile in the set.
+    * You shouldn't usually call this method directly, instead use setCollision, setCollisionBetween or setCollisionByExclusion.
+    *
+    * @method Phaser.Tilemap#setCollisionByIndex
+    * @protected
+    * @param {number} index - The index of the tile on the layer.
+    * @param {boolean} [collides=true] - If true it will enable collision on the tile. If false it will clear collision values from the tile.
+    * @param {number} [layer] - The layer to operate on. If not given will default to this.currentLayer.
+    * @param {boolean} [recalculate=true] - Recalculates the tile faces after the update.
+    */
+    setCollisionByIndex: function (index, collides, layer, recalculate) {
+
+        if (collides === undefined) { collides = true; }
+        if (layer === undefined) { layer = this.currentLayer; }
+        if (recalculate === undefined) { recalculate = true; }
+
+        if (collides)
+        {
+            this.collideIndexes.push(index);
+        }
+        else
+        {
+            var i = this.collideIndexes.indexOf(index);
+
+            if (i > -1)
+            {
+                this.collideIndexes.splice(i, 1);
+            }
+        }
+
+        for (var y = 0; y < this.layers[layer].height; y++)
+        {
+            for (var x = 0; x < this.layers[layer].width; x++)
+            {
+                var tile = this.layers[layer].data[y][x];
+
+                if (tile && tile.index === index)
+                {
+                    if (collides)
+                    {
+                        tile.setCollision(true, true, true, true);
+                    }
+                    else
+                    {
+                        tile.resetCollision();
+                    }
+
+                    tile.faceTop = collides;
+                    tile.faceBottom = collides;
+                    tile.faceLeft = collides;
+                    tile.faceRight = collides;
+                }
+            }
+        }
+
+        if (recalculate)
+        {
+            //  Now re-calculate interesting faces
+            this.calculateFaces(layer);
+        }
+
+        return layer;
+
+    },
+
+    /**
+    * Gets the TilemapLayer index as used in the setCollision calls.
+    *
+    * @method Phaser.Tilemap#getLayer
+    * @protected
+    * @param {number|string|Phaser.TilemapLayer} layer - The layer to operate on. If not given will default to this.currentLayer.
+    * @return {number} The TilemapLayer index.
+    */
+    getLayer: function (layer) {
+
+        if (layer === undefined)
+        {
+            layer = this.currentLayer;
+        }
+        else if (typeof layer === 'string')
+        {
+            layer = this.getLayerIndex(layer);
+        }
+        else if (layer instanceof Phaser.TilemapLayer)
+        {
+            layer = layer.index;
+        }
+
+        return layer;
+
+    },
+
+    /**
+    * Turn off/on the recalculation of faces for tile or collision updates.
+    * `setPreventRecalculate(true)` puts recalculation on hold while `setPreventRecalculate(false)` recalculates all the changed layers.
+    *
+    * @method Phaser.Tilemap#setPreventRecalculate
+    * @param {boolean} value - If true it will put the recalculation on hold.
+    */
+    setPreventRecalculate: function (value) {
+
+        if (value === true && this.preventingRecalculate !== true)
+        {
+            this.preventingRecalculate = true;
+            this.needToRecalculate = {};
+        }
+
+        if (value === false && this.preventingRecalculate === true)
+        {
+            this.preventingRecalculate = false;
+
+            for (var i in this.needToRecalculate)
+            {
+                this.calculateFaces(i);
+            }
+
+            this.needToRecalculate = false;
+        }
+
+    },
+
+    /**
+    * Internal function.
+    *
+    * @method Phaser.Tilemap#calculateFaces
+    * @protected
+    * @param {number} layer - The index of the TilemapLayer to operate on.
+    */
+    calculateFaces: function (layer) {
+
+        if (this.preventingRecalculate)
+        {
+            this.needToRecalculate[layer] = true;
+            return;
+        }
+
+        var above = null;
+        var below = null;
+        var left = null;
+        var right = null;
+
+        for (var y = 0, h = this.layers[layer].height; y < h; y++)
+        {
+            for (var x = 0, w = this.layers[layer].width; x < w; x++)
+            {
+                var tile = this.layers[layer].data[y][x];
+
+                if (tile)
+                {
+                    above = this.getTileAbove(layer, x, y);
+                    below = this.getTileBelow(layer, x, y);
+                    left = this.getTileLeft(layer, x, y);
+                    right = this.getTileRight(layer, x, y);
+
+                    if (tile.collides)
+                    {
+                        tile.faceTop = true;
+                        tile.faceBottom = true;
+                        tile.faceLeft = true;
+                        tile.faceRight = true;
+                    }
+
+                    if (above && above.collides)
+                    {
+                        //  There is a tile above this one that also collides, so the top of this tile is no longer interesting
+                        tile.faceTop = false;
+                    }
+
+                    if (below && below.collides)
+                    {
+                        //  There is a tile below this one that also collides, so the bottom of this tile is no longer interesting
+                        tile.faceBottom = false;
+                    }
+
+                    if (left && left.collides)
+                    {
+                        //  There is a tile left this one that also collides, so the left of this tile is no longer interesting
+                        tile.faceLeft = false;
+                    }
+
+                    if (right && right.collides)
+                    {
+                        //  There is a tile right this one that also collides, so the right of this tile is no longer interesting
+                        tile.faceRight = false;
+                    }
+                }
+            }
+        }
+
+    },
+
+    /**
+    * Gets the tile above the tile coordinates given.
+    * Mostly used as an internal function by calculateFaces.
+    *
+    * @method Phaser.Tilemap#getTileAbove
+    * @param {number} layer - The local layer index to get the tile from. Can be determined by Tilemap.getLayer().
+    * @param {number} x - The x coordinate to get the tile from. In tiles, not pixels.
+    * @param {number} y - The y coordinate to get the tile from. In tiles, not pixels.
+    */
+    getTileAbove: function (layer, x, y) {
+
+        if (y > 0)
+        {
+            return this.layers[layer].data[y - 1][x];
+        }
+
+        return null;
+
+    },
+
+    /**
+    * Gets the tile below the tile coordinates given.
+    * Mostly used as an internal function by calculateFaces.
+    *
+    * @method Phaser.Tilemap#getTileBelow
+    * @param {number} layer - The local layer index to get the tile from. Can be determined by Tilemap.getLayer().
+    * @param {number} x - The x coordinate to get the tile from. In tiles, not pixels.
+    * @param {number} y - The y coordinate to get the tile from. In tiles, not pixels.
+    */
+    getTileBelow: function (layer, x, y) {
+
+        if (y < this.layers[layer].height - 1)
+        {
+            return this.layers[layer].data[y + 1][x];
+        }
+
+        return null;
+
+    },
+
+    /**
+    * Gets the tile to the left of the tile coordinates given.
+    * Mostly used as an internal function by calculateFaces.
+    *
+    * @method Phaser.Tilemap#getTileLeft
+    * @param {number} layer - The local layer index to get the tile from. Can be determined by Tilemap.getLayer().
+    * @param {number} x - The x coordinate to get the tile from. In tiles, not pixels.
+    * @param {number} y - The y coordinate to get the tile from. In tiles, not pixels.
+    */
+    getTileLeft: function (layer, x, y) {
+
+        if (x > 0)
+        {
+            return this.layers[layer].data[y][x - 1];
+        }
+
+        return null;
+
+    },
+
+    /**
+    * Gets the tile to the right of the tile coordinates given.
+    * Mostly used as an internal function by calculateFaces.
+    *
+    * @method Phaser.Tilemap#getTileRight
+    * @param {number} layer - The local layer index to get the tile from. Can be determined by Tilemap.getLayer().
+    * @param {number} x - The x coordinate to get the tile from. In tiles, not pixels.
+    * @param {number} y - The y coordinate to get the tile from. In tiles, not pixels.
+    */
+    getTileRight: function (layer, x, y) {
+
+        if (x < this.layers[layer].width - 1)
+        {
+            return this.layers[layer].data[y][x + 1];
+        }
+
+        return null;
+
+    },
+
+    /**
+    * Sets the current layer to the given index.
+    *
+    * @method Phaser.Tilemap#setLayer
+    * @param {number|string|Phaser.TilemapLayer} layer - The layer to set as current.
+    */
+    setLayer: function (layer) {
+
+        layer = this.getLayer(layer);
+
+        if (this.layers[layer])
+        {
+            this.currentLayer = layer;
+        }
+
+    },
+
+    /**
+    * Checks if there is a tile at the given location.
+    *
+    * @method Phaser.Tilemap#hasTile
+    * @param {number} x - X position to check if a tile exists at (given in tile units, not pixels)
+    * @param {number} y - Y position to check if a tile exists at (given in tile units, not pixels)
+    * @param {number|string|Phaser.TilemapLayer} layer - The layer to set as current.
+    * @return {boolean} True if there is a tile at the given location, otherwise false.
+    */
+    hasTile: function (x, y, layer) {
+
+        layer = this.getLayer(layer);
+
+        if (this.layers[layer].data[y] === undefined || this.layers[layer].data[y][x] === undefined)
+        {
+            return false;
+        }
+
+        return (this.layers[layer].data[y][x].index > -1);
+
+    },
+
+    /**
+    * Removes the tile located at the given coordinates and updates the collision data.
+    *
+    * @method Phaser.Tilemap#removeTile
+    * @param {number} x - X position to place the tile (given in tile units, not pixels)
+    * @param {number} y - Y position to place the tile (given in tile units, not pixels)
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to modify.
+    * @return {Phaser.Tile} The Tile object that was removed from this map.
+    */
+    removeTile: function (x, y, layer) {
+
+        layer = this.getLayer(layer);
+
+        if (x >= 0 && x < this.layers[layer].width && y >= 0 && y < this.layers[layer].height)
+        {
+            if (this.hasTile(x, y, layer))
+            {
+                var tile = this.layers[layer].data[y][x];
+
+                this.layers[layer].data[y][x] = new Phaser.Tile(this.layers[layer], -1, x, y, this.tileWidth, this.tileHeight);
+
+                this.layers[layer].dirty = true;
+
+                this.calculateFaces(layer);
+
+                return tile;
+            }
+        }
+
+    },
+
+    /**
+    * Removes the tile located at the given coordinates and updates the collision data. The coordinates are given in pixel values.
+    *
+    * @method Phaser.Tilemap#removeTileWorldXY
+    * @param {number} x - X position to insert the tile (given in pixels)
+    * @param {number} y - Y position to insert the tile (given in pixels)
+    * @param {number} tileWidth - The width of the tile in pixels.
+    * @param {number} tileHeight - The height of the tile in pixels.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to modify.
+    * @return {Phaser.Tile} The Tile object that was removed from this map.
+    */
+    removeTileWorldXY: function (x, y, tileWidth, tileHeight, layer) {
+
+        layer = this.getLayer(layer);
+
+        x = this.game.math.snapToFloor(x, tileWidth) / tileWidth;
+        y = this.game.math.snapToFloor(y, tileHeight) / tileHeight;
+
+        return this.removeTile(x, y, layer);
+
+    },
+
+    /**
+    * Puts a tile of the given index value at the coordinate specified.
+    * If you pass `null` as the tile it will pass your call over to Tilemap.removeTile instead.
+    *
+    * @method Phaser.Tilemap#putTile
+    * @param {Phaser.Tile|number|null} tile - The index of this tile to set or a Phaser.Tile object. If null the tile is removed from the map.
+    * @param {number} x - X position to place the tile (given in tile units, not pixels)
+    * @param {number} y - Y position to place the tile (given in tile units, not pixels)
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to modify.
+    * @return {Phaser.Tile} The Tile object that was created or added to this map.
+    */
+    putTile: function (tile, x, y, layer) {
+
+        if (tile === null)
+        {
+            return this.removeTile(x, y, layer);
+        }
+
+        layer = this.getLayer(layer);
+
+        if (x >= 0 && x < this.layers[layer].width && y >= 0 && y < this.layers[layer].height)
+        {
+            var index;
+
+            if (tile instanceof Phaser.Tile)
+            {
+                index = tile.index;
+
+                if (this.hasTile(x, y, layer))
+                {
+                    this.layers[layer].data[y][x].copy(tile);
+                }
+                else
+                {
+                    this.layers[layer].data[y][x] = new Phaser.Tile(layer, index, x, y, tile.width, tile.height);
+                }
+            }
+            else
+            {
+                index = tile;
+
+                if (this.hasTile(x, y, layer))
+                {
+                    this.layers[layer].data[y][x].index = index;
+                }
+                else
+                {
+                    this.layers[layer].data[y][x] = new Phaser.Tile(this.layers[layer], index, x, y, this.tileWidth, this.tileHeight);
+                }
+            }
+
+            if (this.collideIndexes.indexOf(index) > -1)
+            {
+                this.layers[layer].data[y][x].setCollision(true, true, true, true);
+            }
+            else
+            {
+                this.layers[layer].data[y][x].resetCollision();
+            }
+
+            this.layers[layer].dirty = true;
+
+            this.calculateFaces(layer);
+
+            return this.layers[layer].data[y][x];
+        }
+
+        return null;
+
+    },
+
+    /**
+    * Puts a tile into the Tilemap layer. The coordinates are given in pixel values.
+    *
+    * @method Phaser.Tilemap#putTileWorldXY
+    * @param {Phaser.Tile|number} tile - The index of this tile to set or a Phaser.Tile object.
+    * @param {number} x - X position to insert the tile (given in pixels)
+    * @param {number} y - Y position to insert the tile (given in pixels)
+    * @param {number} tileWidth - The width of the tile in pixels.
+    * @param {number} tileHeight - The height of the tile in pixels.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to modify.
+    * @return {Phaser.Tile} The Tile object that was created or added to this map.
+    */
+    putTileWorldXY: function (tile, x, y, tileWidth, tileHeight, layer) {
+
+        layer = this.getLayer(layer);
+
+        x = this.game.math.snapToFloor(x, tileWidth) / tileWidth;
+        y = this.game.math.snapToFloor(y, tileHeight) / tileHeight;
+
+        return this.putTile(tile, x, y, layer);
+
+    },
+
+    /**
+    * Searches the entire map layer for the first tile matching the given index, then returns that Phaser.Tile object.
+    * If no match is found it returns null.
+    * The search starts from the top-left tile and continues horizontally until it hits the end of the row, then it drops down to the next column.
+    * If the reverse boolean is true, it scans starting from the bottom-right corner traveling up to the top-left.
+    *
+    * @method Phaser.Tilemap#searchTileIndex
+    * @param {number} index - The tile index value to search for.
+    * @param {number} [skip=0] - The number of times to skip a matching tile before returning.
+    * @param {number} [reverse=false] - If true it will scan the layer in reverse, starting at the bottom-right. Otherwise it scans from the top-left.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to get the tile from.
+    * @return {Phaser.Tile} The first (or n skipped) tile with the matching index.
+    */
+    searchTileIndex: function (index, skip, reverse, layer) {
+
+        if (skip === undefined) { skip = 0; }
+        if (reverse === undefined) { reverse = false; }
+
+        layer = this.getLayer(layer);
+
+        var c = 0;
+
+        if (reverse)
+        {
+            for (var y = this.layers[layer].height - 1; y >= 0; y--)
+            {
+                for (var x = this.layers[layer].width - 1; x >= 0; x--)
+                {
+                    if (this.layers[layer].data[y][x].index === index)
+                    {
+                        if (c === skip)
+                        {
+                            return this.layers[layer].data[y][x];
+                        }
+                        else
+                        {
+                            c++;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            for (var y = 0; y < this.layers[layer].height; y++)
+            {
+                for (var x = 0; x < this.layers[layer].width; x++)
+                {
+                    if (this.layers[layer].data[y][x].index === index)
+                    {
+                        if (c === skip)
+                        {
+                            return this.layers[layer].data[y][x];
+                        }
+                        else
+                        {
+                            c++;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+
+    },
+
+    /**
+    * Gets a tile from the Tilemap Layer. The coordinates are given in tile values.
+    *
+    * @method Phaser.Tilemap#getTile
+    * @param {number} x - X position to get the tile from (given in tile units, not pixels)
+    * @param {number} y - Y position to get the tile from (given in tile units, not pixels)
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to get the tile from.
+    * @param {boolean} [nonNull=false] - If true getTile won't return null for empty tiles, but a Tile object with an index of -1.
+    * @return {Phaser.Tile} The tile at the given coordinates or null if no tile was found or the coordinates were invalid.
+    */
+    getTile: function (x, y, layer, nonNull) {
+
+        if (nonNull === undefined) { nonNull = false; }
+
+        layer = this.getLayer(layer);
+
+        if (x >= 0 && x < this.layers[layer].width && y >= 0 && y < this.layers[layer].height)
+        {
+            if (this.layers[layer].data[y][x].index === -1)
+            {
+                if (nonNull)
+                {
+                    return this.layers[layer].data[y][x];
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return this.layers[layer].data[y][x];
+            }
+        }
+        else
+        {
+            return null;
+        }
+
+    },
+
+    /**
+    * Gets a tile from the Tilemap layer. The coordinates are given in pixel values.
+    *
+    * @method Phaser.Tilemap#getTileWorldXY
+    * @param {number} x - X position to get the tile from (given in pixels)
+    * @param {number} y - Y position to get the tile from (given in pixels)
+    * @param {number} [tileWidth] - The width of the tiles. If not given the map default is used.
+    * @param {number} [tileHeight] - The height of the tiles. If not given the map default is used.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to get the tile from.
+    * @param {boolean} [nonNull=false] - If true getTile won't return null for empty tiles, but a Tile object with an index of -1.
+    * @return {Phaser.Tile} The tile at the given coordinates.
+    */
+    getTileWorldXY: function (x, y, tileWidth, tileHeight, layer, nonNull) {
+
+        if (tileWidth === undefined) { tileWidth = this.tileWidth; }
+        if (tileHeight === undefined) { tileHeight = this.tileHeight; }
+
+        layer = this.getLayer(layer);
+
+        x = this.game.math.snapToFloor(x, tileWidth) / tileWidth;
+        y = this.game.math.snapToFloor(y, tileHeight) / tileHeight;
+
+        return this.getTile(x, y, layer, nonNull);
+
+    },
+
+    /**
+    * Copies all of the tiles in the given rectangular block into the tilemap data buffer.
+    *
+    * @method Phaser.Tilemap#copy
+    * @param {integer} x - X position of the top left of the area to copy (given in tiles, not pixels)
+    * @param {integer} y - Y position of the top left of the area to copy (given in tiles, not pixels)
+    * @param {integer} width - The width of the area to copy (given in tiles, not pixels)
+    * @param {integer} height - The height of the area to copy (given in tiles, not pixels)
+    * @param {integer|string|Phaser.TilemapLayer} [layer] - The layer to copy the tiles from.
+    * @return {array} An array of the tiles that were copied.
+    */
+    copy: function (x, y, width, height, layer) {
+
+        layer = this.getLayer(layer);
+
+        if (!this.layers[layer])
+        {
+            this._results.length = 0;
+            return;
+        }
+
+        if (x === undefined) { x = 0; }
+        if (y === undefined) { y = 0; }
+        if (width === undefined) { width = this.layers[layer].width; }
+        if (height === undefined) { height = this.layers[layer].height; }
+
+        if (x < 0)
+        {
+            x = 0;
+        }
+
+        if (y < 0)
+        {
+            y = 0;
+        }
+
+        if (width > this.layers[layer].width)
+        {
+            width = this.layers[layer].width;
+        }
+
+        if (height > this.layers[layer].height)
+        {
+            height = this.layers[layer].height;
+        }
+
+        this._results.length = 0;
+
+        this._results.push({ x: x, y: y, width: width, height: height, layer: layer });
+
+        for (var ty = y; ty < y + height; ty++)
+        {
+            for (var tx = x; tx < x + width; tx++)
+            {
+                this._results.push(this.layers[layer].data[ty][tx]);
+            }
+        }
+
+        return this._results;
+
+    },
+
+    /**
+    * Pastes a previously copied block of tile data into the given x/y coordinates. Data should have been prepared with Tilemap.copy.
+    *
+    * @method Phaser.Tilemap#paste
+    * @param {number} x - X position of the top left of the area to paste to (given in tiles, not pixels)
+    * @param {number} y - Y position of the top left of the area to paste to (given in tiles, not pixels)
+    * @param {array} tileblock - The block of tiles to paste.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to paste the tiles into.
+    */
+    paste: function (x, y, tileblock, layer) {
+
+        if (x === undefined) { x = 0; }
+        if (y === undefined) { y = 0; }
+
+        layer = this.getLayer(layer);
+
+        if (!tileblock || tileblock.length < 2)
+        {
+            return;
+        }
+
+        //  Find out the difference between tileblock[1].x/y and x/y and use it as an offset, as it's the top left of the block to paste
+        var diffX = x - tileblock[1].x;
+        var diffY = y - tileblock[1].y;
+
+        for (var i = 1; i < tileblock.length; i++)
+        {
+            this.layers[layer].data[ diffY + tileblock[i].y ][ diffX + tileblock[i].x ].copy(tileblock[i]);
+        }
+
+		this.layers[layer].dirty = true;
+        this.calculateFaces(layer);
+
+    },
+
+    /**
+    * Scans the given area for tiles with an index matching tileA and swaps them with tileB.
+    *
+    * @method Phaser.Tilemap#swap
+    * @param {number} tileA - First tile index.
+    * @param {number} tileB - Second tile index.
+    * @param {number} x - X position of the top left of the area to operate one, given in tiles, not pixels.
+    * @param {number} y - Y position of the top left of the area to operate one, given in tiles, not pixels.
+    * @param {number} width - The width in tiles of the area to operate on.
+    * @param {number} height - The height in tiles of the area to operate on.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to operate on.
+    */
+    swap: function (tileA, tileB, x, y, width, height, layer) {
+
+        layer = this.getLayer(layer);
+
+        this.copy(x, y, width, height, layer);
+
+        if (this._results.length < 2)
+        {
+            return;
+        }
+
+        this._tempA = tileA;
+        this._tempB = tileB;
+
+        this._results.forEach(this.swapHandler, this);
+
+        this.paste(x, y, this._results, layer);
+
+    },
+
+    /**
+    * Internal function that handles the swapping of tiles.
+    *
+    * @method Phaser.Tilemap#swapHandler
+    * @private
+    * @param {number} value
+    */
+    swapHandler: function (value) {
+
+        if (value.index === this._tempA)
+        {
+            //  Swap A with B
+            value.index = this._tempB;
+        }
+        else if (value.index === this._tempB)
+        {
+            //  Swap B with A
+            value.index = this._tempA;
+        }
+
+    },
+
+    /**
+    * For each tile in the given area defined by x/y and width/height run the given callback.
+    *
+    * @method Phaser.Tilemap#forEach
+    * @param {number} callback - The callback. Each tile in the given area will be passed to this callback as the first and only parameter.
+    * @param {number} context - The context under which the callback should be run.
+    * @param {number} x - X position of the top left of the area to operate one, given in tiles, not pixels.
+    * @param {number} y - Y position of the top left of the area to operate one, given in tiles, not pixels.
+    * @param {number} width - The width in tiles of the area to operate on.
+    * @param {number} height - The height in tiles of the area to operate on.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to operate on.
+    */
+    forEach: function (callback, context, x, y, width, height, layer) {
+
+        layer = this.getLayer(layer);
+
+        this.copy(x, y, width, height, layer);
+
+        if (this._results.length < 2)
+        {
+            return;
+        }
+
+        this._results.forEach(callback, context);
+
+        this.paste(x, y, this._results, layer);
+
+    },
+
+    /**
+    * Scans the given area for tiles with an index matching `source` and updates their index to match `dest`.
+    *
+    * @method Phaser.Tilemap#replace
+    * @param {number} source - The tile index value to scan for.
+    * @param {number} dest - The tile index value to replace found tiles with.
+    * @param {number} x - X position of the top left of the area to operate one, given in tiles, not pixels.
+    * @param {number} y - Y position of the top left of the area to operate one, given in tiles, not pixels.
+    * @param {number} width - The width in tiles of the area to operate on.
+    * @param {number} height - The height in tiles of the area to operate on.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to operate on.
+    */
+    replace: function (source, dest, x, y, width, height, layer) {
+
+        layer = this.getLayer(layer);
+
+        this.copy(x, y, width, height, layer);
+
+        if (this._results.length < 2)
+        {
+            return;
+        }
+
+        for (var i = 1; i < this._results.length; i++)
+        {
+            if (this._results[i].index === source)
+            {
+                this._results[i].index = dest;
+            }
+        }
+
+        this.paste(x, y, this._results, layer);
+
+    },
+
+    /**
+    * Randomises a set of tiles in a given area.
+    *
+    * @method Phaser.Tilemap#random
+    * @param {number} x - X position of the top left of the area to operate one, given in tiles, not pixels.
+    * @param {number} y - Y position of the top left of the area to operate one, given in tiles, not pixels.
+    * @param {number} width - The width in tiles of the area to operate on.
+    * @param {number} height - The height in tiles of the area to operate on.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to operate on.
+    */
+    random: function (x, y, width, height, layer) {
+
+        layer = this.getLayer(layer);
+
+        this.copy(x, y, width, height, layer);
+
+        if (this._results.length < 2)
+        {
+            return;
+        }
+
+        var indexes = [];
+
+        for (var t = 1; t < this._results.length; t++)
+        {
+            if (this._results[t].index)
+            {
+                var idx = this._results[t].index;
+
+                if (indexes.indexOf(idx) === -1)
+                {
+                    indexes.push(idx);
+                }
+            }
+        }
+
+        for (var i = 1; i < this._results.length; i++)
+        {
+            this._results[i].index = this.game.rnd.pick(indexes);
+        }
+
+        this.paste(x, y, this._results, layer);
+
+    },
+
+    /**
+    * Shuffles a set of tiles in a given area. It will only randomise the tiles in that area, so if they're all the same nothing will appear to have changed!
+    *
+    * @method Phaser.Tilemap#shuffle
+    * @param {number} x - X position of the top left of the area to operate one, given in tiles, not pixels.
+    * @param {number} y - Y position of the top left of the area to operate one, given in tiles, not pixels.
+    * @param {number} width - The width in tiles of the area to operate on.
+    * @param {number} height - The height in tiles of the area to operate on.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to operate on.
+    */
+    shuffle: function (x, y, width, height, layer) {
+
+        layer = this.getLayer(layer);
+
+        this.copy(x, y, width, height, layer);
+
+        if (this._results.length < 2)
+        {
+            return;
+        }
+
+        var indexes = [];
+
+        for (var t = 1; t < this._results.length; t++)
+        {
+            if (this._results[t].index)
+            {
+                indexes.push(this._results[t].index);
+            }
+        }
+
+        Phaser.ArrayUtils.shuffle(indexes);
+
+        for (var i = 1; i < this._results.length; i++)
+        {
+            this._results[i].index = indexes[i - 1];
+        }
+
+        this.paste(x, y, this._results, layer);
+
+    },
+
+    /**
+    * Fills the given area with the specified tile.
+    *
+    * @method Phaser.Tilemap#fill
+    * @param {number} index - The index of the tile that the area will be filled with.
+    * @param {number} x - X position of the top left of the area to operate one, given in tiles, not pixels.
+    * @param {number} y - Y position of the top left of the area to operate one, given in tiles, not pixels.
+    * @param {number} width - The width in tiles of the area to operate on.
+    * @param {number} height - The height in tiles of the area to operate on.
+    * @param {number|string|Phaser.TilemapLayer} [layer] - The layer to operate on.
+    */
+    fill: function (index, x, y, width, height, layer) {
+
+        layer = this.getLayer(layer);
+
+        this.copy(x, y, width, height, layer);
+
+        if (this._results.length < 2)
+        {
+            return;
+        }
+
+        for (var i = 1; i < this._results.length; i++)
+        {
+            this._results[i].index = index;
+        }
+
+        this.paste(x, y, this._results, layer);
+
+    },
+
+    /**
+    * Removes all layers from this tile map.
+    *
+    * @method Phaser.Tilemap#removeAllLayers
+    */
+    removeAllLayers: function () {
+
+        this.layers.length = 0;
+        this.currentLayer = 0;
+
+    },
+
+    /**
+    * Dumps the tilemap data out to the console.
+    *
+    * @method Phaser.Tilemap#dump
+    */
+    dump: function () {
+
+        var txt = '';
+        var args = [''];
+
+        for (var y = 0; y < this.layers[this.currentLayer].height; y++)
+        {
+            for (var x = 0; x < this.layers[this.currentLayer].width; x++)
+            {
+                txt += "%c  ";
+
+                if (this.layers[this.currentLayer].data[y][x] > 1)
+                {
+                    if (this.debugMap[this.layers[this.currentLayer].data[y][x]])
+                    {
+                        args.push("background: " + this.debugMap[this.layers[this.currentLayer].data[y][x]]);
+                    }
+                    else
+                    {
+                        args.push("background: #ffffff");
+                    }
+                }
+                else
+                {
+                    args.push("background: rgb(0, 0, 0)");
+                }
+            }
+
+            txt += "\n";
+        }
+
+        args[0] = txt;
+        console.log.apply(console, args);
+
+    },
+
+    /**
+    * Removes all layer data from this tile map and nulls the game reference.
+    * Note: You are responsible for destroying any TilemapLayer objects you generated yourself, as Tilemap doesn't keep a reference to them.
+    *
+    * @method Phaser.Tilemap#destroy
+    */
+    destroy: function () {
+
+        this.removeAllLayers();
+        this.data = [];
+        this.game = null;
+
+    }
+
+};
+
+Phaser.Tilemap.prototype.constructor = Phaser.Tilemap;
+
+/**
+* @name Phaser.Tilemap#layer
+* @property {number|string|Phaser.TilemapLayer} layer - The current layer object.
+*/
+Object.defineProperty(Phaser.Tilemap.prototype, "layer", {
+
+    get: function () {
+
+        return this.layers[this.currentLayer];
+
+    },
+
+    set: function (value) {
+
+        if (value !== this.currentLayer)
+        {
+            this.setLayer(value);
+        }
+
+    }
+
+});
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
+* A TilemapLayer is a Phaser.Image/Sprite that renders a specific TileLayer of a Tilemap.
+*
+* Since a TilemapLayer is a Sprite it can be moved around the display, added to other groups or display objects, etc.
+*
+* By default TilemapLayers have fixedToCamera set to `true`. Changing this will break Camera follow and scrolling behavior.
+*
+* @class Phaser.TilemapLayer
+* @extends Phaser.Sprite
+* @constructor
+* @param {Phaser.Game} game - Game reference to the currently running game.
+* @param {Phaser.Tilemap} tilemap - The tilemap to which this layer belongs.
+* @param {integer} index - The index of the TileLayer to render within the Tilemap.
+* @param {integer} width - Width of the renderable area of the layer (in pixels).
+* @param {integer} height - Height of the renderable area of the layer (in pixels).
+*/
+Phaser.TilemapLayer = function (game, tilemap, index, width, height) {
+
+    width |= 0;
+    height |= 0;
+
+    Phaser.Sprite.call(this, game, 0, 0);
+
+    /**
+    * The Tilemap to which this layer is bound.
+    * @property {Phaser.Tilemap} map
+    * @protected
+    * @readonly
+    */
+    this.map = tilemap;
+
+    /**
+    * The index of this layer within the Tilemap.
+    * @property {number} index
+    * @protected
+    * @readonly
+    */
+    this.index = index;
+
+    /**
+    * The layer object within the Tilemap that this layer represents.
+    * @property {object} layer
+    * @protected
+    * @readonly
+    */
+    this.layer = tilemap.layers[index];
+
+    /**
+    * The canvas to which this TilemapLayer draws.
+    * @property {HTMLCanvasElement} canvas
+    * @protected
+    */
+    this.canvas = Phaser.CanvasPool.create(this, width, height);
+
+    /**
+    * The 2d context of the canvas.
+    * @property {CanvasRenderingContext2D} context
+    * @private
+    */
+    this.context = this.canvas.getContext('2d');
+
+    this.setTexture(new PIXI.Texture(new PIXI.BaseTexture(this.canvas, null, this.game.resolution)));
+
+    /**
+    * The const type of this object.
+    * @property {number} type
+    * @readonly
+    * @protected
+    * @default Phaser.TILEMAPLAYER
+    */
+    this.type = Phaser.TILEMAPLAYER;
+
+    /**
+    * @property {number} physicsType - The const physics body type of this object.
+    * @readonly
+    */
+    this.physicsType = Phaser.TILEMAPLAYER;
+
+    /**
+    * Settings that control standard (non-diagnostic) rendering.
+    *
+    * @property {boolean} [enableScrollDelta=true] - Delta scroll rendering only draws tiles/edges as they come into view.
+    *     This can greatly improve scrolling rendering performance, especially when there are many small tiles.
+    *     It should only be disabled in rare cases.
+    *
+    * @property {?DOMCanvasElement} [copyCanvas=(auto)] - [Internal] If set, force using a separate (shared) copy canvas.
+    *     Using a canvas bitblt/copy when the source and destinations region overlap produces unexpected behavior
+    *     in some browsers, notably Safari. 
+    *
+    * @default
+    */
+    this.renderSettings = {
+        enableScrollDelta: true,
+        overdrawRatio: 0.20,
+        copyCanvas: null
+    };
+
+    /**
+    * Enable an additional "debug rendering" pass to display collision information.
+    *
+    * @property {boolean} debug
+    * @default
+    */
+    this.debug = false;
+
+    /**
+    * @property {boolean} exists - Controls if the core game loop and physics update this game object or not.
+    */
+    this.exists = true;
+
+    /**
+    * Settings used for debugging and diagnostics.
+    *
+    * @property {?string} missingImageFill - A tile is rendered as a rectangle using the following fill if a valid tileset/image cannot be found. A value of `null` prevents additional rendering for tiles without a valid tileset image. _This takes effect even when debug rendering for the layer is not enabled._
+    *
+    * @property {?string} debuggedTileOverfill - If a Tile has `Tile#debug` true then, after normal tile image rendering, a rectangle with the following fill is drawn above/over it. _This takes effect even when debug rendering for the layer is not enabled._
+    *
+    * @property {boolean} forceFullRedraw - When debug rendering (`debug` is true), and this option is enabled, the a full redraw is forced and rendering optimization is suppressed.
+    *
+    * @property {number} debugAlpha - When debug rendering (`debug` is true), the tileset is initially rendered with this alpha level. This can make the tile edges clearer.
+    *
+    * @property {?string} facingEdgeStroke - When debug rendering (`debug` is true), this color/stroke is used to draw "face" edges. A value of `null` disables coloring facing edges.
+    *
+    * @property {?string} collidingTileOverfill - When debug rendering (`debug` is true), this fill is used for tiles that are collidable. A value of `null` disables applying the additional overfill.
+    *
+    */
+    this.debugSettings = {
+
+        missingImageFill: 'rgb(255,255,255)',
+        debuggedTileOverfill: 'rgba(0,255,0,0.4)',
+
+        forceFullRedraw: true,
+
+        debugAlpha: 0.5,
+        facingEdgeStroke: 'rgba(0,255,0,1)',
+        collidingTileOverfill: 'rgba(0,255,0,0.2)'
+
+    };
+
+    /**
+    * Speed at which this layer scrolls horizontally, relative to the camera (e.g. scrollFactorX of 0.5 scrolls half as quickly as the 'normal' camera-locked layers do).
+    * @property {number} scrollFactorX
+    * @public
+    * @default
+    */
+    this.scrollFactorX = 1;
+
+    /**
+    * Speed at which this layer scrolls vertically, relative to the camera (e.g. scrollFactorY of 0.5 scrolls half as quickly as the 'normal' camera-locked layers do)
+    * @property {number} scrollFactorY
+    * @public
+    * @default
+    */
+    this.scrollFactorY = 1;
+
+    /**
+    * If true tiles will be force rendered, even if such is not believed to be required.
+    * @property {boolean} dirty
+    * @protected
+    */
+    this.dirty = true;
+
+    /**
+    * When ray-casting against tiles this is the number of steps it will jump. For larger tile sizes you can increase this to improve performance.
+    * @property {integer} rayStepRate
+    * @default
+    */
+    this.rayStepRate = 4;
+
+    /**
+    * Flag controlling if the layer tiles wrap at the edges.
+    * @property {boolean} _wrap
+    * @private
+    */
+    this._wrap = false;
+
+    /**
+    * Local map data and calculation cache.
+    * @property {object} _mc
+    * @private
+    */
+    this._mc = {
+
+        // Used to bypass rendering without reliance on `dirty` and detect changes.
+        scrollX: 0,
+        scrollY: 0,
+        renderWidth: 0,
+        renderHeight: 0,
+
+        tileWidth: tilemap.tileWidth,
+        tileHeight: tilemap.tileHeight,
+
+        // Collision width/height (pixels)
+        // What purpose do these have? Most things use tile width/height directly.
+        // This also only extends collisions right and down.       
+        cw: tilemap.tileWidth,
+        ch: tilemap.tileHeight,
+
+        // Cached tilesets from index -> Tileset
+        tilesets: []
+
+    };
+
+    /**
+    * The current canvas left after scroll is applied.
+    * @property {number} _scrollX
+    * @private
+    */
+    this._scrollX = 0;
+
+    /**
+    * The current canvas top after scroll is applied.
+    * @property {number} _scrollY
+    * @private
+    */
+    this._scrollY = 0;
+
+    /**
+     * The position offset of the layer's tiles.
+     * @property {Phaser.Point}
+     */
+    this.tileOffset = new Phaser.Point(this.layer.offsetX || 0, this.layer.offsetY || 0);
+
+    /**
+    * Used for caching the tiles / array of tiles.
+    * @property {Phaser.Tile[]} _results
+    * @private
+    */
+    this._results = [];
+
+    if (!game.device.canvasBitBltShift)
+    {
+        this.renderSettings.copyCanvas = Phaser.TilemapLayer.ensureSharedCopyCanvas();
+    }
+
+    this.fixedToCamera = true;
+
+};
+
+Phaser.TilemapLayer.prototype = Object.create(Phaser.Sprite.prototype);
+Phaser.TilemapLayer.prototype.constructor = Phaser.TilemapLayer;
+
+Phaser.TilemapLayer.prototype.preUpdateCore = Phaser.Component.Core.preUpdate;
+
+/**
+* The shared double-copy canvas, created as needed.
+*
+* @private
+* @static
+*/
+Phaser.TilemapLayer.sharedCopyCanvas = null;
+
+/**
+* Create if needed (and return) a shared copy canvas that is shared across all TilemapLayers.
+*
+* Code that uses the canvas is responsible to ensure the dimensions and save/restore state as appropriate.
+*
+* @method Phaser.TilemapLayer#ensureSharedCopyCanvas
+* @protected
+* @static
+*/
+Phaser.TilemapLayer.ensureSharedCopyCanvas = function () {
+
+    if (!this.sharedCopyCanvas)
+    {
+        this.sharedCopyCanvas = Phaser.CanvasPool.create(this, 2, 2);
+    }
+
+    return this.sharedCopyCanvas;
+
+};
+
+/**
+* Automatically called by World.preUpdate.
+*
+* @method Phaser.TilemapLayer#preUpdate
+*/
+Phaser.TilemapLayer.prototype.preUpdate = function() {
+
+    return this.preUpdateCore();
+
+};
+
+/**
+* Automatically called by World.postUpdate. Handles cache updates.
+*
+* @method Phaser.TilemapLayer#postUpdate
+* @protected
+*/
+Phaser.TilemapLayer.prototype.postUpdate = function () {
+
+    if (this.fixedToCamera)
+    {
+        this.position.x = (this.game.camera.view.x + this.cameraOffset.x) / this.game.camera.scale.x;
+        this.position.y = (this.game.camera.view.y + this.cameraOffset.y) / this.game.camera.scale.y;
+    }
+
+    this._scrollX = (this.game.camera.view.x - this.tileOffset.x) * this.scrollFactorX / this.scale.x;
+    this._scrollY = (this.game.camera.view.y - this.tileOffset.y) * this.scrollFactorY / this.scale.y;
+
+};
+
+/**
+* Automatically called by the Canvas Renderer.
+* Overrides the Sprite._renderCanvas function.
+*
+* @method Phaser.TilemapLayer#_renderCanvas
+* @private
+*/
+Phaser.TilemapLayer.prototype._renderCanvas = function (renderSession) {
+
+    if (this.fixedToCamera)
+    {
+        this.position.x = (this.game.camera.view.x + this.cameraOffset.x) / this.game.camera.scale.x;
+        this.position.y = (this.game.camera.view.y + this.cameraOffset.y) / this.game.camera.scale.y;
+    }
+
+    this._scrollX = (this.game.camera.view.x - this.tileOffset.x) * this.scrollFactorX / this.scale.x;
+    this._scrollY = (this.game.camera.view.y - this.tileOffset.y) * this.scrollFactorY / this.scale.y;
+
+    this.render();
+
+    PIXI.Sprite.prototype._renderCanvas.call(this, renderSession);
+
+};
+
+/**
+* Automatically called by the Canvas Renderer.
+* Overrides the Sprite._renderWebGL function.
+*
+* @method Phaser.TilemapLayer#_renderWebGL
+* @private
+*/
+Phaser.TilemapLayer.prototype._renderWebGL = function (renderSession) {
+
+    if (this.fixedToCamera)
+    {
+        this.position.x = (this.game.camera.view.x + this.cameraOffset.x) / this.game.camera.scale.x;
+        this.position.y = (this.game.camera.view.y + this.cameraOffset.y) / this.game.camera.scale.y;
+    }
+    
+    this._scrollX = (this.game.camera.view.x - this.tileOffset.x) * this.scrollFactorX / this.scale.x;
+    this._scrollY = (this.game.camera.view.y - this.tileOffset.y) * this.scrollFactorY / this.scale.y;
+
+    this.render();
+
+    PIXI.Sprite.prototype._renderWebGL.call(this, renderSession);
+
+};
+
+/**
+* Destroys this TilemapLayer.
+*
+* @method Phaser.TilemapLayer#destroy
+*/
+Phaser.TilemapLayer.prototype.destroy = function() {
+
+    Phaser.CanvasPool.remove(this);
+
+    Phaser.Component.Destroy.prototype.destroy.call(this);
+
+};
+
+/**
+* Resizes the internal canvas and texture frame used by this TilemapLayer.
+*
+* This is an expensive call, so don't bind it to a window resize event! But instead call it at carefully
+* selected times.
+*
+* Be aware that no validation of the new sizes takes place and the current map scroll coordinates are not
+* modified either. You will have to handle both of these things from your game code if required.
+* 
+* @method Phaser.TilemapLayer#resize
+* @param {number} width - The new width of the TilemapLayer
+* @param {number} height - The new height of the TilemapLayer
+*/
+Phaser.TilemapLayer.prototype.resize = function (width, height) {
+
+    this.canvas.width = width;
+    this.canvas.height = height;
+
+    this.texture.frame.resize(width, height);
+
+    this.texture.width = width;
+    this.texture.height = height;
+
+    this.texture.crop.width = width;
+    this.texture.crop.height = height;
+
+    this.texture.baseTexture.width = width;
+    this.texture.baseTexture.height = height;
+
+    this.texture.baseTexture.dirty();
+    this.texture.requiresUpdate = true;
+
+    this.texture._updateUvs();
+
+    this.dirty = true;
+
+};
+
+/**
+* Sets the world size to match the size of this layer.
+*
+* @method Phaser.TilemapLayer#resizeWorld
+* @public
+*/
+Phaser.TilemapLayer.prototype.resizeWorld = function () {
+
+    this.game.world.setBounds(0, 0, this.layer.widthInPixels * this.scale.x, this.layer.heightInPixels * this.scale.y);
+
+};
+
+/**
+ * Get the X axis position offset of this layer's tiles.
+ *
+ * @method Phaser.TilemapLayer#getLayerOffsetX
+ * @public
+ * @return {number}
+ */
+Phaser.TilemapLayer.prototype.getTileOffsetX = function () {
+
+    return this.tileOffset.x || ((!this.fixedToCamera) ? this.position.x : 0);
+
+};
+
+/**
+ * Get the Y axis position offset of this layer's tiles.
+ *
+ * @method Phaser.TilemapLayer#getTileOffsetY
+ * @public
+ * @return {number}
+ */
+Phaser.TilemapLayer.prototype.getTileOffsetY = function () {
+
+    return this.tileOffset.y || ((!this.fixedToCamera) ? this.position.y : 0);
+
+};
+
+/**
+* Take an x coordinate that doesn't account for scrollFactorX and 'fix' it into a scrolled local space.
+*
+* @method Phaser.TilemapLayer#_fixX
+* @private
+* @param {number} x - x coordinate in camera space
+* @return {number} x coordinate in scrollFactor-adjusted dimensions
+*/
+Phaser.TilemapLayer.prototype._fixX = function (x) {
+
+    if (this.scrollFactorX === 1 || (this.scrollFactorX === 0 && this.position.x === 0))
+    {
+        return x;
+    }
+    
+    //  This executes if the scrollFactorX is 0 and the x position of the tilemap is off from standard.
+    if (this.scrollFactorX === 0 && this.position.x !== 0)
+    {
+        return x - this.position.x;
+    }
+
+    return this._scrollX + (x - (this._scrollX / this.scrollFactorX));
+
+};
+
+/**
+* Take an x coordinate that _does_ account for scrollFactorX and 'unfix' it back to camera space.
+*
+* @method Phaser.TilemapLayer#_unfixX
+* @private
+* @param {number} x - x coordinate in scrollFactor-adjusted dimensions
+* @return {number} x coordinate in camera space
+*/
+Phaser.TilemapLayer.prototype._unfixX = function (x) {
+
+    if (this.scrollFactorX === 1)
+    {
+        return x;
+    }
+
+    return (this._scrollX / this.scrollFactorX) + (x - this._scrollX);
+
+};
+
+/**
+* Take a y coordinate that doesn't account for scrollFactorY and 'fix' it into a scrolled local space.
+*
+* @method Phaser.TilemapLayer#_fixY
+* @private
+* @param {number} y - y coordinate in camera space
+* @return {number} y coordinate in scrollFactor-adjusted dimensions
+*/
+Phaser.TilemapLayer.prototype._fixY = function (y) {
+
+    if (this.scrollFactorY === 1 || (this.scrollFactorY === 0 && this.position.y === 0))
+    {
+        return y;
+    }
+    
+    //  This executes if the scrollFactorY is 0 and the y position of the tilemap is off from standard.
+    if (this.scrollFactorY === 0 && this.position.y !== 0)
+    {
+        return y - this.position.y;
+    }
+    
+    return this._scrollY + (y - (this._scrollY / this.scrollFactorY));
+
+};
+
+/**
+* Take a y coordinate that _does_ account for scrollFactorY and 'unfix' it back to camera space.
+*
+* @method Phaser.TilemapLayer#_unfixY
+* @private
+* @param {number} y - y coordinate in scrollFactor-adjusted dimensions
+* @return {number} y coordinate in camera space
+*/
+Phaser.TilemapLayer.prototype._unfixY = function (y) {
+
+    if (this.scrollFactorY === 1)
+    {
+        return y;
+    }
+
+    return (this._scrollY / this.scrollFactorY) + (y - this._scrollY);
+
+};
+
+/**
+* Convert a pixel value to a tile coordinate.
+*
+* @method Phaser.TilemapLayer#getTileX
+* @public
+* @param {number} x - X position of the point in target tile (in pixels).
+* @return {integer} The X map location of the tile.
+*/
+Phaser.TilemapLayer.prototype.getTileX = function (x) {
+
+    // var tileWidth = this.tileWidth * this.scale.x;
+    return Math.floor(this._fixX(x) / this._mc.tileWidth);
+
+};
+
+/**
+* Convert a pixel value to a tile coordinate.
+*
+* @method Phaser.TilemapLayer#getTileY
+* @public
+* @param {number} y - Y position of the point in target tile (in pixels).
+* @return {integer} The Y map location of the tile.
+*/
+Phaser.TilemapLayer.prototype.getTileY = function (y) {
+
+    // var tileHeight = this.tileHeight * this.scale.y;
+    return Math.floor(this._fixY(y) / this._mc.tileHeight);
+
+};
+
+/**
+* Convert a pixel coordinate to a tile coordinate.
+*
+* @method Phaser.TilemapLayer#getTileXY
+* @public
+* @param {number} x - X position of the point in target tile (in pixels).
+* @param {number} y - Y position of the point in target tile (in pixels).
+* @param {(Phaser.Point|object)} point - The Point/object to update.
+* @return {(Phaser.Point|object)} A Point/object with its `x` and `y` properties set.
+*/
+Phaser.TilemapLayer.prototype.getTileXY = function (x, y, point) {
+
+    point.x = this.getTileX(x);
+    point.y = this.getTileY(y);
+
+    return point;
+
+};
+
+/**
+* Gets all tiles that intersect with the given line.
+*
+* @method Phaser.TilemapLayer#getRayCastTiles
+* @public
+* @param {Phaser.Line} line - The line used to determine which tiles to return.
+* @param {integer} [stepRate=(rayStepRate)] - How many steps through the ray will we check? Defaults to `rayStepRate`.
+* @param {boolean} [collides=false] - If true, _only_ return tiles that collide on one or more faces.
+* @param {boolean} [interestingFace=false] - If true, _only_ return tiles that have interesting faces.
+* @return {Phaser.Tile[]} An array of Phaser.Tiles.
+*/
+Phaser.TilemapLayer.prototype.getRayCastTiles = function (line, stepRate, collides, interestingFace) {
+
+    if (!stepRate) { stepRate = this.rayStepRate; }
+    if (collides === undefined) { collides = false; }
+    if (interestingFace === undefined) { interestingFace = false; }
+
+    //  First get all tiles that touch the bounds of the line
+    var tiles = this.getTiles(line.x, line.y, line.width, line.height, collides, interestingFace);
+
+    if (tiles.length === 0)
+    {
+        return [];
+    }
+
+    //  Now we only want the tiles that intersect with the points on this line
+    var coords = line.coordinatesOnLine(stepRate);
+    var results = [];
+
+    for (var i = 0; i < tiles.length; i++)
+    {
+        for (var t = 0; t < coords.length; t++)
+        {
+            var tile = tiles[i];
+            var coord = coords[t];
+            if (tile.containsPoint(coord[0], coord[1]))
+            {
+                results.push(tile);
+                break;
+            }
+        }
+    }
+
+    return results;
+
+};
+
+/**
+* Get all tiles that exist within the given area, defined by the top-left corner, width and height. Values given are in pixels, not tiles.
+*
+* @method Phaser.TilemapLayer#getTiles
+* @public
+* @param {number} x - X position of the top left corner (in pixels).
+* @param {number} y - Y position of the top left corner (in pixels).
+* @param {number} width - Width of the area to get (in pixels).
+* @param {number} height - Height of the area to get (in pixels).
+* @param {boolean} [collides=false] - If true, _only_ return tiles that collide on one or more faces.
+* @param {boolean} [interestingFace=false] - If true, _only_ return tiles that have interesting faces.
+* @return {array<Phaser.Tile>} An array of Tiles.
+*/
+Phaser.TilemapLayer.prototype.getTiles = function (x, y, width, height, collides, interestingFace) {
+
+    //  Should we only get tiles that have at least one of their collision flags set? (true = yes, false = no just get them all)
+    if (collides === undefined) { collides = false; }
+    if (interestingFace === undefined) { interestingFace = false; }
+
+    var fetchAll = !(collides || interestingFace);
+
+    //  Adjust the x,y coordinates for scrollFactor
+    x = this._fixX(x);
+    y = this._fixY(y);
+
+    //  Convert the pixel values into tile coordinates
+    var tx = Math.floor(x / (this._mc.cw * this.scale.x));
+    var ty = Math.floor(y / (this._mc.ch * this.scale.y));
+    //  Don't just use ceil(width/cw) to allow account for x/y diff within cell
+    var tw = Math.ceil((x + width) / (this._mc.cw * this.scale.x)) - tx;
+    var th = Math.ceil((y + height) / (this._mc.ch * this.scale.y)) - ty;
+
+    while (this._results.length)
+    {
+        this._results.pop();
+    }
+
+    for (var wy = ty; wy < ty + th; wy++)
+    {
+        for (var wx = tx; wx < tx + tw; wx++)
+        {
+            var row = this.layer.data[wy];
+
+            if (row && row[wx])
+            {
+                if (fetchAll || row[wx].isInteresting(collides, interestingFace))
+                {
+                    this._results.push(row[wx]);
+                }
+            }
+        }
+    }
+
+    return this._results.slice();
+
+};
+
+/**
+* Returns the appropriate tileset for the index, updating the internal cache as required.
+* This should only be called if `tilesets[index]` evaluates to undefined.
+*
+* @method Phaser.TilemapLayer#resolveTileset
+* @private
+* @param {integer} Tile index
+* @return {Phaser.Tileset|null} Returns the associated tileset or null if there is no such mapping.
+*/
+Phaser.TilemapLayer.prototype.resolveTileset = function (tileIndex) {
+
+    var tilesets = this._mc.tilesets;
+
+    //  Try for dense array if reasonable
+    if (tileIndex < 2000)
+    {
+        while (tilesets.length < tileIndex)
+        {
+            tilesets.push(undefined);
+        }
+    }
+
+    var setIndex = this.map.tiles[tileIndex] && this.map.tiles[tileIndex][2];
+
+    if (setIndex !== null)
+    {
+        var tileset = this.map.tilesets[setIndex];
+
+        if (tileset && tileset.containsTileIndex(tileIndex))
+        {
+            return (tilesets[tileIndex] = tileset);
+        }
+    }
+
+    return (tilesets[tileIndex] = null);
+
+};
+
+/**
+* The TilemapLayer caches tileset look-ups.
+*
+* Call this method of clear the cache if tilesets have been added or updated after the layer has been rendered.
+*
+* @method Phaser.TilemapLayer#resetTilesetCache
+* @public
+*/
+Phaser.TilemapLayer.prototype.resetTilesetCache = function () {
+
+    var tilesets = this._mc.tilesets;
+
+    while (tilesets.length)
+    {
+        tilesets.pop();
+    }
+
+};
+
+/**
+ * This method will set the scale of the tilemap as well as update the underlying block data of this layer.
+ * 
+ * @method Phaser.TilemapLayer#setScale
+ * @param {number} [xScale=1] - The scale factor along the X-plane 
+ * @param {number} [yScale] - The scale factor along the Y-plane
+ */
+Phaser.TilemapLayer.prototype.setScale = function (xScale, yScale) {
+
+    xScale = xScale || 1;
+    yScale = yScale || xScale;
+
+    for (var y = 0; y < this.layer.data.length; y++)
+    {
+        var row = this.layer.data[y];
+
+        for (var x = 0; x < row.length; x++)
+        {
+            var tile = row[x];
+
+            tile.width = this.map.tileWidth * xScale;
+            tile.height = this.map.tileHeight * yScale;
+
+            tile.worldX = tile.x * tile.width;
+            tile.worldY = tile.y * tile.height;
+        }
+    }
+
+    this.scale.setTo(xScale, yScale);
+
+};
+
+/**
+* Shifts the contents of the canvas - does extra math so that different browsers agree on the result.
+*
+* The specified (x/y) will be shifted to (0,0) after the copy and the newly exposed canvas area will need to be filled in.
+*
+* @method Phaser.TilemapLayer#shiftCanvas
+* @private
+* @param {CanvasRenderingContext2D} context - The context to shift
+* @param {integer} x
+* @param {integer} y
+*/
+Phaser.TilemapLayer.prototype.shiftCanvas = function (context, x, y) {
+
+    var canvas = context.canvas;
+    var copyW = canvas.width - Math.abs(x);
+    var copyH = canvas.height - Math.abs(y);
+
+    //  When x/y non-negative
+    var dx = 0;
+    var dy = 0;
+    var sx = x;
+    var sy = y;
+
+    if (x < 0)
+    {
+        dx = -x;
+        sx = 0;
+    }
+
+    if (y < 0)
+    {
+        dy = -y;
+        sy = 0;
+    }
+
+    var copyCanvas = this.renderSettings.copyCanvas;
+
+    if (copyCanvas)
+    {
+        // Use a second copy buffer, without slice support, for Safari .. again.
+        // Ensure copy canvas is large enough
+        if (copyCanvas.width < copyW || copyCanvas.height < copyH)
+        {
+            copyCanvas.width = copyW;
+            copyCanvas.height = copyH;
+        }
+
+        var copyContext = copyCanvas.getContext('2d');
+        copyContext.clearRect(0, 0, copyW, copyH);
+        copyContext.drawImage(canvas, dx, dy, copyW, copyH, 0, 0, copyW, copyH);
+        // clear allows default 'source-over' semantics
+        context.clearRect(sx, sy, copyW, copyH);
+        context.drawImage(copyCanvas, 0, 0, copyW, copyH, sx, sy, copyW, copyH);
+    }
+    else
+    {
+        // Avoids a second copy but flickers in Safari / Safari Mobile
+        // Ref. https://github.com/photonstorm/phaser/issues/1439
+        context.save();
+        context.globalCompositeOperation = 'copy';
+        context.drawImage(canvas, dx, dy, copyW, copyH, sx, sy, copyW, copyH);
+        context.restore();
+    }
+    
+};
+
+/**
+* Render tiles in the given area given by the virtual tile coordinates biased by the given scroll factor.
+* This will constrain the tile coordinates based on wrapping but not physical coordinates.
+*
+* @method Phaser.TilemapLayer#renderRegion
+* @private
+* @param {integer} scrollX - Render x offset/scroll.
+* @param {integer} scrollY - Render y offset/scroll.
+* @param {integer} left - Leftmost column to render.
+* @param {integer} top - Topmost row to render.
+* @param {integer} right - Rightmost column to render.
+* @param {integer} bottom - Bottommost row to render.
+*/
+Phaser.TilemapLayer.prototype.renderRegion = function (scrollX, scrollY, left, top, right, bottom) {
+
+    var context = this.context;
+
+    var width = this.layer.width;
+    var height = this.layer.height;
+    var tw = this._mc.tileWidth;
+    var th = this._mc.tileHeight;
+
+    var tilesets = this._mc.tilesets;
+    var lastAlpha = NaN;
+
+    if (!this._wrap)
+    {
+        if (left <= right) // Only adjust if going to render
+        {
+            left = Math.max(0, left);
+            right = Math.min(width - 1, right);
+        }
+        if (top <= bottom)
+        {
+            top = Math.max(0, top);
+            bottom = Math.min(height - 1, bottom);
+        }
+    }
+   
+    // top-left pixel of top-left cell
+    var baseX = (left * tw) - scrollX;
+    var baseY = (top * th) - scrollY;
+
+    // Fix normStartX/normStartY such it is normalized [0..width/height). This allows a simple conditional and decrement to always keep in range [0..width/height) during the loop. The major offset bias is to take care of negative values.
+    var normStartX = (left + ((1 << 20) * width)) % width;
+    var normStartY = (top + ((1 << 20) * height)) % height;
+
+    // tx/ty - are pixel coordinates where tile is drawn
+    // x/y - is cell location, normalized [0..width/height) in loop
+    // xmax/ymax - remaining cells to render on column/row
+    var tx, ty, x, y, xmax, ymax;
+
+    for (y = normStartY, ymax = bottom - top, ty = baseY; ymax >= 0; y++, ymax--, ty += th)
+    {
+        if (y >= height)
+        {
+            y -= height;
+        }
+
+        var row = this.layer.data[y];
+
+        for (x = normStartX, xmax = right - left, tx = baseX; xmax >= 0; x++, xmax--, tx += tw)
+        {
+            if (x >= width)
+            {
+                x -= width;
+            }
+
+            var tile = row[x];
+
+            if (!tile || tile.index < 0)
+            {
+                continue;
+            }
+
+            var index = tile.index;
+
+            var set = tilesets[index];
+
+            if (set === undefined)
+            {
+                set = this.resolveTileset(index);
+            }
+
+            //  Setting the globalAlpha is "surprisingly expensive" in Chrome (38)
+            if (tile.alpha !== lastAlpha && !this.debug)
+            {
+                context.globalAlpha = tile.alpha;
+                lastAlpha = tile.alpha;
+            }
+
+            if (set)
+            {
+                if (tile.rotation || tile.flipped)
+                {
+                    context.save();
+                    context.translate(tx + tile.centerX, ty + tile.centerY);
+                    context.rotate(tile.rotation);
+
+                    if (tile.flipped)
+                    {
+                        context.scale(-1, 1);
+                    }
+
+                    set.draw(context, -tile.centerX, -tile.centerY, index);
+                    context.restore();
+                }
+                else
+                {
+                    set.draw(context, tx, ty, index);
+                }
+            }
+            else if (this.debugSettings.missingImageFill)
+            {
+                context.fillStyle = this.debugSettings.missingImageFill;
+                context.fillRect(tx, ty, tw, th);
+            }
+
+            if (tile.debug && this.debugSettings.debuggedTileOverfill)
+            {
+                context.fillStyle = this.debugSettings.debuggedTileOverfill;
+                context.fillRect(tx, ty, tw, th);
+            }
+           
+        }
+
+    }
+
+};
+
+/**
+* Shifts the canvas and render damaged edge tiles.
+*
+* @method Phaser.TilemapLayer#renderDeltaScroll
+* @private
+*/
+Phaser.TilemapLayer.prototype.renderDeltaScroll = function (shiftX, shiftY) {
+
+    var scrollX = this._mc.scrollX;
+    var scrollY = this._mc.scrollY;
+
+    var renderW = this.canvas.width;
+    var renderH = this.canvas.height;
+
+    var tw = this._mc.tileWidth;
+    var th = this._mc.tileHeight;
+
+    // Only cells with coordinates in the "plus" formed by `left <= x <= right` OR `top <= y <= bottom` are drawn. These coordinates may be outside the layer bounds.
+
+    // Start in pixels
+    var left = 0;
+    var right = -tw;
+    var top = 0;
+    var bottom = -th;
+
+    if (shiftX < 0) // layer moving left, damage right
+    {
+        left = renderW + shiftX; // shiftX neg.
+        right = renderW - 1;
+    }
+    else if (shiftX > 0)
+    {
+        // left -> 0
+        right = shiftX;
+    }
+
+    if (shiftY < 0) // layer moving down, damage top
+    {
+        top = renderH + shiftY; // shiftY neg.
+        bottom = renderH - 1;
+    }
+    else if (shiftY > 0)
+    {
+        // top -> 0
+        bottom = shiftY;
+    }
+
+    this.shiftCanvas(this.context, shiftX, shiftY);
+
+    // Transform into tile-space
+    left = Math.floor((left + scrollX) / tw);
+    right = Math.floor((right + scrollX) / tw);
+    top = Math.floor((top + scrollY) / th);
+    bottom = Math.floor((bottom + scrollY) / th);
+
+    if (left <= right)
+    {
+        // Clear left or right edge
+        this.context.clearRect(((left * tw) - scrollX), 0, (right - left + 1) * tw, renderH);
+
+        var trueTop = Math.floor((0 + scrollY) / th);
+        var trueBottom = Math.floor((renderH - 1 + scrollY) / th);
+        this.renderRegion(scrollX, scrollY, left, trueTop, right, trueBottom);
+    }
+
+    if (top <= bottom)
+    {
+        // Clear top or bottom edge
+        this.context.clearRect(0, ((top * th) - scrollY), renderW, (bottom - top + 1) * th);
+
+        var trueLeft = Math.floor((0 + scrollX) / tw);
+        var trueRight = Math.floor((renderW - 1 + scrollX) / tw);
+        this.renderRegion(scrollX, scrollY, trueLeft, top, trueRight, bottom);
+    }
+
+};
+
+/**
+* Clear and render the entire canvas.
+*
+* @method Phaser.TilemapLayer#renderFull
+* @private
+*/
+Phaser.TilemapLayer.prototype.renderFull = function () {
+    
+    var scrollX = this._mc.scrollX;
+    var scrollY = this._mc.scrollY;
+
+    var renderW = this.canvas.width;
+    var renderH = this.canvas.height;
+
+    var tw = this._mc.tileWidth;
+    var th = this._mc.tileHeight;
+
+    var left = Math.floor(scrollX / tw);
+    var right = Math.floor((renderW - 1 + scrollX) / tw);
+    var top = Math.floor(scrollY / th);
+    var bottom = Math.floor((renderH - 1 + scrollY) / th);
+
+    this.context.clearRect(0, 0, renderW, renderH);
+
+    this.renderRegion(scrollX, scrollY, left, top, right, bottom);
+
+};
+
+/**
+* Renders the tiles to the layer canvas and pushes to the display.
+*
+* @method Phaser.TilemapLayer#render
+* @protected
+*/
+Phaser.TilemapLayer.prototype.render = function () {
+
+    var redrawAll = false;
+
+    if (!this.visible)
+    {
+        return;
+    }
+
+    if (this.dirty || this.layer.dirty)
+    {
+        this.layer.dirty = false;
+        redrawAll = true;
+    }
+
+    var renderWidth = this.canvas.width; // Use Sprite.width/height?
+    var renderHeight = this.canvas.height;
+
+    //  Scrolling bias; whole pixels only
+    var scrollX = this._scrollX | 0;
+    var scrollY = this._scrollY | 0;
+
+    var mc = this._mc;
+    var shiftX = mc.scrollX - scrollX; // Negative when scrolling right/down
+    var shiftY = mc.scrollY - scrollY;
+
+    if (!redrawAll &&
+        shiftX === 0 && shiftY === 0 &&
+        mc.renderWidth === renderWidth && mc.renderHeight === renderHeight)
+    {
+        //  No reason to redraw map, looking at same thing and not invalidated.
+        return;
+    }
+
+    this.context.save();
+    
+    mc.scrollX = scrollX;
+    mc.scrollY = scrollY;
+
+    if (mc.renderWidth !== renderWidth || mc.renderHeight !== renderHeight)
+    {
+        //  Could support automatic canvas resizing
+        mc.renderWidth = renderWidth;
+        mc.renderHeight = renderHeight;
+    }
+
+    if (this.debug)
+    {
+        this.context.globalAlpha = this.debugSettings.debugAlpha;
+
+        if (this.debugSettings.forceFullRedraw)
+        {
+            redrawAll = true;
+        }
+    }
+
+    if (!redrawAll &&
+        this.renderSettings.enableScrollDelta &&
+        (Math.abs(shiftX) + Math.abs(shiftY)) < Math.min(renderWidth, renderHeight))
+    {
+        this.renderDeltaScroll(shiftX, shiftY);
+    }
+    else
+    {
+        // Too much change or otherwise requires full render
+        this.renderFull();
+    }
+
+    if (this.debug)
+    {
+        this.context.globalAlpha = 1;
+        this.renderDebug();
+    }
+
+    this.texture.baseTexture.dirty();
+
+    this.dirty = false;
+
+    this.context.restore();
+
+    return true;
+
+};
+
+/**
+* Renders a debug overlay on-top of the canvas. Called automatically by render when `debug` is true.
+*
+* See `debugSettings` for assorted configuration options.
+*
+* @method Phaser.TilemapLayer#renderDebug
+* @private
+*/
+Phaser.TilemapLayer.prototype.renderDebug = function () {
+
+    var scrollX = this._mc.scrollX;
+    var scrollY = this._mc.scrollY;
+
+    var context = this.context;
+    var renderW = this.canvas.width;
+    var renderH = this.canvas.height;
+
+    var width = this.layer.width;
+    var height = this.layer.height;
+    var tw = this._mc.tileWidth;
+    var th = this._mc.tileHeight;
+
+    var left = Math.floor(scrollX / tw);
+    var right = Math.floor((renderW - 1 + scrollX) / tw);
+    var top = Math.floor(scrollY / th);
+    var bottom = Math.floor((renderH - 1 + scrollY) / th);
+
+    var baseX = (left * tw) - scrollX;
+    var baseY = (top * th) - scrollY;
+
+    var normStartX = (left + ((1 << 20) * width)) % width;
+    var normStartY = (top + ((1 << 20) * height)) % height;
+
+    var tx, ty, x, y, xmax, ymax;
+
+    context.strokeStyle = this.debugSettings.facingEdgeStroke;
+
+    for (y = normStartY, ymax = bottom - top, ty = baseY; ymax >= 0; y++, ymax--, ty += th)
+    {
+        if (y >= height)
+        {
+            y -= height;
+        }
+
+        var row = this.layer.data[y];
+
+        for (x = normStartX, xmax = right - left, tx = baseX; xmax >= 0; x++, xmax--, tx += tw)
+        {
+            if (x >= width)
+            {
+                x -= width;
+            }
+
+            var tile = row[x];
+            if (!tile || tile.index < 0 || !tile.collides)
+            {
+                continue;
+            }
+
+            if (this.debugSettings.collidingTileOverfill)
+            {
+                context.fillStyle = this.debugSettings.collidingTileOverfill;
+                context.fillRect(tx, ty, this._mc.cw, this._mc.ch);
+            }
+
+            if (this.debugSettings.facingEdgeStroke)
+            {
+                context.beginPath();
+
+                if (tile.faceTop)
+                {
+                    context.moveTo(tx, ty);
+                    context.lineTo(tx + this._mc.cw, ty);
+                }
+
+                if (tile.faceBottom)
+                {
+                    context.moveTo(tx, ty + this._mc.ch);
+                    context.lineTo(tx + this._mc.cw, ty + this._mc.ch);
+                }
+
+                if (tile.faceLeft)
+                {
+                    context.moveTo(tx, ty);
+                    context.lineTo(tx, ty + this._mc.ch);
+                }
+
+                if (tile.faceRight)
+                {
+                    context.moveTo(tx + this._mc.cw, ty);
+                    context.lineTo(tx + this._mc.cw, ty + this._mc.ch);
+                }
+
+                context.closePath();
+
+                context.stroke();
+            }
+           
+        }
+
+    }
+
+};
+
+/**
+* Flag controlling if the layer tiles wrap at the edges. Only works if the World size matches the Map size.
+*
+* @property {boolean} wrap
+* @memberof Phaser.TilemapLayer
+* @public
+* @default false
+*/
+Object.defineProperty(Phaser.TilemapLayer.prototype, "wrap", {
+
+    get: function () {
+        return this._wrap;
+    },
+
+    set: function (value) {
+        this._wrap = value;
+        this.dirty = true;
+    }
+
+});
+
+/**
+* Scrolls the map horizontally or returns the current x position.
+*
+* @property {number} scrollX
+* @memberof Phaser.TilemapLayer
+* @public
+*/
+Object.defineProperty(Phaser.TilemapLayer.prototype, "scrollX", {
+
+    get: function () {
+        return this._scrollX;
+    },
+
+    set: function (value) {
+        this._scrollX = value;
+    }
+
+});
+
+/**
+* Scrolls the map vertically or returns the current y position.
+*
+* @property {number} scrollY
+* @memberof Phaser.TilemapLayer
+* @public
+*/
+Object.defineProperty(Phaser.TilemapLayer.prototype, "scrollY", {
+
+    get: function () {
+        return this._scrollY;
+    },
+
+    set: function (value) {
+        this._scrollY = value;
+    }
+
+});
+
+/**
+* The width of the collision tiles (in pixels).
+*
+* @property {integer} collisionWidth
+* @memberof Phaser.TilemapLayer
+* @public
+*/
+Object.defineProperty(Phaser.TilemapLayer.prototype, "collisionWidth", {
+
+    get: function () {
+        return this._mc.cw;
+    },
+
+    set: function (value) {
+        this._mc.cw = value | 0;
+        this.dirty = true;
+    }
+
+});
+
+/**
+* The height of the collision tiles (in pixels).
+*
+* @property {integer} collisionHeight
+* @memberof Phaser.TilemapLayer
+* @public
+*/
+Object.defineProperty(Phaser.TilemapLayer.prototype, "collisionHeight", {
+
+    get: function () {
+        return this._mc.ch;
+    },
+
+    set: function (value) {
+        this._mc.ch = value | 0;
+        this.dirty = true;
+    }
+
+});
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
+* Phaser.TilemapParser parses data objects from Phaser.Loader that need more preparation before they can be inserted into a Tilemap.
+*
+* @class Phaser.TilemapParser
+* @static
+*/
+Phaser.TilemapParser = {
+
+    /**
+     * When scanning the Tiled map data the TilemapParser can either insert a null value (true) or
+     * a Phaser.Tile instance with an index of -1 (false, the default). Depending on your game type
+     * depends how this should be configured. If you've a large sparsely populated map and the tile
+     * data doesn't need to change then setting this value to `true` will help with memory consumption.
+     * However if your map is small, or you need to update the tiles (perhaps the map dynamically changes
+     * during the game) then leave the default value set.
+     *
+     * @constant
+     * @type {boolean}
+     */
+    INSERT_NULL: false,
+
+    /**
+    * Parse tilemap data from the cache and creates data for a Tilemap object.
+    *
+    * @method Phaser.TilemapParser.parse
+    * @param {Phaser.Game} game - Game reference to the currently running game.
+    * @param {string} key - The key of the tilemap in the Cache.
+    * @param {number} [tileWidth=32] - The pixel width of a single map tile. If using CSV data you must specify this. Not required if using Tiled map data.
+    * @param {number} [tileHeight=32] - The pixel height of a single map tile. If using CSV data you must specify this. Not required if using Tiled map data.
+    * @param {number} [width=10] - The width of the map in tiles. If this map is created from Tiled or CSV data you don't need to specify this.
+    * @param {number} [height=10] - The height of the map in tiles. If this map is created from Tiled or CSV data you don't need to specify this.
+    * @return {object} The parsed map object.
+    */
+    parse: function (game, key, tileWidth, tileHeight, width, height) {
+
+        if (tileWidth === undefined) { tileWidth = 32; }
+        if (tileHeight === undefined) { tileHeight = 32; }
+        if (width === undefined) { width = 10; }
+        if (height === undefined) { height = 10; }
+
+        if (key === undefined)
+        {
+            return this.getEmptyData();
+        }
+
+        if (key === null)
+        {
+            return this.getEmptyData(tileWidth, tileHeight, width, height);
+        }
+
+        var map = game.cache.getTilemapData(key);
+
+        if (map)
+        {
+            if (map.format === Phaser.Tilemap.CSV)
+            {
+                return this.parseCSV(key, map.data, tileWidth, tileHeight);
+            }
+            else if (!map.format || map.format === Phaser.Tilemap.TILED_JSON)
+            {
+                return this.parseTiledJSON(map.data);
+            }
+        }
+        else
+        {
+            console.warn('Phaser.TilemapParser.parse - No map data found for key ' + key);
+        }
+
+    },
+
+    /**
+    * Parses a CSV file into valid map data.
+    *
+    * @method Phaser.TilemapParser.parseCSV
+    * @param {string} key - The name you want to give the map data.
+    * @param {string} data - The CSV file data.
+    * @param {number} [tileWidth=32] - The pixel width of a single map tile. If using CSV data you must specify this. Not required if using Tiled map data.
+    * @param {number} [tileHeight=32] - The pixel height of a single map tile. If using CSV data you must specify this. Not required if using Tiled map data.
+    * @return {object} Generated map data.
+    */
+    parseCSV: function (key, data, tileWidth, tileHeight) {
+
+        var map = this.getEmptyData();
+
+        //  Trim any rogue whitespace from the data
+        data = data.trim();
+
+        var output = [];
+        var rows = data.split("\n");
+        var height = rows.length;
+        var width = 0;
+
+        for (var y = 0; y < rows.length; y++)
+        {
+            output[y] = [];
+
+            var column = rows[y].split(",");
+
+            for (var x = 0; x < column.length; x++)
+            {
+                output[y][x] = new Phaser.Tile(map.layers[0], parseInt(column[x], 10), x, y, tileWidth, tileHeight);
+            }
+
+            if (width === 0)
+            {
+                width = column.length;
+            }
+        }
+
+        map.format = Phaser.Tilemap.CSV;
+        map.name = key;
+        map.width = width;
+        map.height = height;
+        map.tileWidth = tileWidth;
+        map.tileHeight = tileHeight;
+        map.widthInPixels = width * tileWidth;
+        map.heightInPixels = height * tileHeight;
+
+        map.layers[0].width = width;
+        map.layers[0].height = height;
+        map.layers[0].widthInPixels = map.widthInPixels;
+        map.layers[0].heightInPixels = map.heightInPixels;
+        map.layers[0].data = output;
+
+        return map;
+
+    },
+
+    /**
+    * Returns an empty map data object.
+    *
+    * @method Phaser.TilemapParser.getEmptyData
+    * @return {object} Generated map data.
+    */
+    getEmptyData: function (tileWidth, tileHeight, width, height) {
+
+        return {
+            width: (width !== undefined && width !== null) ? width : 0,
+            height: (height !== undefined && height !== null) ? height : 0,
+            tileWidth: (tileWidth !== undefined && tileWidth !== null) ? tileWidth : 0,
+            tileHeight: (tileHeight !== undefined && tileHeight !== null) ? tileHeight : 0,
+            orientation: 'orthogonal',
+            version: '1',
+            properties: {},
+            widthInPixels: 0,
+            heightInPixels: 0,
+            layers: [
+                {
+                    name: 'layer',
+                    x: 0,
+                    y: 0,
+                    width: 0,
+                    height: 0,
+                    widthInPixels: 0,
+                    heightInPixels: 0,
+                    alpha: 1,
+                    visible: true,
+                    properties: {},
+                    indexes: [],
+                    callbacks: [],
+                    bodies: [],
+                    data: []
+                }
+            ],
+            images: [],
+            objects: {},
+            collision: {},
+            tilesets: [],
+            tiles: []
+        };
+
+    },
+
+    /**
+    * Parses a Tiled JSON file into valid map data.
+    * @method Phaser.TilemapParser.parseTiledJSON
+    * @param {object} json - The JSON map data.
+    * @return {object} Generated and parsed map data.
+    */
+    parseTiledJSON: function (json) {
+
+        if (json.orientation !== 'orthogonal')
+        {
+            console.warn('TilemapParser.parseTiledJSON - Only orthogonal map types are supported in this version of Phaser');
+            return null;
+        }
+
+        //  Map data will consist of: layers, objects, images, tilesets, sizes
+        var map = {
+            width: json.width,
+            height: json.height,
+            tileWidth: json.tilewidth,
+            tileHeight: json.tileheight,
+            orientation: json.orientation,
+            format: Phaser.Tilemap.TILED_JSON,
+            version: json.version,
+            properties: json.properties,
+            widthInPixels: json.width * json.tilewidth,
+            heightInPixels: json.height * json.tileheight
+        };
+
+        //  Tile Layers
+        var layers = [];
+
+        for (var i = 0; i < json.layers.length; i++)
+        {
+            if (json.layers[i].type !== 'tilelayer')
+            {
+                continue;
+            }
+
+            var curl = json.layers[i];
+
+            // Base64 decode data if necessary
+            // NOTE: uncompressed base64 only.
+
+            if (!curl.compression && curl.encoding && curl.encoding === 'base64')
+            {
+                var binaryString = window.atob(curl.data);
+                var len = binaryString.length;
+                var bytes = new Array(len);
+
+                // Interpret binaryString as an array of bytes representing
+                // little-endian encoded uint32 values.
+                for (var j = 0; j < len; j+=4)
+                {
+                    bytes[j / 4] = (
+                        binaryString.charCodeAt(j) |
+                        binaryString.charCodeAt(j + 1) << 8 |
+                        binaryString.charCodeAt(j + 2) << 16 |
+                        binaryString.charCodeAt(j + 3) << 24
+                    ) >>> 0;
+                }
+
+                curl.data = bytes;
+
+                delete curl.encoding;
+            }
+            else if (curl.compression)
+            {
+                console.warn('TilemapParser.parseTiledJSON - Layer compression is unsupported, skipping layer \'' + curl.name + '\'');
+                continue;
+            }
+
+            var layer = {
+
+                name: curl.name,
+                x: curl.x,
+                y: curl.y,
+                width: curl.width,
+                height: curl.height,
+                widthInPixels: curl.width * json.tilewidth,
+                heightInPixels: curl.height * json.tileheight,
+                alpha: curl.opacity,
+                offsetX: curl.offsetx,
+                offsetY: curl.offsety,
+                visible: curl.visible,
+                properties: {},
+                indexes: [],
+                callbacks: [],
+                bodies: []
+
+            };
+
+            if (curl.properties)
+            {
+                layer.properties = curl.properties;
+            }
+
+            var x = 0;
+            var row = [];
+            var output = [];
+            var rotation, flipped, flippedVal, gid;
+
+            //  Loop through the data field in the JSON.
+
+            //  This is an array containing the tile indexes, one after the other. -1 = no tile, everything else = the tile index (starting at 1 for Tiled, 0 for CSV)
+            //  If the map contains multiple tilesets then the indexes are relative to that which the set starts from.
+            //  Need to set which tileset in the cache = which tileset in the JSON, if you do this manually it means you can use the same map data but a new tileset.
+
+            for (var t = 0, len = curl.data.length; t < len; t++)
+            {
+                rotation = 0;
+                flipped = false;
+                gid = curl.data[t];
+                flippedVal = 0;
+
+                //  If true the current tile is flipped or rotated (Tiled TMX format)
+                if (gid > 0x20000000)
+                {
+                    // FlippedX
+                    if (gid > 0x80000000)
+                    {
+                        gid -= 0x80000000;
+                        flippedVal += 4;
+                    }
+
+                    // FlippedY
+                    if (gid > 0x40000000)
+                    {
+                        gid -= 0x40000000;
+                        flippedVal += 2;
+                    }
+
+                    // FlippedAD (anti-diagonal = top-right is swapped with bottom-left corners)
+                    if (gid > 0x20000000)
+                    {
+                        gid -= 0x20000000;
+                        flippedVal += 1;
+                    }
+
+                    switch (flippedVal)
+                    {
+                        case 5:
+                            rotation = Math.PI / 2;
+                            break;
+
+                        case 6:
+                            rotation = Math.PI;
+                            break;
+
+                        case 3:
+                            rotation = 3 * Math.PI / 2;
+                            break;
+
+                        case 4:
+                            rotation = 0;
+                            flipped = true;
+                            break;
+
+                        case 7:
+                            rotation = Math.PI / 2;
+                            flipped = true;
+                            break;
+
+                        case 2:
+                            rotation = Math.PI;
+                            flipped = true;
+                            break;
+
+                        case 1:
+                            rotation = 3 * Math.PI / 2;
+                            flipped = true;
+                            break;
+                    }
+                }
+
+                //  index, x, y, width, height
+                if (gid > 0)
+                {
+                    var tile = new Phaser.Tile(layer, gid, x, output.length, json.tilewidth, json.tileheight);
+
+                    tile.rotation = rotation;
+                    tile.flipped = flipped;
+
+                    if (flippedVal !== 0)
+                    {
+                        //  The WebGL renderer uses this to flip UV coordinates before drawing
+                        tile.flippedVal = flippedVal;
+                    }
+
+                    row.push(tile);
+                }
+                else
+                {
+                    if (Phaser.TilemapParser.INSERT_NULL)
+                    {
+                        row.push(null);
+                    }
+                    else
+                    {
+                        row.push(new Phaser.Tile(layer, -1, x, output.length, json.tilewidth, json.tileheight));
+                    }
+                }
+
+                x++;
+
+                if (x === curl.width)
+                {
+                    output.push(row);
+                    x = 0;
+                    row = [];
+                }
+            }
+
+            layer.data = output;
+
+            layers.push(layer);
+        }
+
+        map.layers = layers;
+
+        //  Images
+        var images = [];
+
+        for (var i = 0; i < json.layers.length; i++)
+        {
+            if (json.layers[i].type !== 'imagelayer')
+            {
+                continue;
+            }
+
+            var curi = json.layers[i];
+
+            var image = {
+
+                name: curi.name,
+                image: curi.image,
+                x: curi.x,
+                y: curi.y,
+                alpha: curi.opacity,
+                visible: curi.visible,
+                properties: {}
+
+            };
+
+            if (curi.properties)
+            {
+                image.properties = curi.properties;
+            }
+
+            images.push(image);
+
+        }
+
+        map.images = images;
+
+        //  Tilesets & Image Collections
+        var tilesets = [];
+        var imagecollections = [];
+        var lastSet = null;
+
+        for (var i = 0; i < json.tilesets.length; i++)
+        {
+            //  name, firstgid, width, height, margin, spacing, properties
+            var set = json.tilesets[i];
+
+            if (set.source)
+            {
+                console.warn('Phaser.TilemapParser - Phaser can\'t load external tilesets (%s). Use the Embed Tileset button and then export the map again.', set.source);
+            }
+            else if (set.image)
+            {
+                var newSet = new Phaser.Tileset(set.name, set.firstgid, set.tilewidth, set.tileheight, set.margin, set.spacing, set.properties);
+
+                if (set.tileproperties)
+                {
+                    newSet.tileProperties = set.tileproperties;
+                }
+
+                // For a normal sliced tileset the row/count/size information is computed when updated.
+                // This is done (again) after the image is set.
+                newSet.updateTileData(set.imagewidth, set.imageheight);
+
+                tilesets.push(newSet);
+            }
+            else if (set.tiles)
+            {
+                var newCollection = new Phaser.ImageCollection(set.name, set.firstgid, set.tilewidth, set.tileheight, set.margin, set.spacing, set.properties);
+
+                for (var ti in set.tiles)
+                {
+                    var image = set.tiles[ti].image;
+                    var gid = set.firstgid + parseInt(ti, 10);
+                    newCollection.addImage(gid, image);
+                }
+
+                imagecollections.push(newCollection);
+            }
+            else
+            {
+                throw new Error('Tileset ' + set.name + ' has no `image` or `tiles` property.');
+            }
+
+            //  We've got a new Tileset, so set the lastgid into the previous one
+            if (lastSet)
+            {
+                lastSet.lastgid = set.firstgid - 1;
+            }
+
+            lastSet = set;
+        }
+
+        if (tilesets.length === 0 && imagecollections.length === 0)
+        {
+            throw new Error('This tilemap has no tilesets.');
+        }
+
+        map.tilesets = tilesets;
+        map.imagecollections = imagecollections;
+
+        //  Objects & Collision Data (polylines, etc)
+        var objects = {};
+        var collision = {};
+
+        function slice (obj, fields) {
+
+            var sliced = {};
+
+            for (var k in fields)
+            {
+                var key = fields[k];
+
+                if (typeof obj[key] !== 'undefined')
+                {
+                    sliced[key] = obj[key];
+                }
+            }
+
+            return sliced;
+        }
+
+        for (var i = 0; i < json.layers.length; i++)
+        {
+            if (json.layers[i].type !== 'objectgroup')
+            {
+                continue;
+            }
+
+            var curo = json.layers[i];
+
+            objects[curo.name] = [];
+            collision[curo.name] = [];
+
+            for (var v = 0, len = curo.objects.length; v < len; v++)
+            {
+                //  Object Tiles
+                if (curo.objects[v].gid)
+                {
+                    var object = {
+
+                        gid: curo.objects[v].gid,
+                        name: curo.objects[v].name,
+                        type: curo.objects[v].hasOwnProperty("type") ? curo.objects[v].type : "",
+                        x: curo.objects[v].x,
+                        y: curo.objects[v].y,
+                        width: curo.objects[v].width,
+                        height: curo.objects[v].height,
+                        visible: curo.objects[v].visible,
+                        properties: curo.objects[v].properties
+
+                    };
+
+                    if (curo.objects[v].rotation)
+                    {
+                        object.rotation = curo.objects[v].rotation;
+                    }
+
+                    objects[curo.name].push(object);
+                }
+                else if (curo.objects[v].polyline)
+                {
+                    var object = {
+
+                        name: curo.objects[v].name,
+                        type: curo.objects[v].type,
+                        x: curo.objects[v].x,
+                        y: curo.objects[v].y,
+                        width: curo.objects[v].width,
+                        height: curo.objects[v].height,
+                        visible: curo.objects[v].visible,
+                        properties: curo.objects[v].properties
+
+                    };
+
+                    if (curo.objects[v].rotation)
+                    {
+                        object.rotation = curo.objects[v].rotation;
+                    }
+
+                    object.polyline = [];
+
+                    //  Parse the polyline into an array
+                    for (var p = 0; p < curo.objects[v].polyline.length; p++)
+                    {
+                        object.polyline.push([ curo.objects[v].polyline[p].x, curo.objects[v].polyline[p].y ]);
+                    }
+
+                    collision[curo.name].push(object);
+                    objects[curo.name].push(object);
+                }
+                // polygon
+                else if (curo.objects[v].polygon)
+                {
+                    var object = slice(curo.objects[v], ['name', 'type', 'x', 'y', 'visible', 'rotation', 'properties']);
+
+                    //  Parse the polygon into an array
+                    object.polygon = [];
+
+                    for (var p = 0; p < curo.objects[v].polygon.length; p++)
+                    {
+                        object.polygon.push([curo.objects[v].polygon[p].x, curo.objects[v].polygon[p].y]);
+                    }
+
+                    objects[curo.name].push(object);
+
+                }
+                // ellipse
+                else if (curo.objects[v].ellipse)
+                {
+                    var object = slice(curo.objects[v], ['name', 'type', 'ellipse', 'x', 'y', 'width', 'height', 'visible', 'rotation', 'properties']);
+                    objects[curo.name].push(object);
+                }
+                // otherwise it's a rectangle
+                else
+                {
+                    var object = slice(curo.objects[v], ['name', 'type', 'x', 'y', 'width', 'height', 'visible', 'rotation', 'properties']);
+                    object.rectangle = true;
+                    objects[curo.name].push(object);
+                }
+            }
+        }
+
+        map.objects = objects;
+        map.collision = collision;
+
+        map.tiles = [];
+
+        //  Finally lets build our super tileset index
+        for (var i = 0; i < map.tilesets.length; i++)
+        {
+            var set = map.tilesets[i];
+
+            var x = set.tileMargin;
+            var y = set.tileMargin;
+
+            var count = 0;
+            var countX = 0;
+            var countY = 0;
+
+            for (var t = set.firstgid; t < set.firstgid + set.total; t++)
+            {
+                //  Can add extra properties here as needed
+                map.tiles[t] = [x, y, i];
+
+                x += set.tileWidth + set.tileSpacing;
+
+                count++;
+
+                if (count === set.total)
+                {
+                    break;
+                }
+
+                countX++;
+
+                if (countX === set.columns)
+                {
+                    x = set.tileMargin;
+                    y += set.tileHeight + set.tileSpacing;
+
+                    countX = 0;
+                    countY++;
+
+                    if (countY === set.rows)
+                    {
+                        break;
+                    }
+                }
+            }
+
+        }
+
+        // assign tile properties
+
+        var layer;
+        var tile;
+        var sid;
+        var set;
+
+        // go through each of the map data layers
+        for (var i = 0; i < map.layers.length; i++)
+        {
+            layer = map.layers[i];
+
+            set = null;
+
+            // rows of tiles
+            for (var j = 0; j < layer.data.length; j++)
+            {
+                row = layer.data[j];
+
+                // individual tiles
+                for (var k = 0; k < row.length; k++)
+                {
+                    tile = row[k];
+
+                    if (tile === null || tile.index < 0)
+                    {
+                        continue;
+                    }
+
+                    // find the relevant tileset
+
+                    sid = map.tiles[tile.index][2];
+                    set = map.tilesets[sid];
+
+
+                    // if that tile type has any properties, add them to the tile object
+
+                    if (set.tileProperties && set.tileProperties[tile.index - set.firstgid])
+                    {
+                        tile.properties = Phaser.Utils.mixin(set.tileProperties[tile.index - set.firstgid], tile.properties);
+                    }
+
+                }
+            }
+        }
+
+        return map;
+
+    }
+
+};
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
+* A Tile set is a combination of an image containing the tiles and collision data per tile.
+*
+* Tilesets are normally created automatically when Tiled data is loaded.
+*
+* @class Phaser.Tileset
+* @constructor
+* @param {string} name - The name of the tileset in the map data.
+* @param {integer} firstgid - The first tile index this tileset contains.
+* @param {integer} [width=32] - Width of each tile (in pixels).
+* @param {integer} [height=32] - Height of each tile (in pixels).
+* @param {integer} [margin=0] - The margin around all tiles in the sheet (in pixels).
+* @param {integer} [spacing=0] - The spacing between each tile in the sheet (in pixels).
+* @param {object} [properties={}] - Custom Tileset properties.
+*/
+Phaser.Tileset = function (name, firstgid, width, height, margin, spacing, properties) {
+
+    if (width === undefined || width <= 0) { width = 32; }
+    if (height === undefined || height <= 0) { height = 32; }
+    if (margin === undefined) { margin = 0; }
+    if (spacing === undefined) { spacing = 0; }
+
+    /**
+    * The name of the Tileset.
+    * @property {string} name
+    */
+    this.name = name;
+
+    /**
+    * The Tiled firstgid value.
+    * This is the starting index of the first tile index this Tileset contains.
+    * @property {integer} firstgid
+    */
+    this.firstgid = firstgid | 0;
+
+    /**
+    * The width of each tile (in pixels).
+    * @property {integer} tileWidth
+    * @readonly
+    */
+    this.tileWidth = width | 0;
+
+    /**
+    * The height of each tile (in pixels).
+    * @property {integer} tileHeight
+    * @readonly
+    */
+    this.tileHeight = height | 0;
+
+    /**
+    * The margin around the tiles in the sheet (in pixels).
+    * Use `setSpacing` to change.
+    * @property {integer} tileMarge
+    * @readonly
+    */
+    // Modified internally
+    this.tileMargin = margin | 0;
+
+    /**
+    * The spacing between each tile in the sheet (in pixels).
+    * Use `setSpacing` to change.
+    * @property {integer} tileSpacing
+    * @readonly
+    */
+    this.tileSpacing = spacing | 0;
+
+    /**
+    * Tileset-specific properties that are typically defined in the Tiled editor.
+    * @property {object} properties
+    */
+    this.properties = properties || {};
+
+    /**
+    * The cached image that contains the individual tiles. Use {@link Phaser.Tileset.setImage setImage} to set.
+    * @property {?object} image
+    * @readonly
+    */
+    // Modified internally
+    this.image = null;
+
+    /**
+    * The number of tile rows in the the tileset.
+    * @property {integer}
+    * @readonly
+    */
+    // Modified internally
+    this.rows = 0;
+
+    /**
+    * The number of tile columns in the tileset.
+    * @property {integer} columns
+    * @readonly
+    */
+    // Modified internally
+    this.columns = 0;
+
+    /**
+    * The total number of tiles in the tileset.
+    * @property {integer} total
+    * @readonly
+    */
+    // Modified internally
+    this.total = 0;
+
+    /**
+    * The look-up table to specific tile image offsets.
+    * The coordinates are interlaced such that it is [x0, y0, x1, y1 .. xN, yN] and the tile with the index of firstgid is found at indices 0/1.
+    * @property {integer[]} drawCoords
+    * @private
+    */
+    this.drawCoords = [];
+
+};
+
+Phaser.Tileset.prototype = {
+
+    /**
+    * Draws a tile from this Tileset at the given coordinates on the context.
+    *
+    * @method Phaser.Tileset#draw
+    * @public
+    * @param {CanvasRenderingContext2D} context - The context to draw the tile onto.
+    * @param {number} x - The x coordinate to draw to.
+    * @param {number} y - The y coordinate to draw to.
+    * @param {integer} index - The index of the tile within the set to draw.
+    */
+    draw: function (context, x, y, index) {
+
+        //  Correct the tile index for the set and bias for interlacing
+        var coordIndex = (index - this.firstgid) << 1;
+
+        if (coordIndex >= 0 && (coordIndex + 1) < this.drawCoords.length)
+        {
+            context.drawImage(
+                this.image,
+                this.drawCoords[coordIndex],
+                this.drawCoords[coordIndex + 1],
+                this.tileWidth,
+                this.tileHeight,
+                x,
+                y,
+                this.tileWidth,
+                this.tileHeight
+            );
+        }
+
+    },
+
+    /**
+    * Returns true if and only if this tileset contains the given tile index.
+    *
+    * @method Phaser.Tileset#containsTileIndex
+    * @public
+    * @return {boolean} True if this tileset contains the given index.
+    */
+    containsTileIndex: function (tileIndex) {
+
+        return (
+            tileIndex >= this.firstgid &&
+            tileIndex < (this.firstgid + this.total)
+        );
+
+    },
+
+    /**
+    * Set the image associated with this Tileset and update the tile data.
+    *
+    * @method Phaser.Tileset#setImage
+    * @public
+    * @param {Image} image - The image that contains the tiles.
+    */
+    setImage: function (image) {
+
+        this.image = image;
+        this.updateTileData(image.width, image.height);
+       
+    },
+
+    /**
+    * Sets tile spacing and margins.
+    *
+    * @method Phaser.Tileset#setSpacing
+    * @public
+    * @param {integer} [margin=0] - The margin around the tiles in the sheet (in pixels).
+    * @param {integer} [spacing=0] - The spacing between the tiles in the sheet (in pixels).
+    */
+    setSpacing: function (margin, spacing) {
+
+        this.tileMargin = margin | 0;
+        this.tileSpacing = spacing | 0;
+
+        if (this.image)
+        {
+            this.updateTileData(this.image.width, this.image.height);
+        }
+
+    },
+
+    /**
+    * Updates tile coordinates and tileset data.
+    *
+    * @method Phaser.Tileset#updateTileData
+    * @private
+    * @param {integer} imageWidth - The (expected) width of the image to slice.
+    * @param {integer} imageHeight - The (expected) height of the image to slice.
+    */
+    updateTileData: function (imageWidth, imageHeight) {
+
+        // May be fractional values
+        var rowCount = (imageHeight - this.tileMargin * 2 + this.tileSpacing) / (this.tileHeight + this.tileSpacing);
+        var colCount = (imageWidth - this.tileMargin * 2 + this.tileSpacing) / (this.tileWidth + this.tileSpacing);
+
+        if (rowCount % 1 !== 0 || colCount % 1 !== 0)
+        {
+            console.warn("Phaser.Tileset - " + this.name + " image tile area is not an even multiple of tile size");
+        }
+
+        // In Tiled a tileset image that is not an even multiple of the tile dimensions
+        // is truncated - hence the floor when calculating the rows/columns.
+        rowCount = Math.floor(rowCount);
+        colCount = Math.floor(colCount);
+
+        if ((this.rows && this.rows !== rowCount) || (this.columns && this.columns !== colCount))
+        {
+            console.warn("Phaser.Tileset - actual and expected number of tile rows and columns differ");
+        }
+
+        this.rows = rowCount;
+        this.columns = colCount;
+        this.total = rowCount * colCount;
+
+        this.drawCoords.length = 0;
+
+        var tx = this.tileMargin;
+        var ty = this.tileMargin;
+
+        for (var y = 0; y < this.rows; y++)
+        {
+            for (var x = 0; x < this.columns; x++)
+            {
+                this.drawCoords.push(tx);
+                this.drawCoords.push(ty);
+                tx += this.tileWidth + this.tileSpacing;
+            }
+
+            tx = this.tileMargin;
+            ty += this.tileHeight + this.tileSpacing;
+        }
+
+    }
+
+};
+
+Phaser.Tileset.prototype.constructor = Phaser.Tileset;
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
+* Create a new `Particle` object. Particles are extended Sprites that are emitted by a particle emitter such as Phaser.Particles.Arcade.Emitter.
+* 
+* @class Phaser.Particle
+* @constructor
+* @extends Phaser.Sprite
+* @param {Phaser.Game} game - A reference to the currently running game.
+* @param {number} x - The x coordinate (in world space) to position the Particle at.
+* @param {number} y - The y coordinate (in world space) to position the Particle at.
+* @param {string|Phaser.RenderTexture|Phaser.BitmapData|PIXI.Texture} key - This is the image or texture used by the Particle during rendering. It can be a string which is a reference to the Cache entry, or an instance of a RenderTexture or PIXI.Texture.
+* @param {string|number} frame - If this Particle is using part of a sprite sheet or texture atlas you can specify the exact frame to use by giving a string or numeric index.
+*/
+Phaser.Particle = function (game, x, y, key, frame) {
+
+    Phaser.Sprite.call(this, game, x, y, key, frame);
+
+    /**
+    * @property {boolean} autoScale - If this Particle automatically scales this is set to true by Particle.setScaleData.
+    * @protected
+    */
+    this.autoScale = false;
+
+    /**
+    * @property {array} scaleData - A reference to the scaleData array owned by the Emitter that emitted this Particle.
+    * @protected
+    */
+    this.scaleData = null;
+
+    /**
+    * @property {number} _s - Internal cache var for tracking auto scale.
+    * @private
+    */
+    this._s = 0;
+
+    /**
+    * @property {boolean} autoAlpha - If this Particle automatically changes alpha this is set to true by Particle.setAlphaData.
+    * @protected
+    */
+    this.autoAlpha = false;
+
+    /**
+    * @property {array} alphaData - A reference to the alphaData array owned by the Emitter that emitted this Particle.
+    * @protected
+    */
+    this.alphaData = null;
+
+    /**
+    * @property {number} _a - Internal cache var for tracking auto alpha.
+    * @private
+    */
+    this._a = 0;
+
+};
+
+Phaser.Particle.prototype = Object.create(Phaser.Sprite.prototype);
+Phaser.Particle.prototype.constructor = Phaser.Particle;
+
+/**
+* Updates the Particle scale or alpha if autoScale and autoAlpha are set.
+*
+* @method Phaser.Particle#update
+* @memberof Phaser.Particle
+*/
+Phaser.Particle.prototype.update = function() {
+
+    if (this.autoScale)
+    {
+        this._s--;
+
+        if (this._s)
+        {
+            this.scale.set(this.scaleData[this._s].x, this.scaleData[this._s].y);
+        }
+        else
+        {
+            this.autoScale = false;
+        }
+    }
+
+    if (this.autoAlpha)
+    {
+        this._a--;
+
+        if (this._a)
+        {
+            this.alpha = this.alphaData[this._a].v;
+        }
+        else
+        {
+            this.autoAlpha = false;
+        }
+    }
+
+};
+
+/**
+* Called by the Emitter when this particle is emitted. Left empty for you to over-ride as required.
+*
+* @method Phaser.Particle#onEmit
+* @memberof Phaser.Particle
+*/
+Phaser.Particle.prototype.onEmit = function() {
+};
+
+/**
+* Called by the Emitter if autoAlpha has been enabled. Passes over the alpha ease data and resets the alpha counter.
+*
+* @method Phaser.Particle#setAlphaData
+* @memberof Phaser.Particle
+*/
+Phaser.Particle.prototype.setAlphaData = function(data) {
+
+    this.alphaData = data;
+    this._a = data.length - 1;
+    this.alpha = this.alphaData[this._a].v;
+    this.autoAlpha = true;
+
+};
+
+/**
+* Called by the Emitter if autoScale has been enabled. Passes over the scale ease data and resets the scale counter.
+*
+* @method Phaser.Particle#setScaleData
+* @memberof Phaser.Particle
+*/
+Phaser.Particle.prototype.setScaleData = function(data) {
+
+    this.scaleData = data;
+    this._s = data.length - 1;
+    this.scale.set(this.scaleData[this._s].x, this.scaleData[this._s].y);
+    this.autoScale = true;
+
+};
+
+/**
+* Resets the Particle. This places the Particle at the given x/y world coordinates and then
+* sets alive, exists, visible and renderable all to true. Also resets the outOfBounds state and health values.
+* If the Particle has a physics body that too is reset.
+*
+* @method Phaser.Particle#reset
+* @memberof Phaser.Particle
+* @param {number} x - The x coordinate (in world space) to position the Particle at.
+* @param {number} y - The y coordinate (in world space) to position the Particle at.
+* @param {number} [health=1] - The health to give the Particle.
+* @return {Phaser.Particle} This instance.
+*/
+Phaser.Particle.prototype.reset = function(x, y, health) {
+
+    Phaser.Component.Reset.prototype.reset.call(this, x, y, health);
+
+    this.alpha = 1;
+    this.scale.set(1);
+
+    this.autoScale = false;
+    this.autoAlpha = false;
+
+    return this;
+
+};
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
 * Phaser.Particles is the Particle Manager for the game. It is called during the game update loop and in turn updates any Emitters attached to it.
 *
 * @class Phaser.Particles
@@ -73635,6 +82745,2748 @@ Phaser.Particles.prototype = {
 };
 
 Phaser.Particles.prototype.constructor = Phaser.Particles;
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
+* Arcade Particles is a Particle System integrated with Arcade Physics.
+*
+* @class Phaser.Particles.Arcade
+*/
+Phaser.Particles.Arcade = {};
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
+* Emitter is a lightweight particle emitter that uses Arcade Physics.
+* It can be used for one-time explosions or for continuous effects like rain and fire.
+* All it really does is launch Particle objects out at set intervals, and fixes their positions and velocities accordingly.
+*
+* @class Phaser.Particles.Arcade.Emitter
+* @constructor
+* @extends Phaser.Group
+* @param {Phaser.Game} game - Current game instance.
+* @param {number} [x=0] - The x coordinate within the Emitter that the particles are emitted from.
+* @param {number} [y=0] - The y coordinate within the Emitter that the particles are emitted from.
+* @param {number} [maxParticles=50] - The total number of particles in this emitter.
+*/
+Phaser.Particles.Arcade.Emitter = function (game, x, y, maxParticles) {
+
+    /**
+    * @property {number} maxParticles - The total number of particles in this emitter.
+    * @default
+    */
+    this.maxParticles = maxParticles || 50;
+
+    Phaser.Group.call(this, game);
+
+    /**
+    * @property {number} _id - Internal ID for this emitter -- only used by the Particle System in most cases
+    * @private
+    */
+    this._id = this.game.particles.ID++;
+
+    /**
+    * @property {string} name - A handy string name for this emitter. Can be set to anything.
+    */
+    this.name = 'emitter' + this.id;
+
+    /**
+    * @property {number} type - Internal Phaser Type value.
+    * @protected
+    */
+    this.type = Phaser.EMITTER;
+
+    /**
+    * @property {number} physicsType - The const physics body type of this object.
+    * @readonly
+    */
+    this.physicsType = Phaser.GROUP;
+
+    /**
+    * @property {Phaser.Rectangle} area - The {@link #setSize size} of the emitter's emit area. The **actual** emit area is a rectangle of this size centered on (emitX, emitY): `{x: this.left, y: this.top, width: this.area.width, height: this.area.height}`. Particles are generated at a random position within this area.
+    * @default
+    */
+    this.area = new Phaser.Rectangle(x, y, 1, 1);
+
+    /**
+     * @property {?number} minAngle - The minimum angle of initial particle velocities, in degrees. When set to a non-null value (with {@link #maxAngle}), {@link #minSpeed} and {@link #maxSpeed} are used and {@link #minParticleSpeed} and {@link #maxParticleSpeed} are ignored.
+     * @default
+     */
+    this.minAngle = null;
+
+    /**
+     * @property {?number} maxAngle - The maximum angle of initial particle velocities, in degrees. When set to a non-null value (with {@link #minAngle}), {@link #minSpeed} and {@link #maxSpeed} are used and {@link #minParticleSpeed} and {@link #maxParticleSpeed} are ignored.
+     * @default
+     */
+    this.maxAngle = null;
+
+    /**
+     * @property {number} minSpeed - The minimum initial speed of particles released within {@link #minAngle} and {@link #maxAngle}.
+     * @default
+     */
+    this.minSpeed = 0;
+
+    /**
+     * @property {number} maxSpeed - The maximum initial speed of particles released within {@link #minAngle} and {@link #maxAngle}.
+     * @default
+     */
+    this.maxSpeed = 100;
+
+    /**
+    * @property {Phaser.Point} minParticleSpeed - The minimum possible velocity of a particle.
+    * @default
+    */
+    this.minParticleSpeed = new Phaser.Point(-100, -100);
+
+    /**
+    * @property {Phaser.Point} maxParticleSpeed - The maximum possible velocity of a particle.
+    * @default
+    */
+    this.maxParticleSpeed = new Phaser.Point(100, 100);
+
+    /**
+    * @property {number} minParticleScale - The minimum possible scale of a particle. This is applied to the X and Y axis. If you need to control each axis see minParticleScaleX.
+    * @default
+    */
+    this.minParticleScale = 1;
+
+    /**
+    * @property {number} maxParticleScale - The maximum possible scale of a particle. This is applied to the X and Y axis. If you need to control each axis see maxParticleScaleX.
+    * @default
+    */
+    this.maxParticleScale = 1;
+
+    /**
+    * @property {array} scaleData - An array of the calculated scale easing data applied to particles with scaleRates > 0.
+    */
+    this.scaleData = null;
+
+    /**
+    * @property {number} minRotation - The minimum possible angular velocity of a particle.
+    * @default
+    */
+    this.minRotation = -360;
+
+    /**
+    * @property {number} maxRotation - The maximum possible angular velocity of a particle.
+    * @default
+    */
+    this.maxRotation = 360;
+
+    /**
+    * @property {number} minParticleAlpha - The minimum possible alpha value of a particle.
+    * @default
+    */
+    this.minParticleAlpha = 1;
+
+    /**
+    * @property {number} maxParticleAlpha - The maximum possible alpha value of a particle.
+    * @default
+    */
+    this.maxParticleAlpha = 1;
+
+    /**
+    * @property {array} alphaData - An array of the calculated alpha easing data applied to particles with alphaRates > 0.
+    */
+    this.alphaData = null;
+
+    /**
+    * @property {function} particleClass - For emitting your own particle class types. They must extend Phaser.Particle.
+    * @default
+    */
+    this.particleClass = Phaser.Particle;
+
+    /**
+    * @property {Phaser.Point} particleDrag - The X and Y drag component of particles launched from the emitter.
+    */
+    this.particleDrag = new Phaser.Point();
+
+    /**
+    * @property {number} angularDrag - The angular drag component of particles launched from the emitter if they are rotating.
+    * @default
+    */
+    this.angularDrag = 0;
+
+    /**
+    * @property {number} frequency - How often a particle is emitted in ms (if emitter is started with Explode === false).
+    * @default
+    */
+    this.frequency = 100;
+
+    /**
+    * @property {number} lifespan - How long each particle lives once it is emitted in ms. Default is 2 seconds. Set lifespan to 'zero' for particles to live forever.
+    * @default
+    */
+    this.lifespan = 2000;
+
+    /**
+    * @property {Phaser.Point} bounce - How much each particle should bounce on each axis. 1 = full bounce, 0 = no bounce.
+    */
+    this.bounce = new Phaser.Point();
+
+    /**
+    * @property {boolean} on - Determines whether the emitter is currently emitting particles. It is totally safe to directly toggle this.
+    * @default
+    */
+    this.on = false;
+
+    /**
+    * @property {Phaser.Point} particleAnchor - When a particle is created its anchor will be set to match this Point object (defaults to x/y: 0.5 to aid in rotation)
+    * @default
+    */
+    this.particleAnchor = new Phaser.Point(0.5, 0.5);
+
+    /**
+    * @property {number} blendMode - The blendMode as set on the particle when emitted from the Emitter. Defaults to NORMAL. Needs browser capable of supporting canvas blend-modes (most not available in WebGL)
+    * @default
+    */
+    this.blendMode = Phaser.blendModes.NORMAL;
+
+    /**
+    * The point the particles are emitted from.
+    * Emitter.x and Emitter.y control the containers location, which updates all current particles
+    * Emitter.emitX and Emitter.emitY control the emission location relative to the x/y position.
+    * @property {number} emitX
+    */
+    this.emitX = x;
+
+    /**
+    * The point the particles are emitted from.
+    * Emitter.x and Emitter.y control the containers location, which updates all current particles
+    * Emitter.emitX and Emitter.emitY control the emission location relative to the x/y position.
+    * @property {number} emitY
+    */
+    this.emitY = y;
+
+    /**
+    * @property {boolean} autoScale - When a new Particle is emitted this controls if it will automatically scale in size. Use Emitter.setScale to configure.
+    */
+    this.autoScale = false;
+
+    /**
+    * @property {boolean} autoAlpha - When a new Particle is emitted this controls if it will automatically change alpha. Use Emitter.setAlpha to configure.
+    */
+    this.autoAlpha = false;
+
+    /**
+    * @property {boolean} particleBringToTop - If this is `true` then when the Particle is emitted it will be bought to the top of the Emitters display list.
+    * @default
+    */
+    this.particleBringToTop = false;
+
+    /**
+    * @property {boolean} particleSendToBack - If this is `true` then when the Particle is emitted it will be sent to the back of the Emitters display list.
+    * @default
+    */
+    this.particleSendToBack = false;
+
+    /**
+     * @property {object} count - Records emitter activity.
+     * @property {number} count.emitted - How many particles were emitted during the last update.
+     * @property {number} count.failed - How many particles could not be emitted during the last update (because no particles were available).
+     * @property {number} count.totalEmitted - How many particles have been emitted.
+     * @property {number} count.totalFailed - How many particles could not be emitted when they were due (because no particles were available).
+     */
+    this.count = {
+        emitted: 0,
+        failed: 0,
+        totalEmitted: 0,
+        totalFailed: 0
+    };
+
+    /**
+    * @property {Phaser.Point} _gravity - Internal gravity value.
+    * @private
+    */
+    this._gravity = new Phaser.Point(0, 100);
+
+    /**
+    * @property {Phaser.Point} _minParticleScale - Internal particle scale var.
+    * @private
+    */
+    this._minParticleScale = new Phaser.Point(1, 1);
+
+    /**
+    * @property {Phaser.Point} _maxParticleScale - Internal particle scale var.
+    * @private
+    */
+    this._maxParticleScale = new Phaser.Point(1, 1);
+
+    /**
+    * @property {number} _total - Internal helper for deciding how many particles to launch (via {@link #start}).
+    * @private
+    */
+    this._total = 0;
+
+    /**
+    * @property {number} _timer - Internal helper for deciding when to launch particles or kill them.
+    * @private
+    */
+    this._timer = 0;
+
+    /**
+    * @property {number} _counter - Internal counter for figuring out how many particles to launch.
+    * @private
+    */
+    this._counter = 0;
+
+    /**
+    * @property {number} _flowQuantity - Internal counter for figuring out how many particles to launch per flow update.
+    * @private
+    */
+    this._flowQuantity = 0;
+
+    /**
+    * @property {number} _flowTotal - Internal counter for figuring out how many particles to launch in total (via {@link #flow}).
+    * @private
+    */
+    this._flowTotal = 0;
+
+    /**
+    * @property {boolean} _explode - Internal helper for the style of particle emission (all at once, or one at a time).
+    * @private
+    */
+    this._explode = true;
+
+    /**
+    * @property {any} _frames - Internal helper for the particle frame.
+    * @private
+    */
+    this._frames = null;
+
+};
+
+Phaser.Particles.Arcade.Emitter.prototype = Object.create(Phaser.Group.prototype);
+Phaser.Particles.Arcade.Emitter.prototype.constructor = Phaser.Particles.Arcade.Emitter;
+
+/**
+* Called automatically by the game loop, decides when to launch particles and when to "die".
+*
+* @method Phaser.Particles.Arcade.Emitter#update
+*/
+Phaser.Particles.Arcade.Emitter.prototype.update = function () {
+
+    this.count.emitted = 0;
+    this.count.failed = 0;
+
+    if (this.on && this.game.time.time >= this._timer)
+    {
+        this._timer = this.game.time.time + this.frequency * this.game.time.slowMotion;
+
+        if (this._flowTotal !== 0)
+        {
+            if (this._flowQuantity > 0)
+            {
+                for (var i = 0; i < this._flowQuantity; i++)
+                {
+                    if (this.emitParticle())
+                    {
+                        this._counter++;
+
+                        if (this._flowTotal !== -1 && this._counter >= this._flowTotal)
+                        {
+                            this.on = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (this.emitParticle())
+                {
+                    this._counter++;
+
+                    if (this._flowTotal !== -1 && this._counter >= this._flowTotal)
+                    {
+                        this.on = false;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (this.emitParticle())
+            {
+                this._counter++;
+
+                if (this._total > 0 && this._counter >= this._total)
+                {
+                    this.on = false;
+                }
+            }
+        }
+
+    }
+
+    var i = this.children.length;
+
+    while (i--)
+    {
+        if (this.children[i].exists)
+        {
+            this.children[i].update();
+        }
+    }
+
+};
+
+/**
+* This function generates a new set of particles for use by this emitter.
+* The particles are stored internally waiting to be emitted via Emitter.start.
+*
+* @method Phaser.Particles.Arcade.Emitter#makeParticles
+* @param {array|string} keys - A string or an array of strings that the particle sprites will use as their texture. If an array one is picked at random.
+* @param {array|number} [frames=0] - A frame number, or array of frames that the sprite will use. If an array one is picked at random.
+* @param {number} [quantity] - The number of particles to generate. If not given it will use the value of Emitter.maxParticles. If the value is greater than Emitter.maxParticles it will use Emitter.maxParticles as the quantity.
+* @param {boolean} [collide=false] - If you want the particles to be able to collide with other Arcade Physics bodies then set this to true.
+* @param {boolean} [collideWorldBounds=false] - A particle can be set to collide against the World bounds automatically and rebound back into the World if this is set to true. Otherwise it will leave the World.
+* @param {object} [particleArguments=null] - Custom arguments to pass to your particle class
+* @return {Phaser.Particles.Arcade.Emitter} This Emitter instance.
+*/
+Phaser.Particles.Arcade.Emitter.prototype.makeParticles = function (keys, frames, quantity, collide, collideWorldBounds, particleArguments) {
+
+    if (frames === undefined) { frames = 0; }
+    if (quantity === undefined) { quantity = this.maxParticles; }
+    if (collide === undefined) { collide = false; }
+    if (collideWorldBounds === undefined) { collideWorldBounds = false; }
+    if (particleArguments === undefined) { particleArguments = null; }
+
+    var particle;
+    var i = 0;
+    var rndKey = keys;
+    var rndFrame = frames;
+    this._frames = frames;
+
+    if (quantity > this.maxParticles)
+    {
+        this.maxParticles = quantity;
+    }
+
+    while (i < quantity)
+    {
+        if (Array.isArray(keys))
+        {
+            rndKey = this.game.rnd.pick(keys);
+        }
+
+        if (Array.isArray(frames))
+        {
+            rndFrame = this.game.rnd.pick(frames);
+        }
+
+        particle = new this.particleClass(this.game, 0, 0, rndKey, rndFrame, particleArguments);
+
+        this.game.physics.arcade.enable(particle, false);
+
+        particle.body.checkCollision.none = !collide;
+        particle.body.collideWorldBounds = collideWorldBounds;
+        particle.body.skipQuadTree = true;
+
+        particle.exists = false;
+        particle.visible = false;
+        particle.anchor.copyFrom(this.particleAnchor);
+
+        this.add(particle);
+
+        i++;
+    }
+
+    return this;
+
+};
+
+/**
+* Call this function to turn off all the particles and the emitter.
+*
+* @method Phaser.Particles.Arcade.Emitter#kill
+* @return {Phaser.Particles.Arcade.Emitter} This Emitter instance.
+*/
+Phaser.Particles.Arcade.Emitter.prototype.kill = function () {
+
+    this.on = false;
+    this.alive = false;
+    this.exists = false;
+
+    return this;
+
+};
+
+/**
+* Handy for bringing game objects "back to life". Just sets alive and exists back to true.
+*
+* @method Phaser.Particles.Arcade.Emitter#revive
+* @return {Phaser.Particles.Arcade.Emitter} This Emitter instance.
+*/
+Phaser.Particles.Arcade.Emitter.prototype.revive = function () {
+
+    this.alive = true;
+    this.exists = true;
+
+    return this;
+
+};
+
+/**
+* Call this function to emit the given quantity of particles at all once (an explosion)
+*
+* @method Phaser.Particles.Arcade.Emitter#explode
+* @param {number} [lifespan=0] - How long each particle lives once emitted in ms. 0 = forever.
+* @param {number} [quantity=this.maxParticles] - How many particles to launch.
+* @return {Phaser.Particles.Arcade.Emitter} This Emitter instance.
+*/
+Phaser.Particles.Arcade.Emitter.prototype.explode = function (lifespan, quantity) {
+
+    if (quantity === undefined) {
+        quantity = this.maxParticles;
+    }
+
+    this._flowTotal = 0;
+
+    this.start(true, lifespan, 0, quantity, false);
+
+    return this;
+
+};
+
+/**
+* Call this function to start emitting a flow of particles.
+* `quantity` particles are released every interval of `frequency` ms until `total` particles have been released (or forever).
+* If you set the total to be 20 and quantity to be 5 then flow will emit 4 times in total (4 × 5 = 20 total) and then turn {@link #on off}.
+* If you set the total to be -1 then no quantity cap is used and it will keep emitting (as long as there are inactive particles available).
+*
+* {@link #output}, {@link #lifespanOutput}, and {@link #remainder} describe the particle flow rate.
+* During a stable flow, the number of active particles approaches {@link #lifespanOutput} and the number of inactive particles approaches {@link #remainder}.
+* If {@link #remainder} is less than 0, there will likely be no particles available for a portion of the flow (see {@link #count}).
+*
+* @method Phaser.Particles.Arcade.Emitter#flow
+* @param {number} [lifespan=0] - How long each particle lives once emitted in ms. 0 = forever.
+* @param {number} [frequency=250] - The interval between each release of particles, given in ms. Values between 0 and 16.66 will behave the same (60 releases per second).
+* @param {number} [quantity=1] - How many particles to launch at each interval. Not larger than {@link #maxParticles}.
+* @param {number} [total=-1] - Turn {@link #on off} after launching this many particles in total. If -1 it will carry on indefinitely.
+* @param {boolean} [immediate=true] - Should the flow start immediately (true) or wait until the first frequency event? (false)
+* @return {Phaser.Particles.Arcade.Emitter} This Emitter instance.
+*/
+Phaser.Particles.Arcade.Emitter.prototype.flow = function (lifespan, frequency, quantity, total, immediate) {
+
+    if (frequency === undefined || frequency === null) { frequency = 250; }
+    if (quantity === undefined || quantity === 0) { quantity = 1; }
+    if (total === undefined) { total = -1; }
+    if (immediate === undefined) { immediate = true; }
+
+    if (quantity > this.maxParticles)
+    {
+        quantity = this.maxParticles;
+    }
+
+    this._counter = 0;
+    this._flowQuantity = quantity;
+    this._flowTotal = total;
+
+    if (immediate)
+    {
+        this.start(true, lifespan, frequency, quantity);
+
+        this._counter += quantity;
+        this.on = true;
+        this._timer = this.game.time.time + frequency * this.game.time.slowMotion;
+    }
+    else
+    {
+        this.start(false, lifespan, frequency, quantity);
+    }
+
+    return this;
+
+};
+
+/**
+* Start emitting particles.
+*
+* {@link #explode} and {@link #flow} are simpler methods.
+*
+* There are two patterns, based on the `explode` argument:
+*
+* ##### explode=true
+*
+*     start(true, lifespan=0, null, total)
+*
+* When `explode` is true or `forceQuantity` is true, `start` emits `total` particles immediately. You should pass a nonzero `total`.
+*
+* ##### explode=false
+*
+*     start(false, lifespan=0, frequency=250, total=0)
+*
+* When `explode` is false and `forceQuantity` is false, `start` emits 1 particle every interval of `frequency` ms. If `total` is not zero, the emitter turns itself off after `total` particles have been released. If `total` is zero, the emitter keeps emitting particles as long as they are available. To emit more than 1 particle per flow interval, use {@link #flow} instead.
+*
+* `forceQuantity` seems equivalent to `explode` and can probably be avoided.
+*
+* @method Phaser.Particles.Arcade.Emitter#start
+* @param {boolean} [explode=true] - Whether the particles should all burst out at once (true) or at the frequency given (false).
+* @param {number} [lifespan=0] - How long each particle lives once emitted in ms. 0 = forever.
+* @param {number} [frequency=250] - The interval between each release of 1 particle, when `explode` is false. Value given in ms. Ignored if `explode` is set to true.
+* @param {number} [total=0] - Turn {@link #on off} after launching this many particles in total.
+* @param {number} [forceQuantity=false] - Equivalent to `explodes`.
+* @return {Phaser.Particles.Arcade.Emitter} This Emitter instance.
+*/
+Phaser.Particles.Arcade.Emitter.prototype.start = function (explode, lifespan, frequency, total, forceQuantity) {
+
+    if (explode === undefined) { explode = true; }
+    if (lifespan === undefined) { lifespan = 0; }
+    if (frequency === undefined || frequency === null) { frequency = 250; }
+    if (total === undefined) { total = 0; }
+    if (forceQuantity === undefined) { forceQuantity = false; }
+
+    if (total > this.maxParticles)
+    {
+        total = this.maxParticles;
+    }
+
+    this.revive();
+
+    this.visible = true;
+
+    this.lifespan = lifespan;
+    this.frequency = frequency;
+
+    if (explode || forceQuantity)
+    {
+        for (var i = 0; i < total; i++)
+        {
+            this.emitParticle();
+        }
+    }
+    else
+    {
+        this.on = true;
+        this._total = total;
+        this._counter = 0;
+        this._timer = this.game.time.time + frequency * this.game.time.slowMotion;
+    }
+
+    return this;
+
+};
+
+/**
+* This function is used internally to emit the next particle in the queue.
+*
+* However it can also be called externally to emit a particle.
+*
+* When called externally you can use the arguments to override any defaults the Emitter has set.
+*
+* @method Phaser.Particles.Arcade.Emitter#emitParticle
+* @param {number} [x] - The x coordinate to emit the particle from. If `null` or `undefined` it will use `Emitter.emitX` or if the Emitter has a width > 1 a random value between `Emitter.left` and `Emitter.right`.
+* @param {number} [y] - The y coordinate to emit the particle from. If `null` or `undefined` it will use `Emitter.emitY` or if the Emitter has a height > 1 a random value between `Emitter.top` and `Emitter.bottom`.
+* @param {string|Phaser.RenderTexture|Phaser.BitmapData|Phaser.Video|PIXI.Texture} [key] - This is the image or texture used by the Particle during rendering. It can be a string which is a reference to the Cache Image entry, or an instance of a RenderTexture, BitmapData, Video or PIXI.Texture.
+* @param {string|number} [frame] - If this Particle is using part of a sprite sheet or texture atlas you can specify the exact frame to use by giving a string or numeric index.
+* @return {boolean} True if a particle was emitted, otherwise false.
+*/
+Phaser.Particles.Arcade.Emitter.prototype.emitParticle = function (x, y, key, frame) {
+
+    if (x === undefined) { x = null; }
+    if (y === undefined) { y = null; }
+
+    var particle = this.getFirstExists(false);
+
+    if (particle === null)
+    {
+        this.count.failed++;
+        this.count.totalFailed++;
+
+        return false;
+    }
+
+    this.count.emitted++;
+    this.count.totalEmitted++;
+
+    var rnd = this.game.rnd;
+
+    if (key !== undefined && frame !== undefined)
+    {
+        particle.loadTexture(key, frame);
+    }
+    else if (key !== undefined)
+    {
+        particle.loadTexture(key);
+        particle.frame = Array.isArray(this._frames) ? rnd.pick(this._frames) : this._frames;
+    }
+
+    var emitX = this.emitX;
+    var emitY = this.emitY;
+
+    if (x !== null)
+    {
+        emitX = x;
+    }
+    else if (this.width > 1)
+    {
+        emitX = rnd.between(this.left, this.right);
+    }
+
+    if (y !== null)
+    {
+        emitY = y;
+    }
+    else if (this.height > 1)
+    {
+        emitY = rnd.between(this.top, this.bottom);
+    }
+
+    this.resetParticle(particle, emitX, emitY);
+
+    return true;
+
+};
+
+/**
+ * Helper for {@link #emitParticle}. Sets particle properties and calls {@link Particle#onEmit}.
+ *
+ * @private
+ * @param {Phaser.Particle} particle
+ * @param {number} x
+ * @param {number} y
+ */
+Phaser.Particles.Arcade.Emitter.prototype.resetParticle = function (particle, x, y) {
+
+    var rnd = this.game.rnd;
+
+    particle.reset(x, y);
+
+    particle.angle = 0;
+    particle.lifespan = this.lifespan;
+
+    if (this.particleBringToTop)
+    {
+        this.bringToTop(particle);
+    }
+    else if (this.particleSendToBack)
+    {
+        this.sendToBack(particle);
+    }
+
+    if (this.autoScale)
+    {
+        particle.setScaleData(this.scaleData);
+    }
+    else if (this.minParticleScale !== 1 || this.maxParticleScale !== 1)
+    {
+        particle.scale.set(rnd.realInRange(this.minParticleScale, this.maxParticleScale));
+    }
+    else if ((this._minParticleScale.x !== this._maxParticleScale.x) || (this._minParticleScale.y !== this._maxParticleScale.y))
+    {
+        particle.scale.set(rnd.realInRange(this._minParticleScale.x, this._maxParticleScale.x), rnd.realInRange(this._minParticleScale.y, this._maxParticleScale.y));
+    }
+    else
+    {
+        particle.scale.set(this._minParticleScale.x, this._minParticleScale.y);
+    }
+
+    if (this.autoAlpha)
+    {
+        particle.setAlphaData(this.alphaData);
+    }
+    else
+    {
+        particle.alpha = rnd.realInRange(this.minParticleAlpha, this.maxParticleAlpha);
+    }
+
+    particle.blendMode = this.blendMode;
+
+    var body = particle.body;
+
+    body.updateBounds();
+
+    body.bounce.copyFrom(this.bounce);
+    body.drag.copyFrom(this.particleDrag);
+
+    if (this.minAngle != null && this.maxAngle != null)
+    {
+        this.game.physics.arcade.velocityFromAngle(
+            (this.minAngle === this.maxAngle) ? this.minAngle : rnd.between(this.minAngle, this.maxAngle),
+            (this.minSpeed === this.maxSpeed) ? this.minSpeed : rnd.between(this.minSpeed, this.maxSpeed),
+            body.velocity
+            );
+    }
+    else
+    {
+        body.velocity.x = rnd.between(this.minParticleSpeed.x, this.maxParticleSpeed.x);
+        body.velocity.y = rnd.between(this.minParticleSpeed.y, this.maxParticleSpeed.y);
+    }
+
+    body.angularVelocity = rnd.between(this.minRotation, this.maxRotation);
+    body.gravity.copyFrom(this.gravity);
+    body.angularDrag = this.angularDrag;
+
+    particle.onEmit();
+
+};
+
+/**
+* Destroys this Emitter, all associated child Particles and then removes itself from the Particle Manager.
+*
+* @method Phaser.Particles.Arcade.Emitter#destroy
+*/
+Phaser.Particles.Arcade.Emitter.prototype.destroy = function () {
+
+    this.game.particles.remove(this);
+
+    Phaser.Group.prototype.destroy.call(this, true, false);
+
+};
+
+/**
+* A more compact way of setting the width and height of the emitter.
+*
+* @method Phaser.Particles.Arcade.Emitter#setSize
+* @param {number} width - The desired width of the emitter (particles are spawned randomly within these dimensions).
+* @param {number} height - The desired height of the emitter.
+* @return {Phaser.Particles.Arcade.Emitter} This Emitter instance.
+*/
+Phaser.Particles.Arcade.Emitter.prototype.setSize = function (width, height) {
+
+    this.area.width = width;
+    this.area.height = height;
+
+    return this;
+
+};
+
+/**
+* A more compact way of setting the X velocity range of the emitter.
+* @method Phaser.Particles.Arcade.Emitter#setXSpeed
+* @param {number} [min=0] - The minimum value for this range.
+* @param {number} [max=0] - The maximum value for this range.
+* @return {Phaser.Particles.Arcade.Emitter} This Emitter instance.
+*/
+Phaser.Particles.Arcade.Emitter.prototype.setXSpeed = function (min, max) {
+
+    min = min || 0;
+    max = max || 0;
+
+    this.minParticleSpeed.x = min;
+    this.maxParticleSpeed.x = max;
+
+    return this;
+
+};
+
+/**
+* A more compact way of setting the Y velocity range of the emitter.
+* @method Phaser.Particles.Arcade.Emitter#setYSpeed
+* @param {number} [min=0] - The minimum value for this range.
+* @param {number} [max=0] - The maximum value for this range.
+* @return {Phaser.Particles.Arcade.Emitter} This Emitter instance.
+*/
+Phaser.Particles.Arcade.Emitter.prototype.setYSpeed = function (min, max) {
+
+    min = min || 0;
+    max = max || 0;
+
+    this.minParticleSpeed.y = min;
+    this.maxParticleSpeed.y = max;
+
+    return this;
+
+};
+
+/**
+* A more compact way of setting the angular velocity constraints of the particles.
+*
+* @method Phaser.Particles.Arcade.Emitter#setRotation
+* @param {number} [min=0] - The minimum value for this range.
+* @param {number} [max=0] - The maximum value for this range.
+* @return {Phaser.Particles.Arcade.Emitter} This Emitter instance.
+*/
+Phaser.Particles.Arcade.Emitter.prototype.setRotation = function (min, max) {
+
+    min = min || 0;
+    max = max || 0;
+
+    this.minRotation = min;
+    this.maxRotation = max;
+
+    return this;
+
+};
+
+/**
+* A more compact way of setting the alpha constraints of the particles.
+* The rate parameter, if set to a value above zero, lets you set the speed at which the Particle change in alpha from min to max.
+* If rate is zero, which is the default, the particle won't change alpha - instead it will pick a random alpha between min and max on emit.
+*
+* @method Phaser.Particles.Arcade.Emitter#setAlpha
+* @param {number} [min=1] - The minimum value for this range.
+* @param {number} [max=1] - The maximum value for this range.
+* @param {number} [rate=0] - The rate (in ms) at which the particles will change in alpha from min to max, or set to zero to pick a random alpha between the two.
+* @param {function} [ease=Phaser.Easing.Linear.None] - If you've set a rate > 0 this is the easing formula applied between the min and max values.
+* @param {boolean} [yoyo=false] - If you've set a rate > 0 you can set if the ease will yoyo or not (i.e. ease back to its original values)
+* @return {Phaser.Particles.Arcade.Emitter} This Emitter instance.
+*/
+Phaser.Particles.Arcade.Emitter.prototype.setAlpha = function (min, max, rate, ease, yoyo) {
+
+    if (min === undefined) { min = 1; }
+    if (max === undefined) { max = 1; }
+    if (rate === undefined) { rate = 0; }
+    if (ease === undefined) { ease = Phaser.Easing.Linear.None; }
+    if (yoyo === undefined) { yoyo = false; }
+
+    this.minParticleAlpha = min;
+    this.maxParticleAlpha = max;
+    this.autoAlpha = false;
+
+    if (rate > 0 && min !== max)
+    {
+        var tweenData = { v: min };
+        var tween = this.game.make.tween(tweenData).to( { v: max }, rate, ease);
+        tween.yoyo(yoyo);
+
+        this.alphaData = tween.generateData(60);
+
+        //  Inverse it so we don't have to do array length look-ups in Particle update loops
+        this.alphaData.reverse();
+        this.autoAlpha = true;
+    }
+
+    return this;
+
+};
+
+/**
+* A more compact way of setting the scale constraints of the particles.
+* The rate parameter, if set to a value above zero, lets you set the speed and ease which the Particle uses to change in scale from min to max across both axis.
+* If rate is zero, which is the default, the particle won't change scale during update, instead it will pick a random scale between min and max on emit.
+*
+* @method Phaser.Particles.Arcade.Emitter#setScale
+* @param {number} [minX=1] - The minimum value of Particle.scale.x.
+* @param {number} [maxX=1] - The maximum value of Particle.scale.x.
+* @param {number} [minY=1] - The minimum value of Particle.scale.y.
+* @param {number} [maxY=1] - The maximum value of Particle.scale.y.
+* @param {number} [rate=0] - The rate (in ms) at which the particles will change in scale from min to max, or set to zero to pick a random size between the two.
+* @param {function} [ease=Phaser.Easing.Linear.None] - If you've set a rate > 0 this is the easing formula applied between the min and max values.
+* @param {boolean} [yoyo=false] - If you've set a rate > 0 you can set if the ease will yoyo or not (i.e. ease back to its original values)
+* @return {Phaser.Particles.Arcade.Emitter} This Emitter instance.
+*/
+Phaser.Particles.Arcade.Emitter.prototype.setScale = function (minX, maxX, minY, maxY, rate, ease, yoyo) {
+
+    if (minX === undefined) { minX = 1; }
+    if (maxX === undefined) { maxX = 1; }
+    if (minY === undefined) { minY = 1; }
+    if (maxY === undefined) { maxY = 1; }
+    if (rate === undefined) { rate = 0; }
+    if (ease === undefined) { ease = Phaser.Easing.Linear.None; }
+    if (yoyo === undefined) { yoyo = false; }
+
+    //  Reset these
+    this.minParticleScale = 1;
+    this.maxParticleScale = 1;
+
+    this._minParticleScale.set(minX, minY);
+    this._maxParticleScale.set(maxX, maxY);
+
+    this.autoScale = false;
+
+    if (rate > 0 && ((minX !== maxX) || (minY !== maxY)))
+    {
+        var tweenData = { x: minX, y: minY };
+        var tween = this.game.make.tween(tweenData).to( { x: maxX, y: maxY }, rate, ease);
+        tween.yoyo(yoyo);
+
+        this.scaleData = tween.generateData(60);
+
+        //  Inverse it so we don't have to do array length look-ups in Particle update loops
+        this.scaleData.reverse();
+        this.autoScale = true;
+    }
+
+    return this;
+
+};
+
+/**
+ * Sets a radial pattern for emitting particles.
+ *
+ * This is a shorthand for setting {@link #minAngle}, {@link #maxAngle}, {@link #minSpeed}, and {@link #maxSpeed}.
+ *
+ * To remove the radial pattern, use `setAngle(null, null)`.
+ *
+ * @method Phaser.Particles.Arcade.Emitter#setAngle
+ * @param {?number} minAngle - The minimum angle of initial particle velocities, in degrees.
+ * @param {?number} maxAngle - The maximum angle of initial particle velocities, in degrees.
+ * @param {number} [minSpeed] - The minimum initial particle speed.
+ * @param {number} [maxSpeed] - The maximum initial particle speed.
+ * @return {Phaser.Particles.Arcade.Emitter} This Emitter instance.
+ */
+Phaser.Particles.Arcade.Emitter.prototype.setAngle = function (minAngle, maxAngle, minSpeed, maxSpeed) {
+
+    this.minAngle = minAngle;
+    this.maxAngle = maxAngle;
+
+    if (minSpeed != null) { this.minSpeed = minSpeed; }
+    if (maxSpeed != null) { this.maxSpeed = maxSpeed; }
+
+    return this;
+
+};
+
+/**
+* Change the emitter's center to match the center of any object with a `center` property, such as an Arcade Body.
+* If the object doesn't have a `center` property it will be set to the object's anchor-adjusted world position (`object.world`).
+*
+* @method Phaser.Particles.Arcade.Emitter#at
+* @param {object|Phaser.Sprite|Phaser.Image|Phaser.TileSprite|Phaser.Text|PIXI.DisplayObject} object - The object that you wish to match the center with.
+* @return {Phaser.Particles.Arcade.Emitter} This Emitter instance.
+*/
+Phaser.Particles.Arcade.Emitter.prototype.at = function (object) {
+
+    if (object.center)
+    {
+        this.emitX = object.center.x;
+        this.emitY = object.center.y;
+    }
+    else
+    {
+        this.emitX = object.world.x + (object.anchor.x * object.width);
+        this.emitY = object.world.y + (object.anchor.y * object.height);
+    }
+
+    return this;
+
+};
+
+/**
+ * @name Phaser.Particles.Arcade.Emitter#gravity
+ * @property {Phaser.Point} gravity - Sets the `body.gravity` of each particle sprite to this on launch.
+ */
+Object.defineProperty(Phaser.Particles.Arcade.Emitter.prototype, "gravity", {
+
+    get: function () {
+        return this._gravity;
+    },
+
+    set: function (value) {
+        if (typeof value === "number")
+        {
+            this._gravity.y = value;
+        }
+        else
+        {
+            this._gravity = value;
+        }
+    }
+
+});
+
+
+/**
+* @name Phaser.Particles.Arcade.Emitter#id
+* @property {number} id - Gets the internal ID that represents this emitter.
+*/
+Object.defineProperty(Phaser.Particles.Arcade.Emitter.prototype, "id", {
+    get: function () {
+        return this._id;
+    }
+});
+
+/**
+* @name Phaser.Particles.Arcade.Emitter#width
+* @property {number} width - Gets or sets the width of the Emitter. This is the region in which a particle can be emitted.
+*/
+Object.defineProperty(Phaser.Particles.Arcade.Emitter.prototype, "width", {
+
+    get: function () {
+        return this.area.width;
+    },
+
+    set: function (value) {
+        this.area.width = value;
+    }
+
+});
+
+/**
+* @name Phaser.Particles.Arcade.Emitter#height
+* @property {number} height - Gets or sets the height of the Emitter. This is the region in which a particle can be emitted.
+*/
+Object.defineProperty(Phaser.Particles.Arcade.Emitter.prototype, "height", {
+
+    get: function () {
+        return this.area.height;
+    },
+
+    set: function (value) {
+        this.area.height = value;
+    }
+
+});
+
+/**
+* @name Phaser.Particles.Arcade.Emitter#x
+* @property {number} x - Gets or sets the x position of the Emitter.
+*/
+Object.defineProperty(Phaser.Particles.Arcade.Emitter.prototype, "x", {
+
+    get: function () {
+        return this.emitX;
+    },
+
+    set: function (value) {
+        this.emitX = value;
+    }
+
+});
+
+/**
+* @name Phaser.Particles.Arcade.Emitter#y
+* @property {number} y - Gets or sets the y position of the Emitter.
+*/
+Object.defineProperty(Phaser.Particles.Arcade.Emitter.prototype, "y", {
+
+    get: function () {
+        return this.emitY;
+    },
+
+    set: function (value) {
+        this.emitY = value;
+    }
+
+});
+
+/**
+* @name Phaser.Particles.Arcade.Emitter#left
+* @property {number} left - Gets the left position of the Emitter.
+* @readonly
+*/
+Object.defineProperty(Phaser.Particles.Arcade.Emitter.prototype, "left", {
+
+    get: function () {
+        return Math.floor(this.x - (this.area.width / 2));
+    }
+
+});
+
+/**
+* @name Phaser.Particles.Arcade.Emitter#right
+* @property {number} right - Gets the right position of the Emitter.
+* @readonly
+*/
+Object.defineProperty(Phaser.Particles.Arcade.Emitter.prototype, "right", {
+
+    get: function () {
+        return Math.floor(this.x + (this.area.width / 2));
+    }
+
+});
+
+/**
+* @name Phaser.Particles.Arcade.Emitter#top
+* @property {number} top - Gets the top position of the Emitter.
+* @readonly
+*/
+Object.defineProperty(Phaser.Particles.Arcade.Emitter.prototype, "top", {
+
+    get: function () {
+        return Math.floor(this.y - (this.area.height / 2));
+    }
+
+});
+
+/**
+* @name Phaser.Particles.Arcade.Emitter#bottom
+* @property {number} bottom - Gets the bottom position of the Emitter.
+* @readonly
+*/
+Object.defineProperty(Phaser.Particles.Arcade.Emitter.prototype, "bottom", {
+
+    get: function () {
+        return Math.floor(this.y + (this.area.height / 2));
+    }
+
+});
+
+/**
+ * @name Phaser.Particles.Arcade.Emitter#output
+ * @property {number} output - The number of particles released per second, after calling {@link #flow}.
+ * @readonly
+ */
+Object.defineProperty(Phaser.Particles.Arcade.Emitter.prototype, "output", {
+
+    get: function () {
+        return 1000 * this._flowQuantity / this.frequency;
+    }
+
+});
+
+/**
+ * @name Phaser.Particles.Arcade.Emitter#lifespanOutput
+ * @property {number} lifespanOutput - The number of particles released during one particle's {@link #lifespan}, after calling {@link #flow}.
+ * @readonly
+ */
+Object.defineProperty(Phaser.Particles.Arcade.Emitter.prototype, "lifespanOutput", {
+
+    get: function () {
+        return (this.lifespan === 0 ? Infinity : this.lifespan) * this._flowQuantity / this.frequency;
+    }
+
+});
+
+/**
+ * @name Phaser.Particles.Arcade.Emitter#remainder
+ * @property {number} remainder - The expected number of unreleased particles after a flow interval of {@link #lifespan}, after calling {@link #flow}.
+ * @readonly
+ */
+Object.defineProperty(Phaser.Particles.Arcade.Emitter.prototype, "remainder", {
+
+    get: function () {
+        return this.maxParticles - this.lifespanOutput;
+    }
+
+});
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
+* The Weapon Plugin provides the ability to easily create a bullet pool and manager.
+*
+* Weapons fire Phaser.Bullet objects, which are essentially Sprites with a few extra properties.
+* The Bullets are enabled for Arcade Physics. They do not currently work with P2 Physics.
+*
+* The Bullets are created inside of `Weapon.bullets`, which is a Phaser.Group instance. Anything you
+* can usually do with a Group, such as move it around the display list, iterate it, etc can be done
+* to the bullets Group too.
+*
+* Bullets can have textures and even animations. You can control the speed at which they are fired,
+* the firing rate, the firing angle, and even set things like gravity for them.
+*
+* A small example, assumed to be running from within a Phaser.State create method.
+*
+* `var weapon = this.add.weapon(10, 'bullet');`
+* `weapon.fireFrom.set(300, 300);`
+* `this.input.onDown.add(weapon.fire, this);`
+*
+* @class Phaser.Weapon
+* @constructor
+* @param {Phaser.Game} game - A reference to the current Phaser.Game instance.
+* @param {Phaser.PluginManager} parent - The Phaser Plugin Manager which looks after this plugin.
+*/
+Phaser.Weapon = function (game, parent) {
+
+    Phaser.Plugin.call(this, game, parent);
+
+    /**
+     * This is the Phaser.Group that contains all of the bullets managed by this plugin.
+     * @type {Phaser.Group}
+     */
+    this.bullets = null;
+
+    /**
+     * Should the bullet pool run out of bullets (i.e. they are all in flight) then this
+     * boolean controls if the Group will create a brand new bullet object or not.
+     * @type {boolean}
+     */
+    this.autoExpandBulletsGroup = false;
+
+    /**
+     * Will this weapon auto fire? If set to true then a new bullet will be fired
+     * based on the `fireRate` value.
+     * @type {boolean}
+     */
+    this.autofire = false;
+
+    /**
+     * The total number of bullets this Weapon has fired so far.
+     * You can limit the number of shots allowed (via `fireLimit`), and reset
+     * this total via `Weapon.resetShots`.
+     * @type {number}
+     */
+    this.shots = 0;
+
+    /**
+     * The maximum number of shots that this Weapon is allowed to fire before it stops.
+     * When the limit is his the `Weapon.onFireLimit` Signal is dispatched.
+     * You can reset the shot counter via `Weapon.resetShots`.
+     * @type {number}
+     */
+    this.fireLimit = 0;
+
+    /**
+     * The rate at which this Weapon can fire. The value is given in milliseconds.
+     * @type {number}
+     */
+    this.fireRate = 100;
+
+    /**
+     * This is a modifier that is added to the `fireRate` each update to add variety
+     * to the firing rate of the Weapon. The value is given in milliseconds.
+     * If you've a `fireRate` of 200 and a `fireRateVariance` of 50 then the actual
+     * firing rate of the Weapon will be between 150 and 250.
+     * @type {number}
+     */
+    this.fireRateVariance = 0;
+
+    /**
+     * This is a Rectangle from within which the bullets are fired. By default it's a 1x1
+     * rectangle, the equivalent of a Point. But you can change the width and height, and if
+     * larger than 1x1 it'll pick a random point within the rectangle to launch the bullet from.
+     * @type {Phaser.Rectangle}
+     */
+    this.fireFrom = new Phaser.Rectangle(0, 0, 1, 1);
+
+    /**
+     * The angle at which the bullets are fired. This can be a const such as Phaser.ANGLE_UP
+     * or it can be any number from 0 to 360 inclusive, where 0 degrees is to the right.
+     * @type {integer}
+     */
+    this.fireAngle = Phaser.ANGLE_UP;
+
+    /**
+     * When a Bullet is fired it can optionally inherit the velocity of the `trackedSprite` if set.
+     * @type {boolean}
+     */
+    this.bulletInheritSpriteSpeed = false;
+
+    /**
+     * The string based name of the animation that the Bullet will be given on launch.
+     * This is set via `Weapon.addBulletAnimation`.
+     * @type {string}
+     */
+    this.bulletAnimation = '';
+
+    /**
+     * If you've added a set of frames via `Weapon.setBulletFrames` then you can optionally
+     * chose for each Bullet fired to pick a random frame from the set.
+     * @type {boolean}
+     */
+    this.bulletFrameRandom = false;
+
+    /**
+     * If you've added a set of frames via `Weapon.setBulletFrames` then you can optionally
+     * chose for each Bullet fired to use the next frame in the set. The frame index is then
+     * advanced one frame until it reaches the end of the set, then it starts from the start
+     * again. Cycling frames like this allows you to create varied bullet effects via
+     * sprite sheets.
+     * @type {boolean}
+     */
+    this.bulletFrameCycle = false;
+
+    /**
+     * Should the Bullets wrap around the world bounds? This automatically calls
+     * `World.wrap` on the Bullet each frame. See the docs for that method for details.
+     * @type {boolean}
+     */
+    this.bulletWorldWrap = false;
+
+    /**
+     * If `bulletWorldWrap` is true then you can provide an optional padding value with this
+     * property. It's added to the calculations determining when the Bullet should wrap around
+     * the world or not. The value is given in pixels.
+     * @type {integer}
+     */
+    this.bulletWorldWrapPadding = 0;
+
+    /**
+     * An optional angle offset applied to the Bullets when they are launched.
+     * This is useful if for example your bullet sprites have been drawn facing up, instead of
+     * to the right, and you want to fire them at an angle. In which case you can set the
+     * angle offset to be 90 and they'll be properly rotated when fired.
+     * @type {number}
+     */
+    this.bulletAngleOffset = 0;
+
+    /**
+     * This is a variance added to the angle of Bullets when they are fired.
+     * If you fire from an angle of 90 and have a `bulletAngleVariance` of 20 then the actual
+     * angle of the Bullets will be between 70 and 110 degrees. This is a quick way to add a
+     * great 'spread' effect to a Weapon.
+     * @type {number}
+     */
+    this.bulletAngleVariance = 0;
+
+    /**
+     * The speed at which the bullets are fired. This value is given in pixels per second, and
+     * is used to set the starting velocity of the bullets.
+     * @type {number}
+     */
+    this.bulletSpeed = 200;
+
+    /**
+     * This is a variance added to the speed of Bullets when they are fired.
+     * If bullets have a `bulletSpeed` value of 200, and a `bulletSpeedVariance` of 50
+     * then the actual speed of the Bullets will be between 150 and 250 pixels per second.
+     * @type {number}
+     */
+    this.bulletSpeedVariance = 0;
+
+    /**
+     * If you've set `bulletKillType` to `Phaser.Weapon.KILL_LIFESPAN` this controls the amount
+     * of lifespan the Bullets have set on launch. The value is given in milliseconds.
+     * When a Bullet hits its lifespan limit it will be automatically killed.
+     * @type {number}
+     */
+    this.bulletLifespan = 0;
+
+    /**
+     * If you've set `bulletKillType` to `Phaser.Weapon.KILL_DISTANCE` this controls the distance
+     * the Bullet can travel before it is automatically killed. The distance is given in pixels.
+     * @type {number}
+     */
+    this.bulletKillDistance = 0;
+
+    /**
+     * This is the amount of gravity added to the Bullets physics body when fired.
+     * Gravity is expressed in pixels / second / second.
+     * @type {Phaser.Point}
+     */
+    this.bulletGravity = new Phaser.Point(0, 0);
+
+    /**
+     * Bullets can optionally adjust their rotation in-flight to match their velocity.
+     * This can create the effect of a bullet 'pointing' to the path it is following, for example
+     * an arrow being fired from a bow, and works especially well when added to `bulletGravity`.
+     * @type {boolean}
+     */
+    this.bulletRotateToVelocity = false;
+
+    /**
+     * The Texture Key that the Bullets use when rendering.
+     * Changing this has no effect on bullets in-flight, only on newly spawned bullets.
+     * @type {string}
+     */
+    this.bulletKey = '';
+
+    /**
+     * The Texture Frame that the Bullets use when rendering.
+     * Changing this has no effect on bullets in-flight, only on newly spawned bullets.
+     * @type {string|integer}
+     */
+    this.bulletFrame = '';
+
+    /**
+     * Private var that holds the public `bulletClass` property.
+     * @type {function}
+     * @private
+     */
+    this._bulletClass = Phaser.Bullet;
+
+    /**
+     * Private var that holds the public `bulletCollideWorldBounds` property.
+     * @type {boolean}
+     * @private
+     */
+    this._bulletCollideWorldBounds = false;
+
+    /**
+     * Private var that holds the public `bulletKillType` property.
+     * @type {integer}
+     * @private
+     */
+    this._bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+
+    /**
+     * Holds internal data about custom bullet body sizes.
+     *
+     * @type {Object}
+     * @private
+     */
+    this._data = {
+        customBody: false,
+        width: 0,
+        height: 0,
+        offsetX: 0,
+        offsetY: 0
+    };
+
+    /**
+     * This Rectangle defines the bounds that are used when determining if a Bullet should be killed or not.
+     * It's used in combination with `Weapon.bulletKillType` when that is set to either `Phaser.Weapon.KILL_WEAPON_BOUNDS`
+     * or `Phaser.Weapon.KILL_STATIC_BOUNDS`. If you are not using either of these kill types then the bounds are ignored.
+     * If you are tracking a Sprite or Point then the bounds are centered on that object every frame.
+     *
+     * @type {Phaser.Rectangle}
+     */
+    this.bounds = new Phaser.Rectangle();
+
+    /**
+     * The Rectangle used to calculate the bullet bounds from.
+     *
+     * @type {Phaser.Rectangle}
+     * @private
+     */
+    this.bulletBounds = game.world.bounds;
+
+    /**
+     * This array stores the frames added via `Weapon.setBulletFrames`.
+     *
+     * @type {Array}
+     * @protected
+     */
+    this.bulletFrames = [];
+
+    /**
+     * The index of the frame within `Weapon.bulletFrames` that is currently being used.
+     * This value is only used if `Weapon.bulletFrameCycle` is set to `true`.
+     * @type {number}
+     * @private
+     */
+    this.bulletFrameIndex = 0;
+
+    /**
+     * An internal object that stores the animation data added via `Weapon.addBulletAnimation`.
+     * @type {Object}
+     * @private
+     */
+    this.anims = {};
+
+    /**
+     * The onFire Signal is dispatched each time `Weapon.fire` is called, and a Bullet is
+     * _successfully_ launched. The callback is set two arguments: a reference to the bullet sprite itself,
+     * and a reference to the Weapon that fired the bullet.
+     *
+     * @type {Phaser.Signal}
+     */
+    this.onFire = new Phaser.Signal();
+
+    /**
+     * The onKill Signal is dispatched each time a Bullet that is in-flight is killed. This can be the result
+     * of leaving the Weapon bounds, an expiring lifespan, or exceeding a specified distance.
+     * The callback is sent one argument: A reference to the bullet sprite itself.
+     *
+     * @type {Phaser.Signal}
+     */
+    this.onKill = new Phaser.Signal();
+
+    /**
+     * The onFireLimit Signal is dispatched if `Weapon.fireLimit` is > 0, and a bullet launch takes the number
+     * of shots fired to equal the fire limit.
+     * The callback is sent two arguments: A reference to the Weapon that hit the limit, and the value of
+     * `Weapon.fireLimit`.
+     *
+     * @type {Phaser.Signal}
+     */
+    this.onFireLimit = new Phaser.Signal();
+
+    /**
+     * The Sprite currently being tracked by the Weapon, if any.
+     * This is set via the `Weapon.trackSprite` method.
+     *
+     * @type {Phaser.Sprite|Object}
+     */
+    this.trackedSprite = null;
+
+    /**
+     * The Pointer currently being tracked by the Weapon, if any.
+     * This is set via the `Weapon.trackPointer` method.
+     *
+     * @type {Phaser.Pointer}
+     */
+    this.trackedPointer = null;
+
+    /**
+     * If you want this Weapon to be able to fire more than 1 bullet in a single
+     * update, then set this property to `true`. When `true` the Weapon plugin won't
+     * set the shot / firing timers until the `postRender` phase of the game loop.
+     * This means you can call `fire` (and similar methods) as often as you like in one
+     * single game update.
+     *
+     * @type {boolean}
+     */
+    this.multiFire = false;
+
+    /**
+     * Internal multiFire test flag.
+     *
+     * @type {boolean}
+     */
+    this._hasFired = false;
+
+    /**
+     * If the Weapon is tracking a Sprite, should it also track the Sprites rotation?
+     * This is useful for a game such as Asteroids, where you want the weapon to fire based
+     * on the sprites rotation.
+     *
+     * @type {boolean}
+     */
+    this.trackRotation = false;
+
+    /**
+     * The Track Offset is a Point object that allows you to specify a pixel offset that bullets use
+     * when launching from a tracked Sprite or Pointer. For example if you've got a bullet that is 2x2 pixels
+     * in size, but you're tracking a Sprite that is 32x32, then you can set `trackOffset.x = 16` to have
+     * the bullet launched from the center of the Sprite.
+     *
+     * @type {Phaser.Point}
+     */
+    this.trackOffset = new Phaser.Point();
+
+    /**
+     * Internal firing rate time tracking variable.
+     *
+     * @type {number}
+     * @private
+     */
+    this._nextFire = 0;
+
+    /**
+     * Internal firing rate time tracking variable used by multiFire.
+     *
+     * @type {number}
+     * @private
+     */
+    this._tempNextFire = 0;
+
+    /**
+     * Internal firing rotation tracking point.
+     *
+     * @type {Phaser.Point}
+     * @private
+     */
+    this._rotatedPoint = new Phaser.Point();
+
+};
+
+Phaser.Weapon.prototype = Object.create(Phaser.Plugin.prototype);
+Phaser.Weapon.prototype.constructor = Phaser.Weapon;
+
+/**
+* A `bulletKillType` constant that stops the bullets from ever being destroyed automatically.
+* @constant
+* @type {integer}
+*/
+Phaser.Weapon.KILL_NEVER = 0;
+
+/**
+* A `bulletKillType` constant that automatically kills the bullets when their `bulletLifespan` expires.
+* @constant
+* @type {integer}
+*/
+Phaser.Weapon.KILL_LIFESPAN = 1;
+
+/**
+* A `bulletKillType` constant that automatically kills the bullets after they
+* exceed the `bulletDistance` from their original firing position.
+* @constant
+* @type {integer}
+*/
+Phaser.Weapon.KILL_DISTANCE = 2;
+
+/**
+* A `bulletKillType` constant that automatically kills the bullets when they leave the `Weapon.bounds` rectangle.
+* @constant
+* @type {integer}
+*/
+Phaser.Weapon.KILL_WEAPON_BOUNDS = 3;
+
+/**
+* A `bulletKillType` constant that automatically kills the bullets when they leave the `Camera.bounds` rectangle.
+* @constant
+* @type {integer}
+*/
+Phaser.Weapon.KILL_CAMERA_BOUNDS = 4;
+
+/**
+* A `bulletKillType` constant that automatically kills the bullets when they leave the `World.bounds` rectangle.
+* @constant
+* @type {integer}
+*/
+Phaser.Weapon.KILL_WORLD_BOUNDS = 5;
+
+/**
+* A `bulletKillType` constant that automatically kills the bullets when they leave the `Weapon.bounds` rectangle.
+* @constant
+* @type {integer}
+*/
+Phaser.Weapon.KILL_STATIC_BOUNDS = 6;
+
+/**
+* This method performs two actions: First it will check to see if the `Weapon.bullets` Group exists or not,
+* and if not it creates it, adding it the `group` given as the 4th argument.
+*
+* Then it will seed the bullet pool with the `quantity` number of Bullets, using the texture key and frame
+* provided (if any).
+*
+* If for example you set the quantity to be 10, then this Weapon will only ever be able to have 10 bullets
+* in-flight simultaneously. If you try to fire an 11th bullet then nothing will happen until one, or more, of
+* the in-flight bullets have been killed, freeing them up for use by the Weapon again.
+*
+* If you do not wish to have a limit set, then pass in -1 as the quantity. In this instance the Weapon will
+* keep increasing the size of the bullet pool as needed. It will never reduce the size of the pool however,
+* so be careful it doesn't grow too large.
+*
+* You can either set the texture key and frame here, or via the `Weapon.bulletKey` and `Weapon.bulletFrame`
+* properties. You can also animate bullets, or set them to use random frames. All Bullets belonging to a
+* single Weapon instance must share the same texture key however.
+*
+* @method Phaser.Weapon#createBullets
+* @param {integer} [quantity=1] - The quantity of bullets to seed the Weapon with. If -1 it will set the pool to automatically expand.
+* @param {string} [key] - The Game.cache key of the image that this Sprite will use.
+* @param {integer|string} [frame] - If the Sprite image contains multiple frames you can specify which one to use here.
+* @param {Phaser.Group} [group] - Optional Group to add the object to. If not specified it will be added to the World group.
+* @return {Phaser.Weapon} This Weapon instance.
+*/
+Phaser.Weapon.prototype.createBullets = function (quantity, key, frame, group) {
+
+    if (quantity === undefined) { quantity = 1; }
+    if (group === undefined) { group = this.game.world; }
+
+    if (!this.bullets)
+    {
+        this.bullets = this.game.add.physicsGroup(Phaser.Physics.ARCADE, group);
+        this.bullets.classType = this._bulletClass;
+    }
+
+    if (quantity !== 0)
+    {
+        if (quantity === -1)
+        {
+            this.autoExpandBulletsGroup = true;
+            quantity = 1;
+        }
+
+        this.bullets.createMultiple(quantity, key, frame);
+
+        this.bullets.setAll('data.bulletManager', this);
+
+        this.bulletKey = key;
+        this.bulletFrame = frame;
+    }
+
+    return this;
+
+};
+
+/**
+* Call a function on each in-flight bullet in this Weapon.
+*
+* See {@link Phaser.Group#forEachExists forEachExists} for more details.
+*
+* @method Phaser.Weapon#forEach
+* @param {function} callback - The function that will be called for each applicable child. The child will be passed as the first argument.
+* @param {object} callbackContext - The context in which the function should be called (usually 'this').
+* @param {...any} [args=(none)] - Additional arguments to pass to the callback function, after the child item.
+* @return {Phaser.Weapon} This Weapon instance.
+*/
+Phaser.Weapon.prototype.forEach = function (callback, callbackContext) {
+
+    this.bullets.forEachExists(callback, callbackContext, arguments);
+
+    return this;
+
+};
+
+/**
+* Sets `Body.enable` to `false` on each bullet in this Weapon.
+* This has the effect of stopping them in-flight should they be moving.
+* It also stops them being able to be checked for collision.
+*
+* @method Phaser.Weapon#pauseAll
+* @return {Phaser.Weapon} This Weapon instance.
+*/
+Phaser.Weapon.prototype.pauseAll = function () {
+
+    this.bullets.setAll('body.enable', false);
+
+    return this;
+
+};
+
+/**
+* Sets `Body.enable` to `true` on each bullet in this Weapon.
+* This has the effect of resuming their motion should they be in-flight.
+* It also enables them for collision checks again.
+*
+* @method Phaser.Weapon#resumeAll
+* @return {Phaser.Weapon} This Weapon instance.
+*/
+Phaser.Weapon.prototype.resumeAll = function () {
+
+    this.bullets.setAll('body.enable', true);
+
+    return this;
+
+};
+
+/**
+* Calls `Bullet.kill` on every in-flight bullet in this Weapon.
+* Also re-enables their physics bodies, should they have been disabled via `pauseAll`.
+*
+* @method Phaser.Weapon#killAll
+* @return {Phaser.Weapon} This Weapon instance.
+*/
+Phaser.Weapon.prototype.killAll = function () {
+
+    this.bullets.callAllExists('kill', true);
+
+    this.bullets.setAll('body.enable', true);
+
+    return this;
+
+};
+
+/**
+* Resets the `Weapon.shots` counter back to zero. This is used when you've set
+* `Weapon.fireLimit`, and have hit (or just wish to reset) your limit.
+*
+* @method Phaser.Weapon#resetShots
+* @param {integer} [newLimit] - Optionally set a new `Weapon.fireLimit`.
+* @return {Phaser.Weapon} This Weapon instance.
+*/
+Phaser.Weapon.prototype.resetShots = function (newLimit) {
+
+    this.shots = 0;
+
+    if (newLimit !== undefined)
+    {
+        this.fireLimit = newLimit;
+    }
+
+    return this;
+
+};
+
+/**
+* Destroys this Weapon. It removes itself from the PluginManager, destroys
+* the bullets Group, and nulls internal references.
+*
+* @method Phaser.Weapon#destroy
+*/
+Phaser.Weapon.prototype.destroy = function () {
+
+    this.parent.remove(this, false);
+
+    this.bullets.destroy();
+
+    this.game = null;
+    this.parent = null;
+    this.active = false;
+    this.visible = false;
+
+};
+
+/**
+* Internal update method, called by the PluginManager.
+*
+* @method Phaser.Weapon#update
+* @protected
+*/
+Phaser.Weapon.prototype.update = function () {
+
+    if (this._bulletKillType === Phaser.Weapon.KILL_WEAPON_BOUNDS)
+    {
+        if (this.trackedSprite)
+        {
+            this.trackedSprite.updateTransform();
+            this.bounds.centerOn(this.trackedSprite.worldPosition.x, this.trackedSprite.worldPosition.y);
+        }
+        else if (this.trackedPointer)
+        {
+            this.bounds.centerOn(this.trackedPointer.worldX, this.trackedPointer.worldY);
+        }
+    }
+
+    if (this.autofire)
+    {
+        this.fire();
+    }
+
+};
+
+/**
+* Internal update method, called by the PluginManager.
+*
+* @method Phaser.Weapon#postRender
+* @protected
+*/
+Phaser.Weapon.prototype.postRender = function () {
+
+    if (!this.multiFire || !this._hasFired)
+    {
+        return;
+    }
+
+    this._hasFired = false;
+
+    this._nextFire = this._tempNextFire;
+
+};
+
+/**
+* Sets this Weapon to track the given Sprite, or any Object with a public `world` Point object.
+* When a Weapon tracks a Sprite it will automatically update its `fireFrom` value to match the Sprites
+* position within the Game World, adjusting the coordinates based on the offset arguments.
+*
+* This allows you to lock a Weapon to a Sprite, so that bullets are always launched from its location.
+*
+* Calling `trackSprite` will reset `Weapon.trackedPointer` to null, should it have been set, as you can
+* only track _either_ a Sprite, or a Pointer, at once, but not both.
+*
+* @method Phaser.Weapon#trackSprite
+* @param {Phaser.Sprite|Object} sprite - The Sprite to track the position of.
+* @param {integer} [offsetX=0] - The horizontal offset from the Sprites position to be applied to the Weapon.
+* @param {integer} [offsetY=0] - The vertical offset from the Sprites position to be applied to the Weapon.
+* @param {boolean} [trackRotation=false] - Should the Weapon also track the Sprites rotation?
+* @return {Phaser.Weapon} This Weapon instance.
+*/
+Phaser.Weapon.prototype.trackSprite = function (sprite, offsetX, offsetY, trackRotation) {
+
+    if (offsetX === undefined) { offsetX = 0; }
+    if (offsetY === undefined) { offsetY = 0; }
+    if (trackRotation === undefined) { trackRotation = false; }
+
+    this.trackedPointer = null;
+    this.trackedSprite = sprite;
+    this.trackRotation = trackRotation;
+
+    this.trackOffset.set(offsetX, offsetY);
+
+    return this;
+
+};
+
+/**
+* Sets this Weapon to track the given Pointer.
+* When a Weapon tracks a Pointer it will automatically update its `fireFrom` value to match the Pointers
+* position within the Game World, adjusting the coordinates based on the offset arguments.
+*
+* This allows you to lock a Weapon to a Pointer, so that bullets are always launched from its location.
+*
+* Calling `trackPointer` will reset `Weapon.trackedSprite` to null, should it have been set, as you can
+* only track _either_ a Pointer, or a Sprite, at once, but not both.
+*
+* @method Phaser.Weapon#trackPointer
+* @param {Phaser.Pointer} [pointer] - The Pointer to track the position of. Defaults to `Input.activePointer` if not specified.
+* @param {integer} [offsetX=0] - The horizontal offset from the Pointers position to be applied to the Weapon.
+* @param {integer} [offsetY=0] - The vertical offset from the Pointers position to be applied to the Weapon.
+* @return {Phaser.Weapon} This Weapon instance.
+*/
+Phaser.Weapon.prototype.trackPointer = function (pointer, offsetX, offsetY) {
+
+    if (pointer === undefined) { pointer = this.game.input.activePointer; }
+    if (offsetX === undefined) { offsetX = 0; }
+    if (offsetY === undefined) { offsetY = 0; }
+
+    this.trackedPointer = pointer;
+    this.trackedSprite = null;
+    this.trackRotation = false;
+
+    this.trackOffset.set(offsetX, offsetY);
+
+    return this;
+
+};
+
+/**
+* Attempts to fire multiple bullets from the positions defined in the given array.
+*
+* If you provide a `from` argument, or if there is a tracked Sprite or Pointer, then
+* the positions are treated as __offsets__ from the given objects position.
+*
+* If `from` is undefined, and there is no tracked object, then the bullets are fired
+* from the given positions, as they exist in the world.
+*
+* Calling this method sets `Weapon.multiFire = true`.
+*
+* If there are not enough bullets available in the pool, and the pool cannot be extended,
+* then this method may not fire from all of the given positions.
+*
+* When the bullets are launched they have their texture and frame updated, as required.
+* The velocity of the bullets are calculated based on Weapon properties like `bulletSpeed`.
+*
+* @method Phaser.Weapon#fireMany
+* @param {array} positions - An array of positions. Each position can be any Object, as long as it has public `x` and `y` properties, such as Phaser.Point, { x: 0, y: 0 }, Phaser.Sprite, etc.
+* @param {Phaser.Sprite|Phaser.Point|Object|string} [from] - Optionally fires the bullets **from** the `x` and `y` properties of this object, _instead_ of any `Weapon.trackedSprite` or `trackedPointer` that is set.
+* @return {array} An array containing all of the fired Phaser.Bullet objects, if a launch was successful, otherwise an empty array.
+*/
+Phaser.Weapon.prototype.fireMany = function (positions, from) {
+
+    this.multiFire = true;
+
+    var bullets = [];
+
+    var _this = this;
+
+    if (from || this.trackedSprite || this.trackedPointer)
+    {
+        positions.forEach(function(offset) {
+
+            bullets.push(_this.fire(from, null, null, offset.x, offset.y));
+
+        });
+    }
+    else
+    {
+        positions.forEach(function(position) {
+
+            bullets.push(_this.fire(position));
+
+        });
+    }
+
+    return bullets;
+
+};
+
+/**
+* Attempts to fire a single Bullet from a tracked Sprite or Pointer, but applies an offset
+* to the position first. This is the same as calling `Weapon.fire` and passing in the offset arguments.
+*
+* If there are no more bullets available in the pool, and the pool cannot be extended,
+* then this method returns `null`. It will also return `null` if not enough time has expired since the last time
+* the Weapon was fired, as defined in the `Weapon.fireRate` property.
+*
+* Otherwise the first available bullet is selected, launched, and returned.
+*
+* When the bullet is launched it has its texture and frame updated, as required. The velocity of the bullet is
+* calculated based on Weapon properties like `bulletSpeed`.
+*
+* If you wish to fire multiple bullets in a single game update, then set `Weapon.multiFire = true`
+* and you can call this method as many times as you like, per loop. See also `Weapon.fireMany`.
+*
+* @method Phaser.Weapon#fireOffset
+* @param {number} [offsetX=0] - The horizontal offset from the position of the tracked Sprite or Pointer, as set with `Weapon.trackSprite`.
+* @param {number} [offsetY=0] - The vertical offset from the position of the tracked Sprite or Pointer, as set with `Weapon.trackSprite`.
+* @return {Phaser.Bullet} The fired bullet, if a launch was successful, otherwise `null`.
+*/
+Phaser.Weapon.prototype.fireOffset = function (offsetX, offsetY) {
+
+    if (offsetX === undefined) { offsetX = 0; }
+    if (offsetY === undefined) { offsetY = 0; }
+
+    return this.fire(null, null, null, offsetX, offsetY);
+
+};
+
+/**
+* Attempts to fire a single Bullet. If there are no more bullets available in the pool, and the pool cannot be extended,
+* then this method returns `null`. It will also return `null` if not enough time has expired since the last time
+* the Weapon was fired, as defined in the `Weapon.fireRate` property.
+*
+* Otherwise the first available bullet is selected, launched, and returned.
+*
+* The arguments are all optional, but allow you to control both where the bullet is launched from, and aimed at.
+*
+* If you don't provide any of the arguments then it uses those set via properties such as `Weapon.trackedSprite`,
+* `Weapon.bulletAngle` and so on.
+*
+* When the bullet is launched it has its texture and frame updated, as required. The velocity of the bullet is
+* calculated based on Weapon properties like `bulletSpeed`.
+*
+* If you wish to fire multiple bullets in a single game update, then set `Weapon.multiFire = true`
+* and you can call `fire` as many times as you like, per loop. Multiple fires in a single update
+* only counts once towards the `shots` total, but you will still receive a Signal for each bullet.
+*
+* @method Phaser.Weapon#fire
+* @param {Phaser.Sprite|Phaser.Point|Object|string} [from] - Optionally fires the bullet **from** the `x` and `y` properties of this object. If set this overrides `Weapon.trackedSprite` or `trackedPointer`. Pass `null` to ignore it.
+* @param {number} [x] - The x coordinate, in world space, to fire the bullet **towards**. If left as `undefined`, or `null`, the bullet direction is based on its angle.
+* @param {number} [y] - The y coordinate, in world space, to fire the bullet **towards**. If left as `undefined`, or `null`, the bullet direction is based on its angle.
+* @param {number} [offsetX=0] - If the bullet is fired from a tracked Sprite or Pointer, or the `from` argument is set, this applies a horizontal offset from the launch position.
+* @param {number} [offsetY=0] - If the bullet is fired from a tracked Sprite or Pointer, or the `from` argument is set, this applies a vertical offset from the launch position.
+* @return {Phaser.Bullet} The fired bullet, if a launch was successful, otherwise `null`.
+*/
+Phaser.Weapon.prototype.fire = function (from, x, y, offsetX, offsetY) {
+
+    if (x === undefined) { x = null; }
+    if (y === undefined) { y = null; }
+
+    if (this.game.time.now < this._nextFire || (this.fireLimit > 0 && this.shots === this.fireLimit))
+    {
+        return null;
+    }
+
+    var speed = this.bulletSpeed;
+
+    //  Apply +- speed variance
+    if (this.bulletSpeedVariance !== 0)
+    {
+        speed += Phaser.Math.between(-this.bulletSpeedVariance, this.bulletSpeedVariance);
+    }
+
+    if (from)
+    {
+        if (this.fireFrom.width > 1)
+        {
+            this.fireFrom.centerOn(from.x, from.y);
+        }
+        else
+        {
+            this.fireFrom.x = from.x;
+            this.fireFrom.y = from.y;
+        }
+    }
+    else if (this.trackedSprite)
+    {
+        if (this.trackRotation)
+        {
+            this._rotatedPoint.set(this.trackedSprite.world.x + this.trackOffset.x, this.trackedSprite.world.y + this.trackOffset.y);
+            this._rotatedPoint.rotate(this.trackedSprite.world.x, this.trackedSprite.world.y, this.trackedSprite.worldRotation);
+
+            if (this.fireFrom.width > 1)
+            {
+                this.fireFrom.centerOn(this._rotatedPoint.x, this._rotatedPoint.y);
+            }
+            else
+            {
+                this.fireFrom.x = this._rotatedPoint.x;
+                this.fireFrom.y = this._rotatedPoint.y;
+            }
+        }
+        else
+        {
+            if (this.fireFrom.width > 1)
+            {
+                this.fireFrom.centerOn(this.trackedSprite.world.x + this.trackOffset.x, this.trackedSprite.world.y + this.trackOffset.y);
+            }
+            else
+            {
+                this.fireFrom.x = this.trackedSprite.world.x + this.trackOffset.x;
+                this.fireFrom.y = this.trackedSprite.world.y + this.trackOffset.y;
+            }
+        }
+
+        if (this.bulletInheritSpriteSpeed)
+        {
+            speed += this.trackedSprite.body.speed;
+        }
+    }
+    else if (this.trackedPointer)
+    {
+        if (this.fireFrom.width > 1)
+        {
+            this.fireFrom.centerOn(this.trackedPointer.world.x + this.trackOffset.x, this.trackedPointer.world.y + this.trackOffset.y);
+        }
+        else
+        {
+            this.fireFrom.x = this.trackedPointer.world.x + this.trackOffset.x;
+            this.fireFrom.y = this.trackedPointer.world.y + this.trackOffset.y;
+        }
+    }
+
+    if (offsetX !== undefined)
+    {
+        this.fireFrom.x += offsetX;
+    }
+
+    if (offsetY !== undefined)
+    {
+        this.fireFrom.y += offsetY;
+    }
+
+    var fromX = (this.fireFrom.width > 1) ? this.fireFrom.randomX : this.fireFrom.x;
+    var fromY = (this.fireFrom.height > 1) ? this.fireFrom.randomY : this.fireFrom.y;
+
+    var angle = (this.trackRotation) ? this.trackedSprite.angle : this.fireAngle;
+
+    //  The position (in world space) to fire the bullet towards, if set
+    if (x !== null && y !== null)
+    {
+        angle = this.game.math.radToDeg(Math.atan2(y - fromY, x - fromX));
+    }
+
+    //  Apply +- angle variance
+    if (this.bulletAngleVariance !== 0)
+    {
+        angle += Phaser.Math.between(-this.bulletAngleVariance, this.bulletAngleVariance);
+    }
+
+    var moveX = 0;
+    var moveY = 0;
+
+    //  Avoid sin/cos for right-angled shots
+    if (angle === 0 || angle === 180)
+    {
+        moveX = Math.cos(this.game.math.degToRad(angle)) * speed;
+    }
+    else if (angle === 90 || angle === 270)
+    {
+        moveY = Math.sin(this.game.math.degToRad(angle)) * speed;
+    }
+    else
+    {
+        moveX = Math.cos(this.game.math.degToRad(angle)) * speed;
+        moveY = Math.sin(this.game.math.degToRad(angle)) * speed;
+    }
+
+    var bullet = null;
+
+    if (this.autoExpandBulletsGroup)
+    {
+        bullet = this.bullets.getFirstExists(false, true, fromX, fromY, this.bulletKey, this.bulletFrame);
+
+        bullet.data.bulletManager = this;
+    }
+    else
+    {
+        bullet = this.bullets.getFirstExists(false);
+    }
+
+    if (bullet)
+    {
+        bullet.reset(fromX, fromY);
+
+        bullet.data.fromX = fromX;
+        bullet.data.fromY = fromY;
+        bullet.data.killType = this.bulletKillType;
+        bullet.data.killDistance = this.bulletKillDistance;
+        bullet.data.rotateToVelocity = this.bulletRotateToVelocity;
+
+        if (this.bulletKillType === Phaser.Weapon.KILL_LIFESPAN)
+        {
+            bullet.lifespan = this.bulletLifespan;
+        }
+
+        bullet.angle = angle + this.bulletAngleOffset;
+
+        //  Frames and Animations
+        if (this.bulletAnimation !== '')
+        {
+            if (bullet.animations.getAnimation(this.bulletAnimation) === null)
+            {
+                var anim = this.anims[this.bulletAnimation];
+
+                bullet.animations.add(anim.name, anim.frames, anim.frameRate, anim.loop, anim.useNumericIndex);
+            }
+
+            bullet.animations.play(this.bulletAnimation);
+        }
+        else
+        {
+            if (this.bulletFrameCycle)
+            {
+                bullet.frame = this.bulletFrames[this.bulletFrameIndex];
+
+                this.bulletFrameIndex++;
+
+                if (this.bulletFrameIndex >= this.bulletFrames.length)
+                {
+                    this.bulletFrameIndex = 0;
+                }
+            }
+            else if (this.bulletFrameRandom)
+            {
+                bullet.frame = this.bulletFrames[Math.floor(Math.random() * this.bulletFrames.length)];
+            }
+        }
+
+        if (bullet.data.bodyDirty)
+        {
+            if (this._data.customBody)
+            {
+                bullet.body.setSize(this._data.width, this._data.height, this._data.offsetX, this._data.offsetY);
+            }
+
+            bullet.body.collideWorldBounds = this.bulletCollideWorldBounds;
+
+            bullet.data.bodyDirty = false;
+        }
+
+        bullet.body.velocity.set(moveX, moveY);
+        bullet.body.gravity.set(this.bulletGravity.x, this.bulletGravity.y);
+
+        var next = 0;
+
+        if (this.bulletSpeedVariance !== 0)
+        {
+            var rate = this.fireRate;
+
+            rate += Phaser.Math.between(-this.fireRateVariance, this.fireRateVariance);
+
+            if (rate < 0)
+            {
+                rate = 0;
+            }
+
+            next = this.game.time.now + rate;
+        }
+        else
+        {
+            next = this.game.time.now + this.fireRate;
+        }
+
+        if (this.multiFire)
+        {
+            if (!this._hasFired)
+            {
+                //  We only add 1 to the 'shots' count for multiFire shots
+                this._hasFired = true;
+                this._tempNextFire = next;
+                this.shots++;
+            }
+        }
+        else
+        {
+            this._nextFire = next;
+
+            this.shots++;
+        }
+
+        this.onFire.dispatch(bullet, this, speed);
+
+        if (this.fireLimit > 0 && this.shots === this.fireLimit)
+        {
+            this.onFireLimit.dispatch(this, this.fireLimit);
+        }
+    }
+
+    return bullet;
+
+};
+
+/**
+* Fires a bullet **at** the given Pointer. The bullet will be launched from the `Weapon.fireFrom` position,
+* or from a Tracked Sprite or Pointer, if you have one set.
+*
+* @method Phaser.Weapon#fireAtPointer
+* @param {Phaser.Pointer} [pointer] - The Pointer to fire the bullet towards.
+* @return {Phaser.Bullet} The fired bullet if successful, null otherwise.
+*/
+Phaser.Weapon.prototype.fireAtPointer = function (pointer) {
+
+    if (pointer === undefined) { pointer = this.game.input.activePointer; }
+
+    return this.fire(null, pointer.worldX, pointer.worldY);
+
+};
+
+/**
+* Fires a bullet **at** the given Sprite. The bullet will be launched from the `Weapon.fireFrom` position,
+* or from a Tracked Sprite or Pointer, if you have one set.
+*
+* @method Phaser.Weapon#fireAtSprite
+* @param {Phaser.Sprite} [sprite] - The Sprite to fire the bullet towards.
+* @return {Phaser.Bullet} The fired bullet if successful, null otherwise.
+*/
+Phaser.Weapon.prototype.fireAtSprite = function (sprite) {
+
+    return this.fire(null, sprite.world.x, sprite.world.y);
+
+};
+
+/**
+* Fires a bullet **at** the given coordinates. The bullet will be launched from the `Weapon.fireFrom` position,
+* or from a Tracked Sprite or Pointer, if you have one set.
+*
+* @method Phaser.Weapon#fireAtXY
+* @param {number} [x] - The x coordinate, in world space, to fire the bullet towards.
+* @param {number} [y] - The y coordinate, in world space, to fire the bullet towards.
+* @return {Phaser.Bullet} The fired bullet if successful, null otherwise.
+*/
+Phaser.Weapon.prototype.fireAtXY = function (x, y) {
+
+    return this.fire(null, x, y);
+
+};
+
+/**
+* You can modify the size of the physics Body the Bullets use to be any dimension you need.
+* This allows you to make it smaller, or larger, than the parent Sprite.
+* You can also control the x and y offset of the Body. This is the position of the
+* Body relative to the top-left of the Sprite _texture_.
+*
+* For example: If you have a Sprite with a texture that is 80x100 in size,
+* and you want the physics body to be 32x32 pixels in the middle of the texture, you would do:
+*
+* `setSize(32 / Math.abs(this.scale.x), 32 / Math.abs(this.scale.y), 24, 34)`
+*
+* Where the first two parameters are the new Body size (32x32 pixels) relative to the Sprite's scale.
+* 24 is the horizontal offset of the Body from the top-left of the Sprites texture, and 34
+* is the vertical offset.
+*
+* @method Phaser.Weapon#setBulletBodyOffset
+* @param {number} width - The width of the Body.
+* @param {number} height - The height of the Body.
+* @param {number} [offsetX] - The X offset of the Body from the top-left of the Sprites texture.
+* @param {number} [offsetY] - The Y offset of the Body from the top-left of the Sprites texture.
+* @return {Phaser.Weapon} The Weapon Plugin.
+*/
+Phaser.Weapon.prototype.setBulletBodyOffset = function (width, height, offsetX, offsetY) {
+
+    if (offsetX === undefined) { offsetX = 0; }
+    if (offsetY === undefined) { offsetY = 0; }
+
+    this._data.customBody = true;
+    this._data.width = width;
+    this._data.height = height;
+    this._data.offsetX = offsetX;
+    this._data.offsetY = offsetY;
+
+    //  Update all bullets in the pool
+    this.bullets.callAll('body.setSize', 'body', width, height, offsetX, offsetY);
+    this.bullets.setAll('data.bodyDirty', false);
+
+    return this;
+
+};
+
+/**
+* Sets the texture frames that the bullets can use when being launched.
+*
+* This is intended for use when you've got numeric based frames, such as those loaded via a Sprite Sheet.
+*
+* It works by calling `Phaser.ArrayUtils.numberArray` internally, using the min and max values
+* provided. Then it sets the frame index to be zero.
+*
+* You can optionally set the cycle and random booleans, to allow bullets to cycle through the frames
+* when they're fired, or pick one at random.
+*
+* @method Phaser.Weapon#setBulletFrames
+* @param {integer} min - The minimum value the frame can be. Usually zero.
+* @param {integer} max - The maximum value the frame can be.
+* @param {boolean} [cycle=true] - Should the bullet frames cycle as they are fired?
+* @param {boolean} [random=false] - Should the bullet frames be picked at random as they are fired?
+* @return {Phaser.Weapon} The Weapon Plugin.
+*/
+Phaser.Weapon.prototype.setBulletFrames = function (min, max, cycle, random) {
+
+    if (cycle === undefined) { cycle = true; }
+    if (random === undefined) { random = false; }
+
+    this.bulletFrames = Phaser.ArrayUtils.numberArray(min, max);
+
+    this.bulletFrameIndex = 0;
+
+    this.bulletFrameCycle = cycle;
+    this.bulletFrameRandom = random;
+
+    return this;
+
+};
+
+/**
+* Adds a new animation under the given key. Optionally set the frames, frame rate and loop.
+* The arguments are all the same as for `Animation.add`, and work in the same way.
+*
+* `Weapon.bulletAnimation` will be set to this animation after it's created. From that point on, all
+* bullets fired will play using this animation. You can swap between animations by calling this method
+* several times, and then just changing the `Weapon.bulletAnimation` property to the name of the animation
+* you wish to play for the next launched bullet.
+*
+* If you wish to stop using animations at all, set `Weapon.bulletAnimation` to '' (an empty string).
+*
+* @method Phaser.Weapon#addBulletAnimation
+* @param {string} name - The unique (within the Weapon instance) name for the animation, i.e. "fire", "blast".
+* @param {Array} [frames=null] - An array of numbers/strings that correspond to the frames to add to this animation and in which order. e.g. [1, 2, 3] or ['run0', 'run1', run2]). If null then all frames will be used.
+* @param {number} [frameRate=60] - The speed at which the animation should play. The speed is given in frames per second.
+* @param {boolean} [loop=false] - Whether or not the animation is looped or just plays once.
+* @param {boolean} [useNumericIndex=true] - Are the given frames using numeric indexes (default) or strings?
+* @return {Phaser.Weapon} The Weapon Plugin.
+*/
+Phaser.Weapon.prototype.addBulletAnimation = function (name, frames, frameRate, loop, useNumericIndex) {
+
+    this.anims[name] = {
+        name: name,
+        frames: frames,
+        frameRate: frameRate,
+        loop: loop,
+        useNumericIndex: useNumericIndex
+    };
+
+    //  Add the animation to any existing bullets in the pool
+    this.bullets.callAll('animations.add', 'animations', name, frames, frameRate, loop, useNumericIndex);
+
+    this.bulletAnimation = name;
+
+    return this;
+
+};
+
+/**
+* Uses `Game.Debug` to draw some useful information about this Weapon, including the number of bullets
+* both in-flight, and available. And optionally the physics debug bodies of the bullets.
+*
+* @method Phaser.Weapon#debug
+* @param {integer} [x=16] - The coordinate, in screen space, at which to draw the Weapon debug data.
+* @param {integer} [y=32] - The coordinate, in screen space, at which to draw the Weapon debug data.
+* @param {boolean} [debugBodies=false] - Optionally draw the physics body of every bullet in-flight.
+*/
+Phaser.Weapon.prototype.debug = function (x, y, debugBodies) {
+
+    if (x === undefined) { x = 16; }
+    if (y === undefined) { y = 32; }
+    if (debugBodies === undefined) { debugBodies = false; }
+
+    this.game.debug.text("Weapon Plugin", x, y);
+    this.game.debug.text("Bullets Alive: " + this.bullets.total + " - Total: " + this.bullets.length, x, y + 24);
+
+    if (debugBodies)
+    {
+        this.bullets.forEachExists(this.game.debug.body, this.game.debug, 'rgba(255, 0, 255, 0.8)');
+    }
+
+};
+
+/**
+* The Class of the bullets that are launched by this Weapon. Defaults to {@link Phaser.Bullet}, but can be
+* overridden before calling `createBullets` and set to your own class type.
+*
+* It should be a constructor function accepting `(game, x, y, key, frame)`.
+*
+* @name Phaser.Weapon#bulletClass
+* @property {function} bulletClass
+*/
+Object.defineProperty(Phaser.Weapon.prototype, "bulletClass", {
+
+    get: function () {
+
+        return this._bulletClass;
+
+    },
+
+    set: function (classType) {
+
+        this._bulletClass = classType;
+
+        // `this.bullets` exists only after createBullets()
+        if (this.bullets) {
+            this.bullets.classType = this._bulletClass;
+        }
+    }
+
+});
+
+/**
+* This controls how the bullets will be killed. The default is `Phaser.Weapon.KILL_WORLD_BOUNDS`.
+*
+* There are 7 different "kill types" available:
+*
+* * `Phaser.Weapon.KILL_NEVER`
+* The bullets are never destroyed by the Weapon. It's up to you to destroy them via your own code.
+*
+* * `Phaser.Weapon.KILL_LIFESPAN`
+* The bullets are automatically killed when their `bulletLifespan` amount expires.
+*
+* * `Phaser.Weapon.KILL_DISTANCE`
+* The bullets are automatically killed when they exceed `bulletDistance` pixels away from their original launch position.
+*
+* * `Phaser.Weapon.KILL_WEAPON_BOUNDS`
+* The bullets are automatically killed when they no longer intersect with the `Weapon.bounds` rectangle.
+*
+* * `Phaser.Weapon.KILL_CAMERA_BOUNDS`
+* The bullets are automatically killed when they no longer intersect with the `Camera.bounds` rectangle.
+*
+* * `Phaser.Weapon.KILL_WORLD_BOUNDS`
+* The bullets are automatically killed when they no longer intersect with the `World.bounds` rectangle.
+*
+* * `Phaser.Weapon.KILL_STATIC_BOUNDS`
+* The bullets are automatically killed when they no longer intersect with the `Weapon.bounds` rectangle.
+* The difference between static bounds and weapon bounds, is that a static bounds will never be adjusted to
+* match the position of a tracked sprite or pointer.
+*
+* @name Phaser.Weapon#bulletKillType
+* @property {integer} bulletKillType
+*/
+Object.defineProperty(Phaser.Weapon.prototype, "bulletKillType", {
+
+    get: function () {
+
+        return this._bulletKillType;
+
+    },
+
+    set: function (type) {
+
+        switch (type)
+        {
+            case Phaser.Weapon.KILL_STATIC_BOUNDS:
+            case Phaser.Weapon.KILL_WEAPON_BOUNDS:
+                this.bulletBounds = this.bounds;
+                break;
+
+            case Phaser.Weapon.KILL_CAMERA_BOUNDS:
+                this.bulletBounds = this.game.camera.view;
+                break;
+
+            case Phaser.Weapon.KILL_WORLD_BOUNDS:
+                this.bulletBounds = this.game.world.bounds;
+                break;
+        }
+
+        this._bulletKillType = type;
+
+    }
+
+});
+
+/**
+* Should bullets collide with the World bounds or not?
+*
+* @name Phaser.Weapon#bulletCollideWorldBounds
+* @property {boolean} bulletCollideWorldBounds
+*/
+Object.defineProperty(Phaser.Weapon.prototype, "bulletCollideWorldBounds", {
+
+    get: function () {
+
+        return this._bulletCollideWorldBounds;
+
+    },
+
+    set: function (value) {
+
+        this._bulletCollideWorldBounds = value;
+
+        this.bullets.setAll('body.collideWorldBounds', value);
+        this.bullets.setAll('data.bodyDirty', false);
+
+    }
+
+});
+
+/**
+* The x coordinate from which bullets are fired. This is the same as `Weapon.fireFrom.x`, and
+* can be overridden by the `Weapon.fire` arguments.
+*
+* @name Phaser.Weapon#x
+* @property {number} x
+*/
+Object.defineProperty(Phaser.Weapon.prototype, "x", {
+
+    get: function () {
+
+        return this.fireFrom.x;
+
+    },
+
+    set: function (value) {
+
+        this.fireFrom.x = value;
+    }
+
+});
+
+/**
+* The y coordinate from which bullets are fired. This is the same as `Weapon.fireFrom.y`, and
+* can be overridden by the `Weapon.fire` arguments.
+*
+* @name Phaser.Weapon#y
+* @property {number} y
+*/
+Object.defineProperty(Phaser.Weapon.prototype, "y", {
+
+    get: function () {
+
+        return this.fireFrom.y;
+
+    },
+
+    set: function (value) {
+
+        this.fireFrom.y = value;
+    }
+
+});
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+
+/**
+* Create a new `Bullet` object. Bullets are used by the `Phaser.Weapon` class, and are normal Sprites,
+* with a few extra properties in the data object to handle Weapon specific features.
+* 
+* @class Phaser.Bullet
+* @constructor
+* @extends Phaser.Sprite
+* @param {Phaser.Game} game - A reference to the currently running game.
+* @param {number} x - The x coordinate (in world space) to position the Particle at.
+* @param {number} y - The y coordinate (in world space) to position the Particle at.
+* @param {string|Phaser.RenderTexture|Phaser.BitmapData|PIXI.Texture} key - This is the image or texture used by the Particle during rendering. It can be a string which is a reference to the Cache entry, or an instance of a RenderTexture or PIXI.Texture.
+* @param {string|number} frame - If this Particle is using part of a sprite sheet or texture atlas you can specify the exact frame to use by giving a string or numeric index.
+*/
+Phaser.Bullet = function (game, x, y, key, frame) {
+
+    Phaser.Sprite.call(this, game, x, y, key, frame);
+
+    this.anchor.set(0.5);
+
+    this.data = {
+        bulletManager: null,
+        fromX: 0,
+        fromY: 0,
+        bodyDirty: true,
+        rotateToVelocity: false,
+        killType: 0,
+        killDistance: 0
+    };
+
+};
+
+Phaser.Bullet.prototype = Object.create(Phaser.Sprite.prototype);
+Phaser.Bullet.prototype.constructor = Phaser.Bullet;
+
+/**
+* Kills the Bullet, freeing it up for re-use by the Weapon bullet pool.
+* Also dispatches the `Weapon.onKill` signal.
+*
+* @method Phaser.Bullet#kill
+* @memberof Phaser.Bullet
+*/
+Phaser.Bullet.prototype.kill = function () {
+
+    this.alive = false;
+    this.exists = false;
+    this.visible = false;
+
+    this.data.bulletManager.onKill.dispatch(this);
+
+    return this;
+
+};
+
+/**
+* Updates the Bullet, killing as required.
+*
+* @method Phaser.Bullet#kill
+* @memberof Phaser.Bullet
+*/
+Phaser.Bullet.prototype.update = function () {
+
+    if (!this.exists)
+    {
+        return;
+    }
+
+    if (this.data.killType > Phaser.Weapon.KILL_LIFESPAN)
+    {
+        if (this.data.killType === Phaser.Weapon.KILL_DISTANCE)
+        {
+            if (this.game.physics.arcade.distanceToXY(this, this.data.fromX, this.data.fromY, true) > this.data.killDistance)
+            {
+                this.kill();
+            }
+        }
+        else
+        {
+            if (!this.data.bulletManager.bulletBounds.intersects(this))
+            {
+                this.kill();
+            }
+        }
+    }
+    
+    if (this.data.rotateToVelocity)
+    {
+        this.rotation = Math.atan2(this.body.velocity.y, this.body.velocity.x);
+    }
+
+    if (this.data.bulletManager.bulletWorldWrap)
+    {
+        this.game.world.wrap(this, this.data.bulletManager.bulletWorldWrapPadding);
+    }
+
+};
 
 /**
 * @author       Richard Davey <rich@photonstorm.com>
