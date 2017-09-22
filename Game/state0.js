@@ -1,45 +1,40 @@
-var demo = {}, cursors, player, scoreText, score;
+var demo = {}, player, cursors;
 demo.state0 = function(){};
 demo.state0.prototype = {
     preload: function(){
-        game.load.image('sky','assets/backgrounds/sky.png');
-        game.load.spritesheet('dude', 'assets/spritesheets/dude.png', 32, 48);
+        game.load.spritesheet('dude', 'assets/spritesheets/dude.png',32,48);
+        game.load.image('sky', 'assets/backgrounds/sky.png');
+        game.load.image('redfruit', 'assets/sprites/redfruit.jpg');
+        game.load.image('bluefruit', 'assets/sprites/bluefruit.jpg');
+        game.load.image('yellowfruit', 'assets/sprites/yellowfruit.jpg');
+        game.load.image('orangefruit', 'assets/sprites/orangefruit.jpg');
+        game.load.image('purplefruit', 'assets/sprites/purplefruit.jpg');
+        game.load.image('greenfruit', 'assets/sprites/greenfruit.jpg');
+        
     },
     create: function(){
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#0000FF';
         addChangeStateEventListeners();
         game.add.sprite(0,0,'sky');
-        player = game.add.sprite(0,game.world.height/2,'dude');
+        game.add.text(300,400,"Press 1 to change states.")
+        
+        player = game.add.sprite(32,game.world.height/2,'dude');
         game.physics.arcade.enable(player);
         player.body.collideWorldBounds = true;
+        player.body.gravity.y = 300;
         cursors = game.input.keyboard.createCursorKeys();
-        scoreText = game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+        game.add.text(100,200,"Use arrow keys to move.");
     },
     update: function(){
-        player.velocity.y = 0;
-        player.velocity.x = 0;
-        if (cursors.up.isDown)
-        {
-            player.body.velocity.y = -150;
-        }
-        else if (cursors.left.isDown)
-        {
-            //  Move to the left
-            player.body.velocity.x = -150;
-        }
-        else if (cursors.right.isDown)
-        {
-            //  Move to the right
-            player.body.velocity.x = 150;
-        }
-        else if (cursors.down.isDown)
-        {
-            player.body.velocity.y = 150;  
-        }
-        else
-        {
-            player.body.velocity = 0;
+        player.body.velocity.x = 0;
+        
+        if (cursors.left.isDown) {
+            player.body.velocity.x = -200;
+        } else if (cursors.right.isDown) {
+            player.body.velocity.x = 200;
+        } else if (cursors.up.isDown) {
+            player.body.velocity.y = -200;
         }
 
     }
