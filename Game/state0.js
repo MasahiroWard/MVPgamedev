@@ -2,6 +2,7 @@ var demo = {}, player, cursors;
 var stomach_fruits = {};
 var stomach_icons = {};
 var stomach_tracker = {};
+var map_fruit = {};
 demo.state0 = function(){};
 demo.state0.prototype = {
     preload: function(){
@@ -20,7 +21,7 @@ demo.state0.prototype = {
         game.stage.backgroundColor = '#FFFFFF';
         addChangeStateEventListeners();
         
-        player = game.add.sprite(32,game.world.height,'chameleon');
+        player = game.add.sprite(200,game.world.height,'chameleon');
         player.scale.setTo(0.1,0.1)
         game.physics.arcade.enable(player);
         player.body.collideWorldBounds = true;
@@ -57,20 +58,35 @@ demo.state0.prototype = {
         stomach_tracker.purple = game.add.text(100,375,stomach_fruits.purple);
         stomach_tracker.orange = game.add.text(100,450,stomach_fruits.orange);
         
+        map_fruit = game.add.group();
+        map_fruit.enableBody = true;
+        var redfruit = map_fruit.create(500,500,"redfruit");
+        redfruit.scale.setTo(0.2,0.2);
+        
     },
     update: function(){
+        
+        game.physics.arcade.overlap(player, map_fruit, getfruit, null, this)
+        
         player.body.velocity.x = 0;
         
         if (cursors.left.isDown) {
-            player.body.velocity.x = -200;
+            player.body.velocity.x = -300;
         } else if (cursors.right.isDown) {
-            player.body.velocity.x = 200;
+            player.body.velocity.x = 300;
         } else if (cursors.up.isDown) {
-            player.body.velocity.y = -200;
+            player.body.velocity.y = -300;
         }
 
-    }
+    }    
 };
+
+function getfruit(player, redfruit){
+    redfruit.kill();
+    stomach_fruits.red += 1;
+    stomach_tracker.red.text = stomach_fruits.red;
+}
+
 
 function changeState(i, stateNum){
     console.log('state' + stateNum);
