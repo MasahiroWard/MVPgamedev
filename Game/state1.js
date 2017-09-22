@@ -1,6 +1,6 @@
 demo.state1 = function(){};
 // cursors changes the score so we should remote all the score things 
-var cursors, platforms, yCam = 0;
+var cursors, platforms, yCam = 1000;
 //  note: yCam is a var that can be used to set up scrolling
 // note2: i set ladders as immovable, not sure if i should have... 
 
@@ -19,9 +19,23 @@ demo.state1.prototype = {
     create: function(){
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#DDDDDD';
+        
+        game.world.setBounds(0, 0, 2000, 1600);
+        game.camera.y = 1600;
+        
         addChangeStateEventListeners();
-
-        cursors = game.input.keyboard.createCursorKeys();
+        
+        
+        // removing this crashes it ?!?!?!?
+        player = game.add.sprite(200,game.world.height - 500,'chameleon');
+        player.scale.setTo(0.1,0.1)
+        game.physics.arcade.enable(player);
+        player.body.collideWorldBounds = true;
+        player.body.gravity.y = 300;
+        //player.autoscroll(0,10);
+        
+        
+//        cursors = game.input.keyboard.createCursorKeys();
 //        game.add.text(300,400,"Press 0 to change states.");
 //        game.add.text(100,200,"Press up or down to change score.");
 
@@ -47,7 +61,7 @@ demo.state1.prototype = {
         ledge = platforms.create(250, 450 + yCam, 'platform');
         ledge.width = 75;
         
-        // put a 
+        // put a red fruit on this ledge 
         ledge = platforms.create(700, 200 + yCam, 'platform');
         ledge.width = 150;
         
@@ -75,7 +89,28 @@ demo.state1.prototype = {
         lad2.body.immovable = true;
         
         
-        // add in a blue fruit 
+        // create off screen platforms to yCam = 300
+        ledge = platforms.create(500, -300 + yCam, 'platform');
+        ledge = platforms.create(200, -100 + yCam, 'platform');
+        ledge.width = 100;
+        ledge = platforms.create(300, -200 + yCam, 'platform');
+        ledge.width = 100;
+        
+        // platforms to yCam = 600
+        ledge = platforms.create(50, -450 + yCam, 'platform');
+        ledge.width = 650;
+        ledge = platforms.create(775, -450 + yCam, 'platform');
+        ledge.width = 400;
+//        ledge = platforms.create(300, -200 + yCam, 'platform');
+//        ledge.width = 100;
+        
+        //platforms.autoscroll(0,10);
+        // use the map_fruit group from state0 
+        
+        // add in a red fruit 
+        //var redfruit1 = game.add.sprite(775,100 + yCam, 'redfruit');
+        //var redfruit1 = map_fruit.create(775, 100 + yCam, 'redfruit');
+        //redfruit1.scale.setTo(0.1,0.1);
         
         
         
@@ -91,11 +126,11 @@ demo.state1.prototype = {
     
     
     update: function(){
-        if (cursors.up.isDown) {
-            //score += 10;
-        } else if (cursors.down.isDown) {
-            //score -= 10;
-        }
-
+        chameleonmove();
+        
+        // scroll the camera 
+        game.camera.y -= 1;
+        // the camera scrolling isnt working yet  
+        //yCam += 50;
     }
 };
