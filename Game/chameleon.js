@@ -25,3 +25,9 @@ function chameleonmove(){
         player.body.velocity.y = -300;
     }   
 }
+
+function getfruit(player, redfruit){
+    redfruit.kill();
+    stomach_fruits.red += 1;
+    stomach_tracker.red.text = stomach_fruits.red;
+}
