@@ -23,8 +23,8 @@ demo.state0.prototype = {
         
         map_fruit = game.add.group();
         map_fruit.enableBody = true;
-        var redfruit = map_fruit.create(500,500,"redfruit");
-        redfruit.scale.setTo(0.2,0.2);
+        placeRedFruit(500,500);
+        placeRedFruit(500,300)
         
     },
     update: function(){
