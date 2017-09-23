@@ -2,7 +2,7 @@ var demo = {}, player, cursors;
 var stomach_fruits = {};
 var stomach_icons = {};
 var stomach_tracker = {};
-var map_fruit = {};
+var map_redfruits = {}, map_bluefruits = {}, map_yellowfruits = {}, map_orangefruits = {}, map_purplefruits = {}, map_greenfruits = {};
 var fruit_types = ["red", "blue", "yellow", "orange", "purple", "green"];
 demo.state0 = function(){};
 demo.state0.prototype = {
@@ -21,10 +21,14 @@ demo.state0.prototype = {
         game.add.text(20, 0, "Stomach")
         createInventory()
         
-        map_fruit = game.add.group();
-        map_fruit.enableBody = true;
+        make_fruit_groups()
         placeRedFruit(500,500);
-        placeRedFruit(500,300)
+        placeRedFruit(500,300);
+        placeBlueFruit(400,300);
+        placeYellowFruit(300,300);
+        placeOrangeFruit(200,200);
+        placePurpleFruit(200,300);
+        placeGreenFruit(200,400);
         
     },
     update: function(){
