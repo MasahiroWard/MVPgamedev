@@ -31,6 +31,10 @@ function chameleonmove(){
     }   
 }
 
+function chameleonred{
+    player.tint = 0xff0000;
+}
+
 function getRedfruits(player, fruit){
     fruit_color = "red";
     fruit.kill();
