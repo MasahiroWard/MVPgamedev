@@ -9,5 +9,5 @@ function loadImages(){
     game.load.image('orangefruit', 'assets/sprites/orangefruit.jpg');
     game.load.image('purplefruit', 'assets/sprites/purplefruit.jpg');
     game.load.image('greenfruit', 'assets/sprites/greenfruit.jpg');
-    game.load.image('chameleon', 'assets/sprites/chameleon.jpg');
+    game.load.image('chameleon', 'assets/sprites/white_chameleon.jpg');
 }

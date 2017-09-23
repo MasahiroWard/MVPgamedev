@@ -4,6 +4,7 @@ var stomach_icons = {};
 var stomach_tracker = {};
 var map_redfruits = {}, map_bluefruits = {}, map_yellowfruits = {}, map_orangefruits = {}, map_purplefruits = {}, map_greenfruits = {};
 var fruit_types = ["red", "blue", "yellow", "orange", "purple", "green"];
+var clrs = {"red": 0xff0000, "blue": 0x0000ff, "yellow": 0xffff00, "orange": 0xff8000, "purple": 0x6600cc, "green": 0x00b33c}
 demo.state0 = function(){};
 demo.state0.prototype = {
     preload: function(){
@@ -14,7 +15,7 @@ demo.state0.prototype = {
         game.stage.backgroundColor = '#FFFFFF';
         addChangeStateEventListeners();
         
-        createChameleon(200,game.world.height)
+        createChameleon(200,game.world.height);
         cursors = game.input.keyboard.createCursorKeys();
         
         // Init Stomach
@@ -32,7 +33,13 @@ demo.state0.prototype = {
         
     },
     update: function(){
-        chameleonmove()   
+        chameleonmove();
+        stomach_icons.red.events.onInputDown.add(chameleonred,this);
+        stomach_icons.blue.events.onInputDown.add(chameleonblue,this);
+        stomach_icons.yellow.events.onInputDown.add(chameleonyellow,this);
+        stomach_icons.orange.events.onInputDown.add(chameleonorange,this);
+        stomach_icons.purple.events.onInputDown.add(chameleonpurple,this);
+        stomach_icons.green.events.onInputDown.add(chameleongreen,this);
     }    
 };
 
