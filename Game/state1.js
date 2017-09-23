@@ -1,6 +1,6 @@
 demo.state1 = function(){};
 // cursors changes the score so we should remote all the score things 
-var cursors, platforms, yCam = 980, camSpeed = 0.5;
+var cursors, platforms, yCam = 980, camSpeed = 0.00001;
 // normally keep yCam at 980
 //  note: yCam is a var that can be used to set up scrolling
 // note2: i set ladders as immovable, not sure if i should have... 
@@ -36,14 +36,14 @@ demo.state1.prototype = {
         
         
         // note: the bounce is what allows the chameleon to move jump while on a platform. if there is no bounce, the chameleon cannot jump... 
-        createChameleon(200, game.world.height - 500);
+        createChameleon(200, game.world.height - 200);
         player.body.collideWorldBounds = false;
-        player.scale.setTo(0.03,0.03);
+        player.scale.setTo(0.05,0.05);
         player.body.bounce.y = 0.4;
         
 
 //        player.body.gravity.y = 300;
-//        player.body.bounce.y = 0.2;
+//        player.bod1y.bounce.y = 0.2;
         
         
 //        cursors = game.input.keyboard.createCursorKeys();
@@ -176,6 +176,14 @@ demo.state1.prototype = {
         if (player.body.touching.down){
             console.log('touching');
         }
+        
+        chameleonmove();
+        stomach_icons.red.events.onInputDown.add(chameleonred,this);
+        stomach_icons.blue.events.onInputDown.add(chameleonblue,this);
+        stomach_icons.yellow.events.onInputDown.add(chameleonyellow,this);
+        stomach_icons.orange.events.onInputDown.add(chameleonorange,this);
+        stomach_icons.purple.events.onInputDown.add(chameleonpurple,this);
+        stomach_icons.green.events.onInputDown.add(chameleongreen,this);
 
     }
 };
