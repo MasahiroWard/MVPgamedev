@@ -1,6 +1,6 @@
 demo.state1 = function(){};
 // cursors changes the score so we should remote all the score things 
-var cursors, platforms, yCam = 1000, camSpeed = 1;
+var cursors, platforms, yCam = 980, camSpeed = 0;
 //  note: yCam is a var that can be used to set up scrolling
 // note2: i set ladders as immovable, not sure if i should have... 
 
@@ -49,10 +49,10 @@ demo.state1.prototype = {
         ladders.enableBody = true; 
         
         // create the ground
-        var ground = platforms.create(50, game.world.height - 34 + yCam, 'platform');
+        var ground = platforms.create(50, 600 -16 + yCam, 'platform');
         ground.scale.setTo(2.5,1);
         ground.body.immovable = true;
-        ground = platforms.create(800, game.world.height - 34 + yCam, 'platform');
+        ground = platforms.create(800, 600 - 16 + yCam, 'platform');
         ground.width = 200;
         ground.body.immovable = true;
         
@@ -118,6 +118,8 @@ demo.state1.prototype = {
         ledge = platforms.create(775, -450 + yCam, 'platform');
         ledge.width = 400;
         ledge.body.immovable = true;
+        
+        
 //        ledge = platforms.create(300, -200 + yCam, 'platform');
 //        ledge.width = 100;
         
@@ -144,8 +146,11 @@ demo.state1.prototype = {
     
     
     update: function(){
-        // note the chameleon cannot jump while it is on a platform? 
-        chameleonmove();
+        // note the chameleon cannot jump while it is on a platform? have to press up like 4 times? what even?  
+//        if (player.body.touching.down){
+//            chameleonmove();
+//        }
+       chameleonmove();
         
         // scroll the camera 
         game.camera.y -= camSpeed;
