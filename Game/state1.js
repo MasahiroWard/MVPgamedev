@@ -1,6 +1,7 @@
 demo.state1 = function(){};
 // cursors changes the score so we should remote all the score things 
-var cursors, platforms, yCam = 980, camSpeed = 0;
+var cursors, platforms, yCam = 980, camSpeed = 0.5;
+// normally keep yCam at 980
 //  note: yCam is a var that can be used to set up scrolling
 // note2: i set ladders as immovable, not sure if i should have... 
 
@@ -10,6 +11,10 @@ demo.state1.prototype = {
         game.load.image('platform', 'assets/sprites/platform.png');
         game.load.image('ladder', 'assets/sprites/ladder.png');
         
+        // not sure if i need this 
+        loadImages();
+
+        
     },
     
     
@@ -17,6 +22,8 @@ demo.state1.prototype = {
     
     
     create: function(){
+        createInventory();
+        make_fruit_groups();
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#DDDDDD';
         
@@ -26,13 +33,17 @@ demo.state1.prototype = {
         addChangeStateEventListeners();
         
         
-        // removing this crashes it ?!?!?!?
-        player = game.add.sprite(200,game.world.height - 500,'chameleon');
-        player.scale.setTo(0.05,0.05)
-        game.physics.arcade.enable(player);
-        //player.body.collideWorldBounds = true;
-        player.body.gravity.y = 300;
-        player.body.bounce.y = 0.2;
+        
+        
+        // note: the bounce is what allows the chameleon to move jump while on a platform. if there is no bounce, the chameleon cannot jump... 
+        createChameleon(200, game.world.height - 500);
+        player.body.collideWorldBounds = false;
+        player.scale.setTo(0.03,0.03);
+        player.body.bounce.y = 0.4;
+        
+
+//        player.body.gravity.y = 300;
+//        player.body.bounce.y = 0.2;
         
         
 //        cursors = game.input.keyboard.createCursorKeys();
@@ -127,6 +138,10 @@ demo.state1.prototype = {
         // use the map_fruit group from state0 
         
         // add in a red fruit (not yet working)
+        placeRedFruit(500, 500 + yCam);
+        
+        
+        
         //placeRedFruit(775, 250);
         //var redfruit1 = game.add.sprite(775,100 + yCam, 'redfruit');
         //var redfruit1 = map_fruit.create(775, 100 + yCam, 'redfruit');
@@ -156,9 +171,11 @@ demo.state1.prototype = {
         game.camera.y -= camSpeed;
         
         // check collisions of player with the platform
-        game.physics.arcade.collide(player, platforms);
-        //game.physics.arcade.collide(player,)
-        
+        game.physics.arcade.collide(platforms,player);
+        //game.physics.arcade.collide(player, ladders); <- has the same issue as platforms 
+        if (player.body.touching.down){
+            console.log('touching');
+        }
 
     }
 };
