@@ -31,8 +31,53 @@ function chameleonmove(){
     }   
 }
 
-function chameleonred{
-    player.tint = 0xff0000;
+function chameleonred(){
+    fruit_color = "red"
+    if ((player.tint!=clrs[fruit_color]) && (stomach_fruits[fruit_color]>0)){
+        player.tint = clrs[fruit_color];
+        stomach_fruits[fruit_color] -= 1;
+        stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
+    }
+}
+function chameleonblue(){
+    fruit_color = "blue"
+    if ((player.tint!=clrs[fruit_color]) && (stomach_fruits[fruit_color]>0)){
+        player.tint = clrs[fruit_color];
+        stomach_fruits[fruit_color] -= 1;
+        stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
+    }
+}
+function chameleonyellow(){
+    fruit_color = "yellow"
+    if ((player.tint!=clrs[fruit_color]) && (stomach_fruits[fruit_color]>0)){
+        player.tint = clrs[fruit_color];
+        stomach_fruits[fruit_color] -= 1;
+        stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
+    }
+}
+function chameleongreen(){
+    fruit_color = "green"
+    if ((player.tint!=clrs[fruit_color]) && (stomach_fruits[fruit_color]>0)){
+        player.tint = clrs[fruit_color];
+        stomach_fruits[fruit_color] -= 1;
+        stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
+    }
+}
+function chameleonorange(){
+    fruit_color = "orange"
+    if ((player.tint!=clrs[fruit_color]) && (stomach_fruits[fruit_color]>0)){
+        player.tint = clrs[fruit_color];
+        stomach_fruits[fruit_color] -= 1;
+        stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
+    }
+}
+function chameleonpurple(){
+    fruit_color = "purple"
+    if ((player.tint!=clrs[fruit_color]) && (stomach_fruits[fruit_color]>0)){
+        player.tint = clrs[fruit_color];
+        stomach_fruits[fruit_color] -= 1;
+        stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
+    }
 }
 
 function getRedfruits(player, fruit){
@@ -46,22 +91,26 @@ function getBluefruits(player, fruit){
     fruit.kill();
     stomach_fruits[fruit_color] += 1;
     stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-}function getYellowfruits(player, fruit){
+}
+function getYellowfruits(player, fruit){
     fruit_color = "yellow";
     fruit.kill();
     stomach_fruits[fruit_color] += 1;
     stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-}function getOrangefruits(player, fruit){
+}
+function getOrangefruits(player, fruit){
     fruit_color = "orange";
     fruit.kill();
     stomach_fruits[fruit_color] += 1;
     stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-}function getPurplefruits(player, fruit){
+}
+function getPurplefruits(player, fruit){
     fruit_color = "purple";
     fruit.kill();
     stomach_fruits[fruit_color] += 1;
     stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-}function getGreenfruits(player, fruit){
+}
+function getGreenfruits(player, fruit){
     fruit_color = "green";
     fruit.kill();
     stomach_fruits[fruit_color] += 1;
