@@ -19,6 +19,10 @@ function chameleonmove(){
     game.physics.arcade.overlap(player, map_orangefruits, getOrangefruits, null, this)
     game.physics.arcade.overlap(player, map_purplefruits, getPurplefruits, null, this)
     game.physics.arcade.overlap(player, map_greenfruits, getGreenfruits, null, this)
+    
+    game.physics.arcade.overlap(player, ladders, climbLadder, null, this);
+    
+    
         
     player.body.velocity.x = 0;
 
@@ -26,9 +30,15 @@ function chameleonmove(){
         player.body.velocity.x = -300;
     } else if (cursors.right.isDown) {
         player.body.velocity.x = 300;
-    } else if (cursors.up.isDown) {
+    } else if (cursors.up.isDown && player.body.touching.down) {
         player.body.velocity.y = -300;
     }   
+//    
+//    var boundsA = player.getBounds();
+//    var boundsB = ladders.getBounds();
+//    console.log(boundsB);
+
+    
 }
 
 function chameleonred(){
@@ -122,5 +132,11 @@ function hit_enemy(player, enemy){
         enemy.kill();
     } else {
         player.kill();
+    }
+}
+
+function climbLadder(player, ladders){
+    if (cursors.up.isDown){
+        player.body.velocity.y = -100;
     }
 }

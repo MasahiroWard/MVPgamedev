@@ -1,6 +1,6 @@
 demo.state1 = function(){};
 // cursors changes the score so we should remote all the score things 
-var cursors, platforms, yCam = 980, camSpeed = 0.00001;
+var cursors, platforms, yCam = 980, camSpeed = 0.00001, ladders;
 // normally keep yCam at 980
 //  note: yCam is a var that can be used to set up scrolling
 // note2: i set ladders as immovable, not sure if i should have... 
@@ -36,10 +36,10 @@ demo.state1.prototype = {
         
         
         // note: the bounce is what allows the chameleon to move jump while on a platform. if there is no bounce, the chameleon cannot jump... 
-        createChameleon(200, game.world.height - 200);
+        createChameleon(300, game.world.height - 200);
         player.body.collideWorldBounds = false;
         player.scale.setTo(0.05,0.05);
-        player.body.bounce.y = 0.4;
+        player.body.bounce.y = 0.1;
         
 
 //        player.body.gravity.y = 300;
@@ -83,29 +83,29 @@ demo.state1.prototype = {
         ledge.body.immovable = true;
         
         // creating ladders 
-        var lad = ladders.create(150,150 + yCam,'ladder');
+        var lad = ladders.create(155,150 + yCam,'ladder');
         lad.scale.setTo(0.05,0.05);
         lad.body.immovable = true;
         
         //create ledges with ladder holes 
-        var shortPlat = platforms.create(50,150 + yCam,'platform');
+        var shortPlat = platforms.create(45,150 + yCam,'platform');
         shortPlat.width = 102;
         shortPlat.body.immovable = true;
         
-        shortPlat = platforms.create(50+100+36,150 + yCam,'platform');
+        shortPlat = platforms.create(50+100+50,150 + yCam,'platform');
         shortPlat.width = 102;
         shortPlat.body.immovable = true;
         
-        var shortPlat2 = platforms.create(70,25 + yCam,'platform');
+        var shortPlat2 = platforms.create(65,25 + yCam,'platform');
         shortPlat2.width = 102;
         shortPlat2.body.immovable = true;
         
-        shortPlat = platforms.create(70+100+36,25 + yCam,'platform');
+        shortPlat2 = platforms.create(70+100+50,25 + yCam,'platform');
         shortPlat2.width = 102;
         shortPlat2.body.immovable = true;
         
         // add in the second ladder
-        var lad2 = ladders.create(170,25 + yCam,'ladder');
+        var lad2 = ladders.create(175,25 + yCam,'ladder');
         lad2.scale.setTo(0.05,0.05);
         lad2.height = 127;
         lad2.body.immovable = true;
@@ -130,22 +130,15 @@ demo.state1.prototype = {
         ledge.width = 400;
         ledge.body.immovable = true;
         
+
         
-//        ledge = platforms.create(300, -200 + yCam, 'platform');
-//        ledge.width = 100;
-        
-        //platforms.autoscroll(0,10);
-        // use the map_fruit group from state0 
-        
-        // add in a red fruit (not yet working)
+        // add in a red fruit and a yellow fruit 
         placeRedFruit(500, 500 + yCam);
+        placeGreenFruit(200, -600 + yCam);
+        placeGreenFruit(800, -600, yCam);
         
         
-        
-        //placeRedFruit(775, 250);
-        //var redfruit1 = game.add.sprite(775,100 + yCam, 'redfruit');
-        //var redfruit1 = map_fruit.create(775, 100 + yCam, 'redfruit');
-        //redfruit1.scale.setTo(0.1,0.1);
+
         
         
         
@@ -161,21 +154,18 @@ demo.state1.prototype = {
     
     
     update: function(){
-        // note the chameleon cannot jump while it is on a platform? have to press up like 4 times? what even?  
-//        if (player.body.touching.down){
-//            chameleonmove();
-//        }
+
        chameleonmove();
         
-        // scroll the camera 
+
         game.camera.y -= camSpeed;
         
         // check collisions of player with the platform
         game.physics.arcade.collide(platforms,player);
         //game.physics.arcade.collide(player, ladders); <- has the same issue as platforms 
-        if (player.body.touching.down){
-            console.log('touching');
-        }
+//        if (player.body.touching.down){
+//            console.log('touching');
+//        }
         
         chameleonmove();
         stomach_icons.red.events.onInputDown.add(chameleonred,this);
