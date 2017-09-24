@@ -10,4 +10,5 @@ function loadImages(){
     game.load.image('purplefruit', 'assets/sprites/purplefruit.jpg');
     game.load.image('greenfruit', 'assets/sprites/greenfruit.jpg');
     game.load.image('chameleon', 'assets/sprites/white_chameleon.jpg');
+    game.load.image('bird', 'assets/sprites/bird.jpg')
 }

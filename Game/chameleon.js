@@ -116,3 +116,11 @@ function getGreenfruits(player, fruit){
     stomach_fruits[fruit_color] += 1;
     stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
 }
+
+function hit_enemy(player, enemy){
+    if (player.tint == enemy.tint){
+        enemy.kill();
+    } else {
+        player.kill();
+    }
+}
