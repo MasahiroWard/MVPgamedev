@@ -66,4 +66,5 @@ function addKeyCallback(key, fn, args){
 function addChangeStateEventListeners(){
     addKeyCallback(Phaser.Keyboard.ZERO, changeState, 0);
     addKeyCallback(Phaser.Keyboard.ONE, changeState, 1);
+    addKeyCallback(Phaser.Keyboard.TWO, changeState, 2)
 }
