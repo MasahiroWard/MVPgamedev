@@ -15,10 +15,18 @@ function cat_boss_move(){
     if (catMoveTimeStamp < game.time.time){
         // Cat boss changes direction every 2 seconds
         catMoveTimeStamp = game.time.time + 2000;
-        cat_boss.body.velocity.x = 100 * (Math.random()-0.5);
-        cat_boss.body.velocity.y = 100 * (Math.random()-0.5);
+        
+        // Cat has tendency to move down so she won't be stuck where player can't reach.
+        var xdir = Math.random() - 0.5;
+        var ydir = Math.random() - 0.4;
+        // Normalize so cat always moves at total speed 100
+        xdir = xdir / Math.sqrt(Math.pow(xdir,2) + Math.pow(ydir, 2))
+        ydir = ydir / Math.sqrt(Math.pow(xdir,2) + Math.pow(ydir, 2))
+        cat_boss.body.velocity.x = 100 * xdir;
+        cat_boss.body.velocity.y = 100 * ydir;
     }
     if (cat_boss_health == 0){
+        game.add.text(cat_boss.x, cat_boss.y, 'VICTORY!')
         cat_boss.kill();
     }
 }
