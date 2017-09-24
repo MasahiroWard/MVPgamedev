@@ -10,7 +10,7 @@ var player;
 var cursors;
 
 // Dictionaries to keep track of what is in your stomach
-var stomach_fruits = {}, stomach_icons = {}, stomach_tracker = {};
+var stomach, stomach_fruits = {}, stomach_icons = {}, stomach_tracker = {};
 
 // fruit objects on the map
 var map_redfruits = {}, map_bluefruits = {}, map_yellowfruits = {}, map_orangefruits = {}, map_purplefruits = {}, map_greenfruits = {};

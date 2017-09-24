@@ -1,6 +1,11 @@
 // Function for inventory management
 
 function createInventory(){
+    stomach = game.add.group();
+    stomach.fixedToCamera = true;
+    var mytxt = game.add.text(20, 0, "Stomach");
+    stomach.add(mytxt);
+    
     stomach_icons.red = game.add.sprite(20,75,"redfruit");
     stomach_icons.red.scale.setTo(0.2,0.2);
     stomach_icons.red.inputEnabled = true;
@@ -33,4 +38,10 @@ function createInventory(){
     stomach_tracker.green = game.add.text(100,300,stomach_fruits.green);
     stomach_tracker.purple = game.add.text(100,375,stomach_fruits.purple);
     stomach_tracker.orange = game.add.text(100,450,stomach_fruits.orange);
+    
+    var x;
+    for (x in stomach_fruits) {
+        stomach.add(stomach_icons[x]);
+        stomach.add(stomach_tracker[x]);
+    }
 }

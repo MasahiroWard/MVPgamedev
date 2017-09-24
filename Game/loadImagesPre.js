@@ -1,4 +1,5 @@
 // preload function
+// Use this in every "preload" stage rather than copy + pasta code for each stage
 
 function loadImages(){
     game.load.spritesheet('dude', 'assets/spritesheets/dude.png', 32, 48);

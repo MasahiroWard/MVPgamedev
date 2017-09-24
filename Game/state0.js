@@ -23,7 +23,6 @@ demo.state0.prototype = {
         cursors = game.input.keyboard.createCursorKeys();
         
         // Init Stomach
-        game.add.text(20, 0, "Stomach")
         createInventory();
         
         make_fruit_groups();
