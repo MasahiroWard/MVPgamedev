@@ -9,6 +9,7 @@ function make_enemy_groups(){
 
 function placeBird(x, y, clr){
     var bird = birds_group.create(x,y,"bird");
+    bird.scale.setTo(0.2, 0.2);
     bird.tint = clr;
 }
 

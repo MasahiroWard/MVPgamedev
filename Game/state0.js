@@ -6,6 +6,9 @@ var map_redfruits = {}, map_bluefruits = {}, map_yellowfruits = {}, map_orangefr
 var fruit_types = ["red", "blue", "yellow", "orange", "purple", "green"];
 var clrs = {"red": 0xff0000, "blue": 0x0000ff, "yellow": 0xffff00, "orange": 0xff8000, "purple": 0x6600cc, "green": 0x00b33c}
 var birds_group = {}, snakes_group = {};
+var cat_boss, cat_boss_health;
+var catMoveTimeStamp = 0, catHitTimeStamp = 0;
+
 demo.state0 = function(){};
 demo.state0.prototype = {
     preload: function(){
@@ -35,12 +38,13 @@ demo.state0.prototype = {
         placeGreenFruit(200,400);
         
         placeBird(200, 100, clrs["red"]);
+        place_cat_boss(400, 100);
         
     },
     update: function(){
         chameleonmove();
         moveBird();
-        
+        cat_boss_move();
         stomach_icons.red.events.onInputDown.add(chameleonred,this);
         stomach_icons.blue.events.onInputDown.add(chameleonblue,this);
         stomach_icons.yellow.events.onInputDown.add(chameleonyellow,this);

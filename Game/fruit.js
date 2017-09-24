@@ -26,7 +26,7 @@ function placeBlueFruit(x, y){
 }
 function placeYellowFruit(x, y){
     var fruit = map_yellowfruits.create(x, y, "yellowfruit");
-    fruit.scale.setTo(0.2,0.2);
+    fruit.scale.setTo(0.1,0.1);
 }
 function placeOrangeFruit(x, y){
     var fruit = map_orangefruits.create(x, y, "orangefruit");
@@ -38,5 +38,5 @@ function placePurpleFruit(x, y){
 }
 function placeGreenFruit(x, y){
     var fruit = map_greenfruits.create(x, y, "greenfruit");
-    fruit.scale.setTo(0.2,0.2);
+    fruit.scale.setTo(0.15,0.15);
 }
