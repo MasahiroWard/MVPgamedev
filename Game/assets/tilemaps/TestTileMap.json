@@ -19,15 +19,15 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"UglyGrassTile.tsx"
+         "source":"assets/tilemaps/UglyGrassTile.png"
         }, 
         {
          "firstgid":2,
-         "source":"UglyLadder.tsx"
+         "source":"assets/tilemaps/UglyLadder.png"
         }, 
         {
          "firstgid":3,
-         "source":"UglySky.tsx"
+         "source":"assets/tilemaps/UglySky.png"
         }],
  "tilewidth":32,
  "type":"map",
