@@ -39,7 +39,7 @@ function touch_boss(){
             cat_boss.tint = clrs['green']; // This will become random eventually
 
         } else {
-            player.kill();
+            deadplayer();
         }
     }
 }

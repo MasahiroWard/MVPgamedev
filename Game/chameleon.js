@@ -131,7 +131,7 @@ function hit_enemy(player, enemy){
     if (player.tint == enemy.tint){
         enemy.kill();
     } else {
-        player.kill();
+        deadplayer();
     }
 }
 
@@ -139,4 +139,8 @@ function climbLadder(player, ladders){
     if (cursors.up.isDown){
         player.body.velocity.y = -100;
     }
+}
+
+function deadplayer(){
+    game.state.start('gameover');
 }

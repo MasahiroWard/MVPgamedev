@@ -10,20 +10,14 @@ demo.state1.prototype = {
         // load in platforms image
         game.load.image('platform', 'assets/sprites/platform.png');
         game.load.image('ladder', 'assets/sprites/ladder.png');
-        
         // not sure if i need this 
-        loadImages();
-
-        
+        loadImages();  
     },
-    
-    
-    
-    
-    
     create: function(){
         createInventory();
         make_fruit_groups();
+        make_enemy_groups();
+        
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.stage.backgroundColor = '#DDDDDD';
         
@@ -32,19 +26,14 @@ demo.state1.prototype = {
         
         addChangeStateEventListeners();
         
-        
-        
-        
         // note: the bounce is what allows the chameleon to move jump while on a platform. if there is no bounce, the chameleon cannot jump... 
         createChameleon(300, game.world.height - 200);
         player.body.collideWorldBounds = false;
         player.scale.setTo(0.05,0.05);
         player.body.bounce.y = 0.1;
         
-
 //        player.body.gravity.y = 300;
 //        player.bod1y.bounce.y = 0.2;
-        
         
 //        cursors = game.input.keyboard.createCursorKeys();
 //        game.add.text(300,400,"Press 0 to change states.");
@@ -130,38 +119,22 @@ demo.state1.prototype = {
         ledge.width = 400;
         ledge.body.immovable = true;
         
-
-        
         // add in a red fruit and a yellow fruit 
         placeRedFruit(500, 500 + yCam);
         placeGreenFruit(200, -600 + yCam);
         placeGreenFruit(800, -600 + yCam);
         placeRedFruit(600, -550 + yCam);
+        placeRedFruit(400, 200+yCam);
         
-        
-        
+        placeBird(200, 100+yCam, clrs["red"]);
         place_cat_boss(500, -500);
-        
-        
-
-        
-        
-        
-        
-
-        
         
     },
     
-    
-    
-    
-    
-    
     update: function(){
 
-       chameleonmove();
-        
+        chameleonmove();
+        moveBird();
 
         game.camera.y -= camSpeed;
         
