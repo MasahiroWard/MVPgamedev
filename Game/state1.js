@@ -126,7 +126,7 @@ demo.state1.prototype = {
         placeRedFruit(600, -550 + yCam);
         placeRedFruit(400, 200+yCam);
         
-        placeBird(200, 100+yCam, clrs["red"]);
+        placeBird(200, 70+yCam, clrs["red"]);
         place_cat_boss(500, -500);
         
     },
