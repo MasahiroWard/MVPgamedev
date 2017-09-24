@@ -135,7 +135,12 @@ demo.state1.prototype = {
         // add in a red fruit and a yellow fruit 
         placeRedFruit(500, 500 + yCam);
         placeGreenFruit(200, -600 + yCam);
-        placeGreenFruit(800, -600, yCam);
+        placeGreenFruit(800, -600 + yCam);
+        placeRedFruit(600, -550 + yCam);
+        
+        
+        
+        place_cat_boss(500, -500);
         
         
 
@@ -162,10 +167,7 @@ demo.state1.prototype = {
         
         // check collisions of player with the platform
         game.physics.arcade.collide(platforms,player);
-        //game.physics.arcade.collide(player, ladders); <- has the same issue as platforms 
-//        if (player.body.touching.down){
-//            console.log('touching');
-//        }
+
         
         chameleonmove();
         stomach_icons.red.events.onInputDown.add(chameleonred,this);
@@ -174,6 +176,8 @@ demo.state1.prototype = {
         stomach_icons.orange.events.onInputDown.add(chameleonorange,this);
         stomach_icons.purple.events.onInputDown.add(chameleonpurple,this);
         stomach_icons.green.events.onInputDown.add(chameleongreen,this);
+        
+        cat_boss_move();
 
     }
 };
