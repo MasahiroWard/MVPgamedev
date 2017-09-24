@@ -1,6 +1,6 @@
 demo.state1 = function(){};
 // cursors changes the score so we should remote all the score things 
-var cursors, platforms, yCam = 980, camSpeed = 0.00001, ladders;
+
 // normally keep yCam at 980
 //  note: yCam is a var that can be used to set up scrolling
 // note2: i set ladders as immovable, not sure if i should have... 
