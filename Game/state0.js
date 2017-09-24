@@ -1,13 +1,4 @@
-var demo = {}, player, cursors;
-var stomach_fruits = {};
-var stomach_icons = {};
-var stomach_tracker = {};
-var map_redfruits = {}, map_bluefruits = {}, map_yellowfruits = {}, map_orangefruits = {}, map_purplefruits = {}, map_greenfruits = {};
-var fruit_types = ["red", "blue", "yellow", "orange", "purple", "green"];
-var clrs = {"red": 0xff0000, "blue": 0x0000ff, "yellow": 0xffff00, "orange": 0xff8000, "purple": 0x6600cc, "green": 0x00b33c}
-var birds_group = {}, snakes_group = {};
-var cat_boss, cat_boss_health;
-var catMoveTimeStamp = 0, catHitTimeStamp = 0;
+
 
 demo.state0 = function(){};
 demo.state0.prototype = {
@@ -66,5 +57,6 @@ function addKeyCallback(key, fn, args){
 function addChangeStateEventListeners(){
     addKeyCallback(Phaser.Keyboard.ZERO, changeState, 0);
     addKeyCallback(Phaser.Keyboard.ONE, changeState, 1);
-    addKeyCallback(Phaser.Keyboard.TWO, changeState, 2)
+    // state 2 doesnt work currently 
+    addKeyCallback(Phaser.Keyboard.TWO, changeState, 2);
 }
