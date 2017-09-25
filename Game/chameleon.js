@@ -8,6 +8,7 @@ function createChameleon(xcoor, ycoor){
     game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
     player.body.gravity.y = 300;
+    player.animations.add('walk', [0, 1, 2], 5, true);
 }
 
 // Put this in update
@@ -22,8 +23,7 @@ function chameleonmove(){
     
     game.physics.arcade.overlap(player, ladders, climbLadder, null, this);
     
-    
-        
+    player.animations.play('walk');
     player.body.velocity.x = 0;
 
     if (cursors.left.isDown) {
