@@ -11,6 +11,9 @@ function loadImages(){
     game.load.image('purplefruit', 'assets/sprites/purplefruit.jpg');
     game.load.image('greenfruit', 'assets/sprites/greenfruit.jpg');
     game.load.image('chameleon', 'assets/sprites/white_chameleon.jpg');
-    game.load.spritesheet('bird', 'assets/Pauline_art/M1_spritesheet.png')
-    game.load.image('cat_boss', 'assets/sprites/boss_cat.png')
+    
+    game.load.spritesheet('bird', 'assets/Pauline_art/M1_spritesheet.png', 250, 500);
+    game.load.spritesheet('snake', 'assets/Pauline_art/M2_spritesheet.png');
+    
+    game.load.image('cat_boss', 'assets/sprites/boss_cat.png');
 }
