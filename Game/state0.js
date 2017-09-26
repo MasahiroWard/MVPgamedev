@@ -1,8 +1,7 @@
-
-
 demo.state0 = function(){};
 demo.state0.prototype = {
     preload: function(){
+        // Add this in every preload function.  All necessary images for the stage should be in loadImages()
         loadImages()
     },
     create: function(){
@@ -19,13 +18,7 @@ demo.state0.prototype = {
         make_fruit_groups();
         make_enemy_groups();
         
-        placeRedFruit(500,500);
-        placeRedFruit(500,300);
-        placeBlueFruit(400,300);
-        placeYellowFruit(300,300);
-        placeOrangeFruit(200,200);
-        placePurpleFruit(200,300);
-        placeGreenFruit(200,400);
+        placeFruit(500,500, "redfruit");
         
         placeBird(200, 100, clrs["red"]);
         place_cat_boss(400, 100);

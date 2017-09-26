@@ -6,6 +6,8 @@ function createInventory(){
     var mytxt = game.add.text(20, 0, "Stomach");
     stomach.add(mytxt);
     
+    
+    // Change the x y coords to suite the screen later
     stomach_icons.red = game.add.sprite(20,75,"redfruit");
     stomach_icons.red.scale.setTo(0.2,0.2);
     stomach_icons.red.inputEnabled = true;

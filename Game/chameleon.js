@@ -9,18 +9,13 @@ function createChameleon(xcoor, ycoor){
     player.body.collideWorldBounds = true;
     player.body.gravity.y = 300;
     player.animations.add('walk', [0, 1, 2], 5, true);
+    player.color = "grey";
 }
 
 // Put this in update
 
 function chameleonmove(){
-    game.physics.arcade.overlap(player, map_redfruits, getRedfruits, null, this)
-    game.physics.arcade.overlap(player, map_bluefruits, getBluefruits, null, this)
-    game.physics.arcade.overlap(player, map_yellowfruits, getYellowfruits, null, this)
-    game.physics.arcade.overlap(player, map_orangefruits, getOrangefruits, null, this)
-    game.physics.arcade.overlap(player, map_purplefruits, getPurplefruits, null, this)
-    game.physics.arcade.overlap(player, map_greenfruits, getGreenfruits, null, this)
-    
+    game.physics.arcade.overlap(player, map_fruits, getfruits, null, this)
     game.physics.arcade.overlap(player, ladders, climbLadder, null, this);
     
     player.animations.play('walk');
@@ -41,48 +36,8 @@ function chameleonmove(){
     
 }
 
-function chameleonred(){
-    fruit_color = "red"
-    if ((player.tint!=clrs[fruit_color]) && (stomach_fruits[fruit_color]>0)){
-        player.tint = clrs[fruit_color];
-        stomach_fruits[fruit_color] -= 1;
-        stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-    }
-}
-function chameleonblue(){
-    fruit_color = "blue"
-    if ((player.tint!=clrs[fruit_color]) && (stomach_fruits[fruit_color]>0)){
-        player.tint = clrs[fruit_color];
-        stomach_fruits[fruit_color] -= 1;
-        stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-    }
-}
-function chameleonyellow(){
-    fruit_color = "yellow"
-    if ((player.tint!=clrs[fruit_color]) && (stomach_fruits[fruit_color]>0)){
-        player.tint = clrs[fruit_color];
-        stomach_fruits[fruit_color] -= 1;
-        stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-    }
-}
-function chameleongreen(){
-    fruit_color = "green"
-    if ((player.tint!=clrs[fruit_color]) && (stomach_fruits[fruit_color]>0)){
-        player.tint = clrs[fruit_color];
-        stomach_fruits[fruit_color] -= 1;
-        stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-    }
-}
-function chameleonorange(){
-    fruit_color = "orange"
-    if ((player.tint!=clrs[fruit_color]) && (stomach_fruits[fruit_color]>0)){
-        player.tint = clrs[fruit_color];
-        stomach_fruits[fruit_color] -= 1;
-        stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-    }
-}
-function chameleonpurple(){
-    fruit_color = "purple"
+function chameleon_change_color(){
+    fruit_color = this.color
     if ((player.tint!=clrs[fruit_color]) && (stomach_fruits[fruit_color]>0)){
         player.tint = clrs[fruit_color];
         stomach_fruits[fruit_color] -= 1;
@@ -90,38 +45,8 @@ function chameleonpurple(){
     }
 }
 
-function getRedfruits(player, fruit){
-    fruit_color = "red";
-    fruit.kill();
-    stomach_fruits[fruit_color] += 1;
-    stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-}
-function getBluefruits(player, fruit){
-    fruit_color = "blue";
-    fruit.kill();
-    stomach_fruits[fruit_color] += 1;
-    stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-}
-function getYellowfruits(player, fruit){
-    fruit_color = "yellow";
-    fruit.kill();
-    stomach_fruits[fruit_color] += 1;
-    stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-}
-function getOrangefruits(player, fruit){
-    fruit_color = "orange";
-    fruit.kill();
-    stomach_fruits[fruit_color] += 1;
-    stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-}
-function getPurplefruits(player, fruit){
-    fruit_color = "purple";
-    fruit.kill();
-    stomach_fruits[fruit_color] += 1;
-    stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-}
-function getGreenfruits(player, fruit){
-    fruit_color = "green";
+function getfruits(player, fruit){
+    fruit_color = fruit.color;
     fruit.kill();
     stomach_fruits[fruit_color] += 1;
     stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
