@@ -26,12 +26,26 @@ function chameleonmove(){
     player.animations.play('walk');
     player.body.velocity.x = 0;
 
+    
     if (cursors.left.isDown) {
         player.body.velocity.x = -300;
+        if (cursors.up.isDown && player.body.touching.down){
+            player.body.velocity.y = -300;
+        }
+        
     } else if (cursors.right.isDown) {
         player.body.velocity.x = 300;
+        if (cursors.up.isDown && player.body.touching.down){
+            player.body.velocity.y = -300;
+        }
     } else if (cursors.up.isDown && player.body.touching.down) {
         player.body.velocity.y = -300;
+        if (cursors.right.isDown){
+            player.body.velocity.x = 300;
+        }
+        else if (cursors.left.isDown){
+            player.body.velocity.x = -300;
+        }
     }   
 //    
 //    var boundsA = player.getBounds();
