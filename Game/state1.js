@@ -120,11 +120,11 @@ demo.state1.prototype = {
         ledge.body.immovable = true;
         
         // add in a red fruit and a yellow fruit 
-        placeRedFruit(500, 500 + yCam);
-        placeGreenFruit(200, -600 + yCam);
-        placeGreenFruit(800, -600 + yCam);
-        placeRedFruit(600, -550 + yCam);
-        placeRedFruit(400, 200+yCam);
+        placeFruit(500, 500 + yCam, "redfruit");
+        placeFruit(200, -600 + yCam, "greenfruit");
+        placeFruit(800, -600 + yCam, "greenfruit");
+        placeFruit(600, -550 + yCam, "redfruit");
+        placeFruit(400, 200 + yCam, "redfruit");
         
         placeBird(200, 70+yCam, clrs["red"]);
         place_cat_boss(500, -500);
@@ -143,12 +143,11 @@ demo.state1.prototype = {
 
         
         chameleonmove();
-        stomach_icons.red.events.onInputDown.add(chameleonred,this);
-        stomach_icons.blue.events.onInputDown.add(chameleonblue,this);
-        stomach_icons.yellow.events.onInputDown.add(chameleonyellow,this);
-        stomach_icons.orange.events.onInputDown.add(chameleonorange,this);
-        stomach_icons.purple.events.onInputDown.add(chameleonpurple,this);
-        stomach_icons.green.events.onInputDown.add(chameleongreen,this);
+        for (fruit in fruit_clr){
+            clr = fruit_clr[fruit];
+            stomach_icons[clr].events.onInputDown.add(chameleon_change_color, this);
+        }    
+
         
         cat_boss_move();
 

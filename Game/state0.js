@@ -28,12 +28,11 @@ demo.state0.prototype = {
         chameleonmove();
         moveBird();
         cat_boss_move();
-        stomach_icons.red.events.onInputDown.add(chameleonred,this);
-        stomach_icons.blue.events.onInputDown.add(chameleonblue,this);
-        stomach_icons.yellow.events.onInputDown.add(chameleonyellow,this);
-        stomach_icons.orange.events.onInputDown.add(chameleonorange,this);
-        stomach_icons.purple.events.onInputDown.add(chameleonpurple,this);
-        stomach_icons.green.events.onInputDown.add(chameleongreen,this);
+        
+        for (fruit in fruit_clr){
+            clr = fruit_clr[fruit];
+            stomach_icons[clr].events.onInputDown.add(chameleon_change_color, {color:clr});
+        }    
     }
 };
 
