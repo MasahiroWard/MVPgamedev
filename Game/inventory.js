@@ -1,21 +1,23 @@
 // Function for inventory management
 
-function createInventory(){
+function createInventory(x, y){
     stomach = game.add.group();
     stomach.fixedToCamera = true;
-    var inventory_x = 400;
-    var inventory_y = 25;
+    var inventory_x = x;
+    var inventory_y = y;
     var mytxt = game.add.text(inventory_x, inventory_y, "Stomach");
     stomach.add(mytxt);
     
     var i = 0;
-    for (fruit in fruit_clr){
-        i += 1;
-        clr = fruit_clr[fruit];
+    for (fruit in fruit_colors){
+        i += 1; // Allows the inventory to be staggered for ease of vision
+        var clr = fruit_colors[fruit];
         
         // Make icons to show player what is in the inventory
         stomach_icons[clr] = game.add.sprite(inventory_x,inventory_y+75*i,fruit);
         stomach_icons[clr].scale.setTo(0.2,0.2);
+        
+        // Allows clicking the icon
         stomach_icons[clr].inputEnabled = true;
         stomach_icons[clr]["color"] = clr;
         stomach.add(stomach_icons[clr]);

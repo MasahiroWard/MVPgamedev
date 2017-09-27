@@ -4,7 +4,7 @@
 function placeFruit(x, y, fruitsprite){
     var fruit = game.add.sprite(x, y, fruitsprite);
     fruit.scale.setTo(0.2, 0.2);
-    fruit.color = fruit_clr[fruitsprite];
+    fruit.color = fruit_colors[fruitsprite];
     map_fruits.add(fruit);
 }
 
