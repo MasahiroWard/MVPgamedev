@@ -14,7 +14,7 @@ demo.state1.prototype = {
         loadImages();  
     },
     create: function(){
-        createInventory();
+        createInventory(500,25);
         make_fruit_groups();
         make_enemy_groups();
         
@@ -126,7 +126,7 @@ demo.state1.prototype = {
         placeFruit(600, -550 + yCam, "redfruit");
         placeFruit(400, 200 + yCam, "redfruit");
         
-        placeBird(200, 70+yCam, clrs["red"]);
+        placeBird(200, 70+yCam, "red");
         place_cat_boss(500, -500);
         
     },
@@ -142,9 +142,8 @@ demo.state1.prototype = {
         game.physics.arcade.collide(platforms,player);
 
         
-        chameleonmove();
-        for (fruit in fruit_clr){
-            clr = fruit_clr[fruit];
+        for (fruit in fruit_colors){
+            clr = fruit_colors[fruit];
             stomach_icons[clr].events.onInputDown.add(chameleon_change_color, this);
         }    
 

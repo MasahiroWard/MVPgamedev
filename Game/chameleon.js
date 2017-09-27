@@ -3,8 +3,8 @@
 // Put this in create
 
 function createChameleon(xcoor, ycoor){
-    player = game.add.sprite(xcoor, ycoor,'green_chameleon');
-    player.scale.setTo(0.1,0.1)
+    player = game.add.sprite(xcoor, ycoor,'grey_chameleon');
+    player.scale.setTo(0.13,0.13)
     game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
     player.body.gravity.y = 300;
@@ -52,13 +52,12 @@ function chameleonmove(){
 }
 
 function chameleon_change_color(fruit){
-    fruit_color = fruit["color"];
-    console.log(fruit_color);
-    if ((player.tint!=clrs[fruit_color]) && (stomach_fruits[fruit_color]>0)){
-        player.tint = clrs[fruit_color];
-        player.color = fruit_clr;
-        stomach_fruits[fruit_color] -= 1;
-        stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
+    clr = fruit["color"];
+    console.log(clr);
+    if ((player.color!=clr) && (stomach_fruits[clr]>0)){
+        player.color = clr;
+        stomach_fruits[clr] -= 1;
+        stomach_tracker[clr].text = stomach_fruits[clr];
     }
 }
 

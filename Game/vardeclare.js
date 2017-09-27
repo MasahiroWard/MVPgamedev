@@ -14,7 +14,7 @@ var stomach, stomach_fruits = {}, stomach_icons = {}, stomach_tracker = {};
 
 // fruit objects on the map
 var map_fruits = {};
-var fruit_colors = {"redfruit":"red", "bluefruit":"blue", "yellowfruit":"yellow","orangefruit":"orange", "purplefruit":"purple", "greenfruit":"green"};
+var fruit_colors = {"redfruit": "red", "bluefruit": "blue", "yellowfruit": "yellow", "orangefruit": "orange", "purplefruit": "purple", "greenfruit": "green"};
 
 // Stores colors as hex code.  When calling colors in this game, use the syntax clrs["red"]
 var hex_colors = {"red": 0xff0000, "blue": 0x0000ff, "yellow": 0xffff00, "orange": 0xff8000, "purple": 0x6600cc, "green": 0x00b33c};

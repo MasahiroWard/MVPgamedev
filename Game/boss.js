@@ -38,7 +38,8 @@ function touch_boss(){
         catHitTimeStamp = game.time.time + 2000;
         if (cat_boss.color == player.color){
             cat_boss_health -= 1;
-            cat_boss.tint = clrs['green']; // This will become random eventually
+            cat_boss.color = "green";
+            cat_boss.tint = hex_colors['green']; // This will become random eventually
 
         } else {
             deadplayer();
