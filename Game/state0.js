@@ -1,9 +1,9 @@
-
-
 demo.state0 = function(){};
 demo.state0.prototype = {
     preload: function(){
-        loadImages()
+        // Add this in every preload function.  All necessary images for the stage should be in loadImages()
+        loadImages();
+        loadCatBoss()
     },
     create: function(){
         game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -13,21 +13,14 @@ demo.state0.prototype = {
         createChameleon(200,game.world.height);
         cursors = game.input.keyboard.createCursorKeys();
         
-        // Init Stomach
-        createInventory();
+        // Init Stomach, args are x&y of top left corner of inventory
+        createInventory(400,25);
         
         make_fruit_groups();
         make_enemy_groups();
         
-        placeRedFruit(500,500);
-        placeRedFruit(500,300);
-        placeBlueFruit(400,300);
-        placeYellowFruit(300,300);
-        placeOrangeFruit(200,200);
-        placePurpleFruit(200,300);
-        placeGreenFruit(200,400);
-        
-        placeBird(200, 100, clrs["red"]);
+        placeFruit(500,500, "redfruit");
+        placeBird(200, 100, "red");
         place_cat_boss(400, 100);
         
     },
@@ -35,12 +28,11 @@ demo.state0.prototype = {
         chameleonmove();
         moveBird();
         cat_boss_move();
-        stomach_icons.red.events.onInputDown.add(chameleonred,this);
-        stomach_icons.blue.events.onInputDown.add(chameleonblue,this);
-        stomach_icons.yellow.events.onInputDown.add(chameleonyellow,this);
-        stomach_icons.orange.events.onInputDown.add(chameleonorange,this);
-        stomach_icons.purple.events.onInputDown.add(chameleonpurple,this);
-        stomach_icons.green.events.onInputDown.add(chameleongreen,this);
+        
+        for (fruit in fruit_colors){
+            clr = fruit_colors[fruit];
+            stomach_icons[clr].events.onInputDown.add(chameleon_change_color, {color:clr});
+        }    
     }
 };
 
@@ -57,6 +49,6 @@ function addKeyCallback(key, fn, args){
 function addChangeStateEventListeners(){
     addKeyCallback(Phaser.Keyboard.ZERO, changeState, 0);
     addKeyCallback(Phaser.Keyboard.ONE, changeState, 1);
-    // state 2 doesnt work currently 
     addKeyCallback(Phaser.Keyboard.TWO, changeState, 2);
+    addKeyCallback(Phaser.Keyboard.THREE, changeState, 3);
 }

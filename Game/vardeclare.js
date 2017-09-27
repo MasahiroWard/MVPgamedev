@@ -13,13 +13,14 @@ var cursors;
 var stomach, stomach_fruits = {}, stomach_icons = {}, stomach_tracker = {};
 
 // fruit objects on the map
-var map_redfruits = {}, map_bluefruits = {}, map_yellowfruits = {}, map_orangefruits = {}, map_purplefruits = {}, map_greenfruits = {};
+var map_fruits = {};
+var fruit_colors = {"redfruit":"red", "bluefruit":"blue", "yellowfruit":"yellow","orangefruit":"orange", "purplefruit":"purple", "greenfruit":"green"};
 
 // Stores colors as hex code.  When calling colors in this game, use the syntax clrs["red"]
-var clrs = {"red": 0xff0000, "blue": 0x0000ff, "yellow": 0xffff00, "orange": 0xff8000, "purple": 0x6600cc, "green": 0x00b33c};
+var hex_colors = {"red": 0xff0000, "blue": 0x0000ff, "yellow": 0xffff00, "orange": 0xff8000, "purple": 0x6600cc, "green": 0x00b33c};
 
 // This is a list used to pick random colors or cycle through all colors
-var fruit_types = ["red", "blue", "yellow", "orange", "purple", "green"];
+var color_list = ["red", "blue", "yellow", "orange", "purple", "green"];
 
 // Groups for enemies
 var birds_group = {}, snakes_group = {};
