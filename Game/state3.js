@@ -1,7 +1,7 @@
 demo.state3 = function(){};
 demo.state3.prototype = {
     preload: function(){
-        game.world.setBounds(0, 0, 2000, 3000);
+        game.world.setBounds(0, 0, 1600, 3000);
         game.load.tilemap('stage', 'assets/tilemaps/TileMapBig.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('LargeGrass', 'assets/tilemaps/LargeGrass.png');
 //        game.load.image('UglyGrassTile', 'assets/tilemaps/UglyGrassTile.png');
