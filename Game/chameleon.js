@@ -4,12 +4,15 @@
 
 function createChameleon(xcoor, ycoor){
     player = game.add.sprite(xcoor, ycoor,'grey_chameleon');
-    player.scale.setTo(0.13,0.13)
     game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
     player.body.gravity.y = 300;
     player.animations.add('walk', [0, 1, 2], 5, true);
     player.color = "grey";
+    
+    // Use this later to flip sprite
+    player.anchor.setTo(0.5,0.5);
+    player.scale.setTo(0.13,0.13)
 }
 
 
@@ -24,22 +27,27 @@ function chameleonmove(){
     player.body.velocity.x = 0;
 
     if (cursors.left.isDown) {
+        player.scale.setTo(0.13, 0.13)
         player.body.velocity.x = -300;
         if (cursors.up.isDown && player.body.touching.down){
             player.body.velocity.y = -300;
         }
         
     } else if (cursors.right.isDown) {
+        player.scale.setTo(-0.13, 0.13)
         player.body.velocity.x = 300;
         if (cursors.up.isDown && player.body.touching.down){
             player.body.velocity.y = -300;
         }
-    } else if (cursors.up.isDown && player.body.touching.down) {
+    } 
+    if (cursors.up.isDown && player.body.touching.down) {
         player.body.velocity.y = -300;
         if (cursors.right.isDown){
+            player.scale.setTo(-0.13, 0.13)
             player.body.velocity.x = 300;
         }
         else if (cursors.left.isDown){
+            player.scale.setTo(0.13, 0.13)
             player.body.velocity.x = -300;
         }
     } else if (cursors.down.isDown) {
