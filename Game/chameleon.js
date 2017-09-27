@@ -36,8 +36,8 @@ function chameleonmove(){
     
 }
 
-function chameleon_change_color(color){
-    fruit_color = color;
+function chameleon_change_color(fruit){
+    fruit_color = fruit["color"];
     console.log(fruit_color);
     if ((player.tint!=clrs[fruit_color]) && (stomach_fruits[fruit_color]>0)){
         player.tint = clrs[fruit_color];
