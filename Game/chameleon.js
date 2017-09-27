@@ -42,7 +42,9 @@ function chameleonmove(){
         else if (cursors.left.isDown){
             player.body.velocity.x = -300;
         }
-    }   
+    } else if (cursors.down.isDown) {
+        player.body.velocity = 300;
+    }
 //    
 //    var boundsA = player.getBounds();
 //    var boundsB = ladders.getBounds();
@@ -51,8 +53,7 @@ function chameleonmove(){
     
 }
 
-function chameleon_change_color(fruit){
-    clr = fruit["color"];
+function chameleon_change_color(clr){
     console.log(clr);
     if ((player.color!=clr) && (stomach_fruits[clr]>0)){
         player.color = clr;

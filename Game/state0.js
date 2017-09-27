@@ -28,11 +28,11 @@ demo.state0.prototype = {
         chameleonmove();
         moveBird();
         cat_boss_move();
-        
+        /*
         for (fruit in fruit_colors){
             clr = fruit_colors[fruit];
             stomach_icons[clr].events.onInputDown.add(chameleon_change_color, {color:clr});
-        }    
+        } */   
     }
 };
 
