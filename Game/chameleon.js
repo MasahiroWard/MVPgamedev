@@ -25,7 +25,7 @@ function chameleonmove(){
     
     player.animations.play('walk');
     player.body.velocity.x = 0;
-
+    
     if (cursors.left.isDown) {
         player.scale.setTo(0.13, 0.13)
         player.body.velocity.x = -300;
@@ -40,26 +40,37 @@ function chameleonmove(){
             player.body.velocity.y = -300;
         }
     } 
-    if (cursors.up.isDown /*&& player.body.touching.down*/) {
-        player.body.velocity.y = -300;
-        if (cursors.right.isDown){
-            player.scale.setTo(-0.13, 0.13)
-            player.body.velocity.x = 300;
-        }
-        else if (cursors.left.isDown){
-            player.scale.setTo(0.13, 0.13)
-            player.body.velocity.x = -300;
-        }
-    } else if (cursors.down.isDown) {
-        player.body.velocity = 300;
-    }
+//    if (cursors.up.isDown /*&& player.body.touching.down*/) {
+//        player.body.velocity.y = -300;
+//        if (cursors.right.isDown){
+//            player.scale.setTo(-0.13, 0.13)
+//            player.body.velocity.x = 300;
+//        }
+//        else if (cursors.left.isDown){
+//            player.scale.setTo(0.13, 0.13)
+//            player.body.velocity.x = -300;
+//        }
+//    } else if (cursors.down.isDown) {
+//        player.body.velocity = 300;
+//    }
 //    
-//    var boundsA = player.getBounds();
-//    var boundsB = ladders.getBounds();
-//    console.log(boundsB);
-
-    
 }
+
+
+//chameleonjump function(){
+//    console.log('hitting');
+//    if (cursors.up.isDown && cursors.left.isDown == false && cursors.right.isDown == false){
+//        player.body.velocity.y = -300;
+//    }
+//    
+//}
+
+
+//    console.log('hitting'); 
+//    if(cursors.up.isDown && cursors.left.isDown == false && cursors.right.isDown == false {
+//       player.body.velocity.y = -300;
+//    }
+
 
 function chameleon_change_color(clr){
     console.log(clr);

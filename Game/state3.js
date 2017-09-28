@@ -53,7 +53,7 @@ demo.state3.prototype = {
         // set collisions
         //map.setCollisionBetween(1, 3, true, 'layer1');
         map.setCollisionBetween(1, 3, true, layer1);
-        console.log("Collide")
+//        console.log("Collide")
         
 //        setCollisionBetween(1, 3, true, 'LargeGrass');// true, function(){console.log('hitting grass')});
         
@@ -73,10 +73,12 @@ demo.state3.prototype = {
        
     },
     update: function(){
-        game.camera.y -= camSpeed;
-        console.log("Update")
+//        game.camera.y -= camSpeed;
+//        console.log("Update")
 
-        game.physics.arcade.collide(player, layer1, function(){console.log("hit layer")});
+        
+        // the jump kinda works for now.... sorta ... 
+        game.physics.arcade.collide(player, layer1, function(){console.log('hitting'); if(cursors.up.isDown && cursors.left.isDown == false && cursors.right.isDown == false){player.body.velocity.y = -300}});
         chameleonmove();
 
     }
