@@ -1,4 +1,6 @@
 var layer1;
+var layer2; 
+
 demo.state3 = function(){};
 demo.state3.prototype = {
     preload: function(){
@@ -20,7 +22,7 @@ demo.state3.prototype = {
 
     },
     create: function(){
-        
+
         //game.physics.startSystem.(Phaser.Physics.ARCADE);
         game.camera.y = 3000;
         game.stage.backgroundColor = '#DDDDDD';
@@ -35,19 +37,27 @@ demo.state3.prototype = {
 
 
 //        var ladder = map.createLayer('ladders');
-        layer1 = map.createLayer('Platforms');
-        var ladders = map.createLayer('Ladders');
+        
+        
+        layer1 = map.createLayer('Ladders');
+        layer2 = map.createLayer('Platforms');
+        layer1.resizeWorld();
+        
         game.physics.arcade.enable(layer1);
+        
         
         createChameleon(500,2500);
         
+        
 
         // set collisions
+        //map.setCollisionBetween(1, 3, true, 'layer1');
         map.setCollisionBetween(1, 3, true, layer1);
+        console.log("Collide")
         
 //        setCollisionBetween(1, 3, true, 'LargeGrass');// true, function(){console.log('hitting grass')});
         
-        
+
 
 //
         
@@ -63,9 +73,10 @@ demo.state3.prototype = {
        
     },
     update: function(){
-        //game.camera.y -= camSpeed;
-        console.log('hi there');
-        game.physics.arcade.collide(player, layer1);
+        game.camera.y -= camSpeed;
+        console.log("Update")
+
+        game.physics.arcade.collide(player, layer1, function(){console.log("hit layer")});
         chameleonmove();
 
     }
