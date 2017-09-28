@@ -40,7 +40,7 @@ function chameleonmove(){
             player.body.velocity.y = -300;
         }
     } 
-    if (cursors.up.isDown && player.body.touching.down) {
+    if (cursors.up.isDown /*&& player.body.touching.down*/) {
         player.body.velocity.y = -300;
         if (cursors.right.isDown){
             player.scale.setTo(-0.13, 0.13)
@@ -67,6 +67,7 @@ function chameleon_change_color(clr){
         player.color = clr;
         stomach_fruits[clr] -= 1;
         stomach_tracker[clr].text = stomach_fruits[clr];
+        player.loadTexture(clr+'_chameleon', 0, false);
     }
 }
 

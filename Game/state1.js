@@ -142,10 +142,10 @@ demo.state1.prototype = {
         game.physics.arcade.collide(platforms,player);
 
         
-        for (fruit in fruit_colors){
+        /*for (fruit in fruit_colors){
             clr = fruit_colors[fruit];
             stomach_icons[clr].events.onInputDown.add(chameleon_change_color, this);
-        }    
+        } */   
 
         
         cat_boss_move();

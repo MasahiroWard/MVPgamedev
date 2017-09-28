@@ -26,10 +26,10 @@ function keyPress(char) {
     } else if (char == "e"){
         chameleon_change_color("yellow")
     } else if (char == "r"){
-        chameleon_change_color("green")
-    } else if (char == "t"){
         chameleon_change_color("orange")
-    } else if (char == "y"){
+    } else if (char == "t"){
         chameleon_change_color("purple")
+    } else if (char == "y"){
+        chameleon_change_color("green")
     } 
 }
