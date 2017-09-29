@@ -31,16 +31,13 @@ function chameleonmove(){
     if (cursors.left.isDown) {
         player.scale.setTo(0.13, 0.13)
         player.body.velocity.x = -300;
-//        if (cursors.up.isDown && player.body.touching.down){
-//            player.body.velocity.y = -300;
-//        }
         
-    } else if (cursors.right.isDown) {
+    } 
+    
+    else if (cursors.right.isDown) {
         player.scale.setTo(-0.13, 0.13)
         player.body.velocity.x = 300;
-//        if (cursors.up.isDown && player.body.touching.down){
-//            player.body.velocity.y = -300;
-//        }
+    
     }
     
 //    if (player.body.checkCollision.down){
@@ -68,7 +65,7 @@ function chameleonmove(){
 
 function jump_function(){
     console.log('hitting');
-    if (cursors.up.isDown && player.body.checkCollision.up){
+    if (cursors.up.isDown && player.body.velocity.y == 0){
         player.body.velocity.y = -300;
     }    
 }
