@@ -1,3 +1,5 @@
+
+
 // Function for chameleon generation and movement
 
 // Put this in create
@@ -29,17 +31,25 @@ function chameleonmove(){
     if (cursors.left.isDown) {
         player.scale.setTo(0.13, 0.13)
         player.body.velocity.x = -300;
-        if (cursors.up.isDown && player.body.touching.down){
-            player.body.velocity.y = -300;
-        }
+//        if (cursors.up.isDown && player.body.touching.down){
+//            player.body.velocity.y = -300;
+//        }
         
     } else if (cursors.right.isDown) {
         player.scale.setTo(-0.13, 0.13)
         player.body.velocity.x = 300;
-        if (cursors.up.isDown && player.body.touching.down){
-            player.body.velocity.y = -300;
-        }
-    } 
+//        if (cursors.up.isDown && player.body.touching.down){
+//            player.body.velocity.y = -300;
+//        }
+    }
+    
+//    if (player.body.checkCollision.down){
+//        player.body.velocity.y = -100;
+//        console.log('down');
+//    }
+//    if (cursors.up.isDown && player.body.velocity.y ==0){
+//        player.body.velocity.y = -300;
+//    }
 //    if (cursors.up.isDown /*&& player.body.touching.down*/) {
 //        player.body.velocity.y = -300;
 //        if (cursors.right.isDown){
@@ -53,17 +63,15 @@ function chameleonmove(){
 //    } else if (cursors.down.isDown) {
 //        player.body.velocity = 300;
 //    }
-//    
+//
 }
 
-
-//chameleonjump function(){
-//    console.log('hitting');
-//    if (cursors.up.isDown && cursors.left.isDown == false && cursors.right.isDown == false){
-//        player.body.velocity.y = -300;
-//    }
-//    
-//}
+function jump_function(){
+    console.log('hitting');
+    if (cursors.up.isDown && player.body.checkCollision.up){
+        player.body.velocity.y = -300;
+    }    
+}
 
 
 //    console.log('hitting'); 

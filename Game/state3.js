@@ -78,7 +78,7 @@ demo.state3.prototype = {
 
         
         // the jump kinda works for now.... sorta ... 
-        game.physics.arcade.collide(player, layer1, function(){console.log('hitting'); if(cursors.up.isDown && cursors.left.isDown == false && cursors.right.isDown == false){player.body.velocity.y = -300}});
+        game.physics.arcade.collide(player, layer1, jump_function);
         chameleonmove();
 
     }
