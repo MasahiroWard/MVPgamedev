@@ -1,5 +1,6 @@
 var layer1;
 var layer2; 
+var map;
 
 demo.state3 = function(){};
 demo.state3.prototype = {
@@ -9,14 +10,6 @@ demo.state3.prototype = {
         game.load.tilemap('stage', 'assets/tilemaps/TestMapFitted2.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('LargeGrass', 'assets/tilemaps/LargeGrass.png');
         game.load.image('LargeLadder', 'assets/tilemaps/LargeLadder.png');
-//        game.load.image('UglyGrassTile', 'assets/tilemaps/UglyGrassTile.png');
-//        game.load.image('UglyLadder', 'assets/tilemaps/UglyLadder.png');
-//        //game.load.image('UglySky', 'assets/tilemaps/UglySky.png');
-        
-//        game.load.tilemap('test', 'assets/tilemaps/TestTileMap.json', null, Phaser.Tilemap.TILED_JSON);
-//        game.load.image('UglyGrassTile', 'assets/tilemaps/UglyGrassTile.png');
-//         game.load.image('UglySky', 'assets/tilemaps/UglySky.png');
-//         game.load.image('UglyLadder', 'assets/tilemaps/UglyLadder.png');
         
 
 
@@ -24,26 +17,20 @@ demo.state3.prototype = {
     },
     create: function(){
 
-        //game.physics.startSystem.(Phaser.Physics.ARCADE);
         game.camera.y = 3000;
         game.stage.backgroundColor = '#DDDDDD';
         addChangeStateEventListeners();
 
 
-        var map = game.add.tilemap('stage');
+        map = game.add.tilemap('stage');
         map.addTilesetImage('LargeGrass');
-        map.addTilesetImage('LargeLadder')
-//        map.addTilesetImage('UglyGrassTile');
-//        map.addTilesetImage('UglyLadder');
-       // map.addTilesetImage('UglySky');
-
-
-//        var ladder = map.createLayer('ladders');
+        map.addTilesetImage('LargeLadder');
         
         
         layer1 = map.createLayer('Platforms');
         layer2 = map.createLayer('Ladders');
         layer1.resizeWorld();
+        layer2.resizeWorld();
         
         game.physics.arcade.enable(layer1);
         game.physics.arcade.enable(layer2);
@@ -54,29 +41,25 @@ demo.state3.prototype = {
         
 
         // set collisions
-        //map.setCollisionBetween(1, 3, true, 'layer1');
+
         map.setCollisionBetween(1, 3, true, layer1);
         map.setCollision(4, true, layer2);
-//        console.log("Collide")
-        
-//        setCollisionBetween(1, 3, true, 'LargeGrass');// true, function(){console.log('hitting grass')});
-        
 
-
-//
         
-//
-//        addChangeStateEventListeners();
-//        var map = game.add.tilemap('test');
-//        map.addTilesetImage('UglyGrassTile');
-//        map.addTilesetImage('UglySky');
-//        map.addTilesetImage('UglyLadder');
-//        
-//        var grass = map.createLayer('grass');
-//        var ladder = map.createLayer('ladder');
        
     },
     update: function(){
+//        
+        var tx = layer2.getTileX(player.position.x);
+        var ty = layer2.getTileY(player.position.y);
+        
+        var tileType = map.getTile(tx, ty, layer2);
+
+        
+        if (tileType != null){
+            ladder_function();
+        }
+        
         if (camCount < camIncr){
             camCount += 1;
         }
@@ -84,12 +67,12 @@ demo.state3.prototype = {
             camCount = 0;
             game.camera.y -= camSpeed;
         }
-//        game.camera.y -= camSpeed;
-//        console.log("Update")
+
 
         
-        // the jump kinda works for now.... sorta ... 
+        // jump function works now! 
         game.physics.arcade.collide(player, layer1, jump_function);
+
         
         chameleonmove();
 

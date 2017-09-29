@@ -37,7 +37,7 @@ var cat_boss, cat_boss_health, catMoveTimeStamp = 0, catHitTimeStamp = 0;
 var platforms, ladders;
 
 // Moves the camera vertically at a set pace.
-var yCam = 980, camSpeed = 0.00001;
+var yCam = 980, camSpeed = 1;
 // count of frames until camera position can increment
 var camCount = 0;
-var camIncr = 3;
+var camIncr = 2;
