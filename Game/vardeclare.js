@@ -38,3 +38,6 @@ var platforms, ladders;
 
 // Moves the camera vertically at a set pace.
 var yCam = 980, camSpeed = 0.00001;
+// count of frames until camera position can increment
+var camCount = 0;
+var camIncr = 3;

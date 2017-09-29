@@ -73,6 +73,13 @@ demo.state3.prototype = {
        
     },
     update: function(){
+        if (camCount < camIncr){
+            camCount += 1;
+        }
+        else {
+            camCount = 0;
+            game.camera.y -= camSpeed;
+        }
 //        game.camera.y -= camSpeed;
 //        console.log("Update")
 
