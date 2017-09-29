@@ -6,8 +6,9 @@ demo.state3.prototype = {
     preload: function(){
         game.world.setBounds(0, 0, 1000, 3000);
         //player.collideWorldBounds = true;
-        game.load.tilemap('stage', 'assets/tilemaps/TestMapFitted.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.tilemap('stage', 'assets/tilemaps/TestMapFitted2.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('LargeGrass', 'assets/tilemaps/LargeGrass.png');
+        game.load.image('LargeLadder', 'assets/tilemaps/LargeLadder.png');
 //        game.load.image('UglyGrassTile', 'assets/tilemaps/UglyGrassTile.png');
 //        game.load.image('UglyLadder', 'assets/tilemaps/UglyLadder.png');
 //        //game.load.image('UglySky', 'assets/tilemaps/UglySky.png');
@@ -31,6 +32,7 @@ demo.state3.prototype = {
 
         var map = game.add.tilemap('stage');
         map.addTilesetImage('LargeGrass');
+        map.addTilesetImage('LargeLadder')
 //        map.addTilesetImage('UglyGrassTile');
 //        map.addTilesetImage('UglyLadder');
        // map.addTilesetImage('UglySky');
@@ -39,11 +41,12 @@ demo.state3.prototype = {
 //        var ladder = map.createLayer('ladders');
         
         
-        layer1 = map.createLayer('Ladders');
-        layer2 = map.createLayer('Platforms');
+        layer1 = map.createLayer('Platforms');
+        layer2 = map.createLayer('Ladders');
         layer1.resizeWorld();
         
         game.physics.arcade.enable(layer1);
+        game.physics.arcade.enable(layer2);
         
         
         createChameleon(500,2500);
@@ -53,6 +56,7 @@ demo.state3.prototype = {
         // set collisions
         //map.setCollisionBetween(1, 3, true, 'layer1');
         map.setCollisionBetween(1, 3, true, layer1);
+        map.setCollision(4, true, layer2);
 //        console.log("Collide")
         
 //        setCollisionBetween(1, 3, true, 'LargeGrass');// true, function(){console.log('hitting grass')});
@@ -86,6 +90,7 @@ demo.state3.prototype = {
         
         // the jump kinda works for now.... sorta ... 
         game.physics.arcade.collide(player, layer1, jump_function);
+        
         chameleonmove();
 
     }

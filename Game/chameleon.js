@@ -65,7 +65,7 @@ function chameleonmove(){
 
 function jump_function(){
     console.log('hitting');
-    if (cursors.up.isDown && player.body.velocity.y == 0){
+    if (cursors.up.isDown && player.body.blocked.down){
         player.body.velocity.y = -300;
     }    
 }
