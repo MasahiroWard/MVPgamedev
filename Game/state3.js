@@ -15,7 +15,8 @@ demo.state3.prototype = {
         game.load.image('LargeLadder', 'assets/tilemaps/LargeLadder.png');
     },
     create: function(){
-
+        game.physics.startSystem(Phaser.Physics.ARCADE);
+        cursors = game.input.keyboard.createCursorKeys();
 
         game.camera.y = 3600;
         
