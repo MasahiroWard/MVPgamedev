@@ -9,6 +9,8 @@ function loadImages(){
     game.load.image('purplefruit', 'assets/sprites/purplefruit.jpg');
     game.load.image('greenfruit', 'assets/sprites/greenfruit.jpg');
     
+    game.load.image('balloon', 'assets/sprites/balloon.png')
+    
     // when loading spritesheet, each cell must be the same size.  We will need to play with the spritesheets for smooth animations.
     game.load.spritesheet('grey_chameleon', 'assets/spritesheets/grey_chameleon_spritesheet.png', 373, 259);
     game.load.spritesheet('green_chameleon', 'assets/spritesheets/green_chameleon_spritesheet.png', 373, 258);

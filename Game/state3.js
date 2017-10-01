@@ -5,18 +5,22 @@ var map;
 demo.state3 = function(){};
 demo.state3.prototype = {
     preload: function(){
+        loadImages()
         game.world.setBounds(0, 0, 1000, 3000);
         
         // load in tile map assets 
         game.load.tilemap('stage', 'assets/tilemaps/TestMapFitted2.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('LargeGrass', 'assets/tilemaps/LargeGrass.png');
         game.load.image('LargeLadder', 'assets/tilemaps/LargeLadder.png');
+        game.load.image('platform', 'assets/sprites/platform.png')
     },
     create: function(){
+        game.physics.startSystem(Phaser.Physics.ARCADE);
 
         game.camera.y = 3000;
         game.stage.backgroundColor = '#DDDDDD';
         addChangeStateEventListeners();
+        cursors = game.input.keyboard.createCursorKeys();
 
         // add in the tile map 
         map = game.add.tilemap('stage');
@@ -62,6 +66,8 @@ demo.state3.prototype = {
         addMovingPlatforms();
         placeMP(100, 2500, 2, 1, 4, 1, 100, 25);
         placeMP(500, 1600, 3, 1, 0, 5, 0, 100);
+        
+        haveBallon()
        
     },
     update: function(){
@@ -85,7 +91,6 @@ demo.state3.prototype = {
         }
 
 
-        
         // colide with grass and allow player to jump 
         game.physics.arcade.collide(player, layer1, jump_function);
 
