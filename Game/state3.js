@@ -62,6 +62,9 @@ demo.state3.prototype = {
         placeBird(700,3000-550,"blue");
         placeBird(500,1650,"red");
         
+        // place moving platforms
+        addMovingPlatforms();
+        placeMP(100, 2500, 2, 1, 4, 1, 100, 25);
        
     },
     update: function(){
@@ -92,6 +95,7 @@ demo.state3.prototype = {
         
         chameleonmove();
         moveBird();
+        moving_platform_group.forEach(movingPlatformsUpdate, this);
 
     }
 };

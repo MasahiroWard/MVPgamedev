@@ -31,16 +31,16 @@ function placeMP(x, y, xlength, ylength, xmove_tiles, ymove_tiles, xspeed, yspee
 };
 
 function movingPlatformsUpdate(platform) {
-    console.log(platform.body.x, platform.leftbound, platform.rightbound);
-    if (platform.body.x == platform.leftbound) {
+    console.log(platform.body.x, platform.leftbound, platform.rightbound, platform.body.y, platform.upperbound, platform.lowerbound);
+    if (platform.body.x <= platform.leftbound) {
         platform.body.velocity.x = platform.xspeed;
-    } else if (platform.body.x == platform.rightbound){
+    } else if (platform.body.x >= platform.rightbound){
         platform.body.velocity.x = -platform.xspeed
     }
-    if (platform.body.y == platform.upperbound) {
-        platform.body.velocity.y == platform.yspeed;
-    } else if (platform.body.y == platform.lowerbound) {
-        platform.body.velocity.y == -platform.yspeed;
+    if (platform.body.y <= platform.upperbound) {
+        platform.body.velocity.y = platform.yspeed;
+    } else if (platform.body.y >= platform.lowerbound) {
+        platform.body.velocity.y = -platform.yspeed;
     }
     // Allow player to jump from the platform
     game.physics.arcade.collide(player, moving_platform_group, player_on_platform, null, this);

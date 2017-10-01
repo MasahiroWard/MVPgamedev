@@ -33,7 +33,6 @@ demo.state0.prototype = {
         chameleonmove();
         moveBird();
         cat_boss_move();
-        movingPlatformsUpdate();
         /*
         for (fruit in fruit_colors){
             clr = fruit_colors[fruit];
