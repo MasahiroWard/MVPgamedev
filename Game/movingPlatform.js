@@ -5,7 +5,7 @@ function addMovingPlatforms(){
     moving_platform_group.enableBody = true;
 }
 
-function placeMP(x, y, xlength, ylength, xmove, ymove, movetime) {
+function placeMP(x, y, xlength, ylength, xmove_tiles, ymove_tiles, xspeed, yspeed) {
     // x and y are the top left corner of the platform
     // xlength and ylength are integer numbers, in the form of number of tile lengths
     // xmove and ymove determines how far the platform moves
@@ -14,25 +14,42 @@ function placeMP(x, y, xlength, ylength, xmove, ymove, movetime) {
     
     mp.width = xlength * 50;
     mp.height = ylength * 50;
+    mp.leftbound = x;
+    mp.rightbound = x + xmove_tiles * 50;
+    mp.upperbound = y;
+    mp.lowerbound = y + ymove_tiles * 50;
+    mp.xspeed = xspeed;
+    mp.yspeed = yspeed;
     mp.body.allowGravity = false;
     mp.body.immovable = true;
-    mp.playerLocked = false;
     
-    var movement = game.add.tween(mp);
-    movement.to({x:[x+xmove*50, x], y:[y+ymove*50, y]},movetime, "Linear", true, -1, false);
+    // Initialize movement
+    mp.body.velocity.x = xspeed;
+    mp.body.velocity.y = yspeed;
     
     moving_platform_group.add(mp);
 };
 
-function movingPlatformsUpdate() {
+function movingPlatformsUpdate(platform) {
+    console.log(platform.body.x, platform.leftbound, platform.rightbound);
+    if (platform.body.x == platform.leftbound) {
+        platform.body.velocity.x = platform.xspeed;
+    } else if (platform.body.x == platform.rightbound){
+        platform.body.velocity.x = -platform.xspeed
+    }
+    if (platform.body.y == platform.upperbound) {
+        platform.body.velocity.y == platform.yspeed;
+    } else if (platform.body.y == platform.lowerbound) {
+        platform.body.velocity.y == -platform.yspeed;
+    }
+    // Allow player to jump from the platform
     game.physics.arcade.collide(player, moving_platform_group, player_on_platform, null, this);
+    
 }
 
 function player_on_platform(player, mp) {
     console.log(mp.body.velocity.x)
-    if (!this.locked && player.body.velocity.y >0){
-        this.locked = true;
-        this.lockedTo = mp;
-        mp.playerLocked = true;
+    if (cursors.up.isDown) {
+        player.body.velocity.y = -300;
     }
 }
