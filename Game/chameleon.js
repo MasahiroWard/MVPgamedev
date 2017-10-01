@@ -42,6 +42,7 @@ function jump_function(){
 //    console.log('hitting');
     if (cursors.up.isDown && player.body.blocked.down){
         player.body.velocity.y = -375;
+        jump1.play();
     }    
 }
 
@@ -84,12 +85,6 @@ function hit_enemy(player, enemy){
     }
 }
 
-//// dont need this function anymore
-//function climbLadder(player, ladders){
-//    if (cursors.up.isDown){
-//        player.body.velocity.y = -100;
-//    }
-//}
 
 function deadplayer(){
     game.state.start('gameover');

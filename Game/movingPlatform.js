@@ -51,5 +51,6 @@ function player_on_platform(player, mp) {
 //    console.log(mp.body.velocity.x)
     if (cursors.up.isDown) {
         player.body.velocity.y = -300;
+        jump1.play();
     }
 }

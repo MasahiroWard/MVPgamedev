@@ -5,16 +5,19 @@ var map;
 demo.state3 = function(){};
 demo.state3.prototype = {
     preload: function(){
-        game.world.setBounds(0, 0, 1000, 3000);
+        loadImages();
+        game.world.setBounds(0, 0, 1000, 3600);
         
         // load in tile map assets 
-        game.load.tilemap('stage', 'assets/tilemaps/TestMapFitted2.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.tilemap('stage', 'assets/tilemaps/TestMapFitted.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('LargeGrass', 'assets/tilemaps/LargeGrass.png');
         game.load.image('LargeLadder', 'assets/tilemaps/LargeLadder.png');
     },
     create: function(){
 
-        game.camera.y = 3000;
+
+        game.camera.y = 3600;
+        
         game.stage.backgroundColor = '#DDDDDD';
         addChangeStateEventListeners();
 
@@ -33,7 +36,7 @@ demo.state3.prototype = {
         game.physics.arcade.enable(layer2);
         
         
-        createChameleon(450,2750);
+        createChameleon(500,game.world.height - 400);
         
         
 
@@ -48,20 +51,30 @@ demo.state3.prototype = {
         make_enemy_groups();
         
         // place fruit
-        placeFruit(400, 2600, "bluefruit");
-        placeFruit(750,3000-550,"redfruit");
-        placeFruit(150,1200, "bluefruit");
+        placeFruit(700, game.world.height - 450, "bluefruit");
+        placeFruit(450, game.world.height -1300,"redfruit");
+        placeFruit(750, game.world.height - 1600, "bluefruit");
         placeFruit(150, 1000, "greenfruit");
-        placeFruit(200,150,"purplefruit");
+        placeFruit(200, 300, "purplefruit");
 
         // place enemies 
-        placeBird(700,3000-550,"blue");
+        placeBird(300,game.world.height-1000,"blue");
         placeBird(500,1650,"red");
         
         // place moving platforms
         addMovingPlatforms();
         placeMP(100, 2500, 2, 1, 4, 1, 100, 25);
         placeMP(500, 1600, 3, 1, 0, 5, 0, 100);
+        
+        
+        
+        // load in sound
+        jump1 = game.add.audio('jump');
+        guitar1 = game.add.audio('guitar');
+        
+        
+        // loops guitar music 
+        guitar1.loopFull();
        
     },
     update: function(){
@@ -78,6 +91,7 @@ demo.state3.prototype = {
         
         if (camCount < camIncr){
             camCount += 1;
+            console.log(game.camera.y);
         }
         else {
             camCount = 0;
