@@ -11,10 +11,6 @@ demo.state3.prototype = {
         game.load.tilemap('stage', 'assets/tilemaps/TestMapFitted2.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('LargeGrass', 'assets/tilemaps/LargeGrass.png');
         game.load.image('LargeLadder', 'assets/tilemaps/LargeLadder.png');
-        
-
-
-
     },
     create: function(){
 
@@ -37,7 +33,7 @@ demo.state3.prototype = {
         game.physics.arcade.enable(layer2);
         
         
-        createChameleon(300,2900);
+        createChameleon(450,2750);
         
         
 
@@ -52,7 +48,7 @@ demo.state3.prototype = {
         make_enemy_groups();
         
         // place fruit
-        placeFruit(400, 2900, "bluefruit");
+        placeFruit(400, 2600, "bluefruit");
         placeFruit(750,3000-550,"redfruit");
         placeFruit(150,1200, "bluefruit");
         placeFruit(150, 1000, "greenfruit");
@@ -65,6 +61,7 @@ demo.state3.prototype = {
         // place moving platforms
         addMovingPlatforms();
         placeMP(100, 2500, 2, 1, 4, 1, 100, 25);
+        placeMP(500, 1600, 3, 1, 0, 5, 0, 100);
        
     },
     update: function(){
@@ -96,6 +93,11 @@ demo.state3.prototype = {
         chameleonmove();
         moveBird();
         moving_platform_group.forEach(movingPlatformsUpdate, this);
+//        console.log(game.camera.y, player.body.y)
+        // Game over if you fall off the screen
+        if (game.camera.y+700 < player.body.y) {
+            deadplayer()
+        }
 
     }
 };

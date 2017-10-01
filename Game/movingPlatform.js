@@ -31,7 +31,7 @@ function placeMP(x, y, xlength, ylength, xmove_tiles, ymove_tiles, xspeed, yspee
 };
 
 function movingPlatformsUpdate(platform) {
-    console.log(platform.body.x, platform.leftbound, platform.rightbound, platform.body.y, platform.upperbound, platform.lowerbound);
+//    console.log(platform.body.x, platform.leftbound, platform.rightbound, platform.body.y, platform.upperbound, platform.lowerbound);
     if (platform.body.x <= platform.leftbound) {
         platform.body.velocity.x = platform.xspeed;
     } else if (platform.body.x >= platform.rightbound){
@@ -48,7 +48,7 @@ function movingPlatformsUpdate(platform) {
 }
 
 function player_on_platform(player, mp) {
-    console.log(mp.body.velocity.x)
+//    console.log(mp.body.velocity.x)
     if (cursors.up.isDown) {
         player.body.velocity.y = -300;
     }
