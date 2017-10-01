@@ -29,18 +29,13 @@ function chameleonmove(){
     player.body.velocity.x = 0;
     
     if (cursors.left.isDown) {
+        // flip chameleon sprite according to direction of movement
         player.scale.setTo(0.13, 0.13)
         player.body.velocity.x = -300;
-        
-    } 
-    
-    else if (cursors.right.isDown) {
+    } else if (cursors.right.isDown) {
         player.scale.setTo(-0.13, 0.13)
         player.body.velocity.x = 300;
-    
     }
-    
-
 }
 
 function jump_function(){
