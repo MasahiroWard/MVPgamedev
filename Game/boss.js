@@ -7,6 +7,8 @@ function place_cat_boss(x, y){
     cat_boss.color = "red";
     cat_boss.body.collideWorldBounds = true;
     cat_boss_health = 3;
+    
+    cat_boss.tint = hex_colors['red'];
 }
 
 function cat_boss_move(){

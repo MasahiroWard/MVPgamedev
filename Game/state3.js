@@ -6,6 +6,7 @@ demo.state3 = function(){};
 demo.state3.prototype = {
     preload: function(){
         loadImages();
+        loadCatBoss();
         game.world.setBounds(0, 0, 1000, 3600);
         
         // load in tile map assets 
@@ -37,6 +38,7 @@ demo.state3.prototype = {
         
         
         createChameleon(500,game.world.height - 400);
+        place_cat_boss(0,0);
         
         
 
@@ -98,10 +100,11 @@ demo.state3.prototype = {
             game.camera.y -= camSpeed;
         }
 
-
+        cat_boss_move();
         
         // colide with grass and allow player to jump 
         game.physics.arcade.collide(player, layer1, jump_function);
+        game.physics.arcade.collide(layer1, cat_boss);3
 
         
         chameleonmove();
