@@ -28,6 +28,17 @@ demo.state0.prototype = {
         addMovingPlatforms();
         placeMP(200, 200, 2, 2, 4, 4, 4000);
         
+        
+        // load in sound
+        jump1 = game.add.audio('jump');
+        guitar1 = game.add.audio('guitar');
+        
+        
+        // loops guitar music 
+        guitar1.loopFull();
+
+        
+        
     },
     update: function(){
         chameleonmove();

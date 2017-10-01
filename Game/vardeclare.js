@@ -43,3 +43,6 @@ var camSpeed = 2;
 // keep camCount as 0; camIncr determines the count needed before increment 
 var camCount = 0;
 var camIncr = 1;
+
+// sound variables
+var jump1, guitar1;

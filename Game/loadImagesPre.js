@@ -26,6 +26,23 @@ function loadImages(){
     game.load.spritesheet('purple_bird', 'assets/spritesheets/purple_m1_spritesheet.png', 276, 214);    
     
     game.load.spritesheet('blue_snake', 'assets/spritesheets/blue_snake_spritesheet.png');
+    
+    
+    
+    /* Attribution: 
+    This game uses these sounds from freesound:
+    Short_Rock_instrumental_study by ValentinSosnitskiy ( https://freesound.org/people/ValentinSosnitskiy/sounds/368661/)
+    jump1 by jeremysykes ( https://freesound.org/people/jeremysykes/sounds/344500/ )*/
+    
+    
+    // load in sounds 
+    game.load.audio('jump', 'assets/sounds/jump.mp3');
+    game.load.audio('guitar', 'assets/sounds/ElectricGuitarInstrumental.mp3');
+    
+    
+    
+    
+    
 }
 
 // For special enemies such as bosses, only preload them if required
