@@ -16,6 +16,9 @@ var stomach, stomach_fruits = {}, stomach_icons = {}, stomach_tracker = {};
 var map_fruits = {};
 var fruit_colors = {"redfruit": "red", "bluefruit": "blue", "yellowfruit": "yellow", "orangefruit": "orange", "purplefruit": "purple", "greenfruit": "green"};
 
+// Item objects
+var balloon_group;
+
 // Moving platforms
 var moving_platform_group, MovingPlatform;
 
