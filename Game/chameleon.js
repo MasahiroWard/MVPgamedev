@@ -91,13 +91,3 @@ function hit_enemy(player, enemy){
 function deadplayer(){
     game.state.start('gameover');
 }
-
-/*
-function haveBallon(){
-    player.addChild(game.make.sprite(-150, -600, 'balloon'));
-//    var balloon = game.add.sprite(0, 0, 'balloon');
-//    //balloon.scale.setTo(0.1, 0.1);
-//    console.log(balloon);
-//    player.addChild(balloon);
-}
-*/

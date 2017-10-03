@@ -65,6 +65,7 @@ demo.state3.prototype = {
         // place enemies 
         placeBird(300,game.world.height-1000,"blue");
         placeBird(500,1650,"red");
+        placeSnake(800, game.world.height-650, "yellow");
         
         // place moving platforms
         addMovingPlatforms();
@@ -72,7 +73,7 @@ demo.state3.prototype = {
         placeMP(500, 1600, 3, 1, 0, 5, 0, 100);
         
         make_balloon_group();
-        placeBalloon(200, 2300);
+        placeBalloon(400, 2800);
         
         // load in sound
         jump1 = game.add.audio('jump');
@@ -96,7 +97,7 @@ demo.state3.prototype = {
         
         if (camCount < camIncr){
             camCount += 1;
-            console.log(game.camera.y);
+            //console.log(game.camera.y);
         }
         else {
             camCount = 0;
@@ -112,11 +113,18 @@ demo.state3.prototype = {
         
         chameleonmove();
         moveBird();
+        moveSnake();
         moving_platform_group.forEach(movingPlatformsUpdate, this);
 //        console.log(game.camera.y, player.body.y)
         // Game over if you fall off the screen
         if (game.camera.y+700 < player.body.y) {
-            deadplayer()
+            if (player.has_balloon){
+                player.body.velocity.y = -600;
+                player.has_balloon = false;
+//                lose_balloon();
+            } else{
+                deadplayer()
+            }
         }
 
     }

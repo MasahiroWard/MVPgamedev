@@ -26,7 +26,7 @@ function createInventory(x, y){
         stomach_fruits[clr] = 0;
         
         // Display number of fruits currently being held
-        stomach_tracker[clr] = game.add.text(inventory_x+100, inventory_y+75*i, stomach_fruits[clr]);
+        stomach_tracker[clr] = game.add.text(inventory_x+50, inventory_y+75*i, stomach_fruits[clr]);
         stomach.add(stomach_tracker[clr])
     }
 }
