@@ -22,7 +22,7 @@ var balloon_group;
 // Moving platforms
 var moving_platform_group, MovingPlatform;
 
-// Stores colors as hex code.  When calling colors in this game, use the syntax clrs["red"]
+// Stores colors as hex code.  When calling colors in this game, use the syntax hex_colors["red"]
 var hex_colors = {"red": 0xff0000, "blue": 0x0000ff, "yellow": 0xffff00, "orange": 0xff8000, "purple": 0x6600cc, "green": 0x00b33c};
 
 // This is a list used to pick random colors or cycle through all colors
@@ -49,3 +49,5 @@ var camIncr = 1;
 
 // sound variables
 var jump1, guitar1;
+
+var balloon_start_time = 0;

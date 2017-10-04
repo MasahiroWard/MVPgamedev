@@ -16,6 +16,7 @@ function createChameleon(xcoor, ycoor){
     player.anchor.setTo(0.5,0.5);
     player.scale.setTo(0.13,0.13)
     player.has_balloon = false;
+    player.ballooning = false;
 }
 
 
@@ -40,6 +41,7 @@ function chameleonmove(){
     }
 }
 
+
 function jump_function(){
 //    console.log('hitting');
     if (cursors.up.isDown && player.body.blocked.down){
@@ -60,8 +62,6 @@ function ladder_function(){
     }
 }
 
-
-
 function chameleon_change_color(clr){
     console.log(clr);
     if ((player.color!=clr) && (stomach_fruits[clr]>0)){
@@ -72,32 +72,6 @@ function chameleon_change_color(clr){
     }
 }
 
-function getfruits(player, fruit){
-    fruit_color = fruit.color;
-    fruit.kill();
-    stomach_fruits[fruit_color] += 1;
-    stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
-}
-
-function hit_enemy(player, enemy){
-    if (player.color == enemy.color){
-        enemy.kill();
-    } else {
-        deadplayer();
-    }
-}
-
-
 function deadplayer(){
     game.state.start('gameover');
 }
-
-/*
-function haveBallon(){
-    player.addChild(game.make.sprite(-150, -600, 'balloon'));
-//    var balloon = game.add.sprite(0, 0, 'balloon');
-//    //balloon.scale.setTo(0.1, 0.1);
-//    console.log(balloon);
-//    player.addChild(balloon);
-}
-*/

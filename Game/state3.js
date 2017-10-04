@@ -51,7 +51,7 @@ demo.state3.prototype = {
         map.setCollision(4, true, layer2);
         
         //prep for placing fruit and enemies
-        createInventory(0,0);
+        createInventory(150, 550);
         make_fruit_groups();
         make_enemy_groups();
         
@@ -65,14 +65,16 @@ demo.state3.prototype = {
         // place enemies 
         placeBird(300,game.world.height-1000,"blue");
         placeBird(500,1650,"red");
+        placeSnake(800, game.world.height-650, "yellow");
         
         // place moving platforms
         addMovingPlatforms();
         placeMP(100, 2500, 2, 1, 4, 1, 100, 25);
-        placeMP(500, 1600, 3, 1, 0, 5, 0, 100);
+        placeMP(400, 1600, 3, 1, 0, 5, 0, 100);
+        placeMP(200, 900, 3, 1, 3, 0, 100, 0);
         
         make_balloon_group();
-        placeBalloon(200, 2300);
+        placeBalloon(400, 2800);
         
         // load in sound
         jump1 = game.add.audio('jump');
@@ -96,7 +98,7 @@ demo.state3.prototype = {
         
         if (camCount < camIncr){
             camCount += 1;
-            console.log(game.camera.y);
+            //console.log(game.camera.y);
         }
         else {
             camCount = 0;
@@ -109,14 +111,25 @@ demo.state3.prototype = {
         game.physics.arcade.collide(player, layer1, jump_function);
         game.physics.arcade.collide(layer1, cat_boss);
         
-        
-        chameleonmove();
-        moveBird();
+        if (player.ballooning){
+            chameleon_float()
+        } else {
+            chameleonmove();
+        }
+        birds_group.forEach(moveBird, this);
+        snakes_group.forEach(moveSnake, this);
         moving_platform_group.forEach(movingPlatformsUpdate, this);
 //        console.log(game.camera.y, player.body.y)
         // Game over if you fall off the screen
-        if (game.camera.y+700 < player.body.y) {
-            deadplayer()
+        if (game.camera.y+650 < player.body.y) {
+            if (player.has_balloon){
+                use_balloon();
+            } else if (player.ballooning){
+                // prevents dying while the balloon is active
+                chameleon_float();
+            } else {
+                deadplayer();
+            }
         }
 
     }

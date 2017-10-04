@@ -49,8 +49,9 @@ function movingPlatformsUpdate(platform) {
 
 function player_on_platform(player, mp) {
 //    console.log(mp.body.velocity.x)
-    if (cursors.up.isDown) {
-        player.body.velocity.y = -300;
+    // Allow player jump if touching and on top of moving platform
+    if (cursors.up.isDown && player.body.y<=mp.body.y) {
+        player.body.velocity.y = -375;
         jump1.play();
     }
 }
