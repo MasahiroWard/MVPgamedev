@@ -30,3 +30,11 @@ function moveSnake(){
     snakes_group.callAll("play", null, 'slither');
     game.physics.arcade.overlap(player, snakes_group, hit_enemy, null, this);
 }
+
+function hit_enemy(player, enemy){
+    if (player.color == enemy.color){
+        enemy.kill();
+    } else {
+        deadplayer();
+    }
+}

@@ -49,3 +49,5 @@ var camIncr = 1;
 
 // sound variables
 var jump1, guitar1;
+
+var balloon_start_time = 0;

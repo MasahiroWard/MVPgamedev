@@ -11,3 +11,10 @@ function make_fruit_groups(){
     map_fruits = game.add.group();
     map_fruits.enableBody = true;
 }
+
+function getfruits(player, fruit){
+    fruit_color = fruit.color;
+    fruit.kill();
+    stomach_fruits[fruit_color] += 1;
+    stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
+}

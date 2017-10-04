@@ -70,7 +70,8 @@ demo.state3.prototype = {
         // place moving platforms
         addMovingPlatforms();
         placeMP(100, 2500, 2, 1, 4, 1, 100, 25);
-        placeMP(500, 1600, 3, 1, 0, 5, 0, 100);
+        placeMP(400, 1600, 3, 1, 0, 5, 0, 100);
+        placeMP(200, 900, 3, 1, 3, 0, 100, 0);
         
         make_balloon_group();
         placeBalloon(400, 2800);
@@ -110,8 +111,11 @@ demo.state3.prototype = {
         game.physics.arcade.collide(player, layer1, jump_function);
         game.physics.arcade.collide(layer1, cat_boss);
         
-        
-        chameleonmove();
+        if (player.ballooning){
+            chameleon_float()
+        } else {
+            chameleonmove();
+        }
         moveBird();
         moveSnake();
         moving_platform_group.forEach(movingPlatformsUpdate, this);
@@ -119,11 +123,12 @@ demo.state3.prototype = {
         // Game over if you fall off the screen
         if (game.camera.y+700 < player.body.y) {
             if (player.has_balloon){
-                player.body.velocity.y = -600;
-                player.has_balloon = false;
-//                lose_balloon();
-            } else{
-                deadplayer()
+                use_balloon();
+            } else if (player.ballooning){
+                // prevents dying while the balloon is active
+                chameleon_float();
+            } else {
+                deadplayer();
             }
         }
 
