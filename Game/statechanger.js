@@ -15,6 +15,7 @@ function addChangeStateEventListeners(){
     addKeyCallback(Phaser.Keyboard.ONE, changeState, 1);
     addKeyCallback(Phaser.Keyboard.TWO, changeState, 2);
     addKeyCallback(Phaser.Keyboard.THREE, changeState, 3);
+//    addKeyCallback(Phaser.Keyboard.FOUR, game.state.start('icestate'));
 }
 
 function keyPress(char) {
@@ -32,4 +33,7 @@ function keyPress(char) {
     } else if (char == "y"){
         chameleon_change_color("green")
     } 
+    if (char == "i"){
+        game.state.start('icestate');
+    }
 }
