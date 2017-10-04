@@ -51,7 +51,7 @@ demo.state3.prototype = {
         map.setCollision(4, true, layer2);
         
         //prep for placing fruit and enemies
-        createInventory(0,0);
+        createInventory(150, 550);
         make_fruit_groups();
         make_enemy_groups();
         
@@ -116,12 +116,12 @@ demo.state3.prototype = {
         } else {
             chameleonmove();
         }
-        moveBird();
-        moveSnake();
+        birds_group.forEach(moveBird, this);
+        snakes_group.forEach(moveSnake, this);
         moving_platform_group.forEach(movingPlatformsUpdate, this);
 //        console.log(game.camera.y, player.body.y)
         // Game over if you fall off the screen
-        if (game.camera.y+700 < player.body.y) {
+        if (game.camera.y+650 < player.body.y) {
             if (player.has_balloon){
                 use_balloon();
             } else if (player.ballooning){
