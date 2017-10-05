@@ -2,7 +2,7 @@
 //    
 //}
 
-
+// check for ladder collisions - pass in the map name and the layer with the ladders 
 function checkforladders(map, layer) {
     var tx = layer.getTileX(player.position.x);
     var ty = layer.getTileY(player.position.y);
