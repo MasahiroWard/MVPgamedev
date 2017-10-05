@@ -109,9 +109,9 @@ demo.icestate.prototype = {
             ladder_function();
         }
         
+        
         if (camCount < camIncr){
             camCount += 1;
-//            console.log(game.camera.y);
         }
         else {
             camCount = 0;
