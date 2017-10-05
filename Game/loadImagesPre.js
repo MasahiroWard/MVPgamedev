@@ -10,6 +10,7 @@ function loadImages(){
     game.load.image('greenfruit', 'assets/sprites/greenfruit.png');
     
     game.load.image('balloon', 'assets/sprites/balloon.png')
+    game.load.image('stomach_background', 'assets/backgrounds/brown_background.png')
     
     // when loading spritesheet, each cell must be the same size.
     game.load.spritesheet('grey_chameleon', 'assets/spritesheets/grey_chameleon_spritesheet.png', 373, 259);

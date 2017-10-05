@@ -14,7 +14,7 @@ function placeBalloon(x, y){
 function get_balloon(player, balloon){
     balloon.kill();
     player.has_balloon = true;
-    player.childBalloon = player.addChild(game.make.sprite(-150, -600, 'balloon'));
+    player.childBalloon = player.addChild(game.make.sprite(-200, -750, 'balloon'));
 }
 
 function use_balloon(){
@@ -51,5 +51,6 @@ function chameleon_float(){
         escape_balloon.scale.setTo(0.13,0.13)
         game.physics.arcade.enable(escape_balloon);
         escape_balloon.body.velocity.y = -500;
+        escape_balloon.outOfBoundsKill = true;
     }
 }
