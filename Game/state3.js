@@ -51,20 +51,21 @@ demo.state3.prototype = {
         map.setCollision(4, true, layer2);
         
         //prep for placing fruit and enemies
-        createInventory(150, 550);
+        
         make_fruit_groups();
         make_enemy_groups();
         
         // place fruit
         placeFruit(700, game.world.height - 450, "bluefruit");
+        placeFruit(600, game.world.height - 350, "yellowfruit")
         placeFruit(450, game.world.height -1300,"redfruit");
         placeFruit(750, game.world.height - 1600, "bluefruit");
         placeFruit(150, 1000, "greenfruit");
         placeFruit(200, 300, "purplefruit");
 
         // place moving enemy
-        var thisguy = placeBird(300,game.world.height-1000,"blue");
-        game.add.tween(thisguy).to({x:200,y:2000}, 3000, Phaser.Easing.Linear.None, true, 0, Number.MAX_VALUE, true);
+        var thisguy = placeBird(350,game.world.height-1000,"blue");
+        thisguy.mytween = game.add.tween(thisguy).to({x:[250, 350], y:[game.world.height-1000, game.world.height - 1000]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
 
         // place static enemy
         placeBird(500,1650,"red");
@@ -86,6 +87,9 @@ demo.state3.prototype = {
         
         // loops guitar music 
         guitar1.loopFull();
+        
+        // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
+        createInventory(0, 0);
     },
     update: function(){
 //      check player position  
@@ -131,6 +135,7 @@ demo.state3.prototype = {
                 // prevents dying while the balloon is active
                 chameleon_float();
             } else {
+                console.log("state")
                 deadplayer();
             }
         }

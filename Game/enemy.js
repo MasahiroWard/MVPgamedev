@@ -30,15 +30,21 @@ function moveBird(bird){
     }
 }
 
-function moveSnake(bird){
-    snakes_group.callAll("play", null, 'slither');
-    game.physics.arcade.overlap(player, snakes_group, hit_enemy, null, this);
+function moveSnake(snake){
+    snake.animations.play('slither');
+    if (checkOverlap(snake, player)) {
+        hit_enemy(player, snake);
+    }
 }
 
 function hit_enemy(player, enemy){
     if (player.color == enemy.color){
-        enemy.kill();
+        // When enemies have tweens, the kill method doesn't work.
+        // So here is your workaround
+        enemy.body = null;
+        enemy.destroy();
     } else {
+        console.log(enemy.color)
         deadplayer();
     }
 }

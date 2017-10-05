@@ -131,6 +131,7 @@ demo.icestate.prototype = {
 
         // Game over if you fall off the screen
         if (game.camera.y+650 < player.body.y) {
+            console.log("ICE")
             deadplayer()
         }
 

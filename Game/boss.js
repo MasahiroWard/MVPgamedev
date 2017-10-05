@@ -44,6 +44,7 @@ function touch_boss(){
             cat_boss.tint = hex_colors['green']; // This will become random eventually
 
         } else {
+            console.log("Boss")
             deadplayer();
         }
     }
