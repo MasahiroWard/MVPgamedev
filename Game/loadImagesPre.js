@@ -40,6 +40,8 @@ function loadImages(){
     // load in sounds 
     game.load.audio('jump', 'assets/sounds/jump.mp3');
     game.load.audio('guitar', 'assets/sounds/ElectricGuitarInstrumental.mp3');
+    game.load.audio('beep', 'assets/sounds/beep.mp3');
+    game.load.audio('leaves', 'assets/sounds/leaves.mp3');
     
 }
 
