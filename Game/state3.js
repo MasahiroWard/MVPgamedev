@@ -2,8 +2,8 @@ var layer1;
 var layer2; 
 var map;
 
-demo.state3 = function(){};
-demo.state3.prototype = {
+demo.tutorial = function(){};
+demo.tutorial.prototype = {
     preload: function(){
         loadImages();
         loadCatBoss();
@@ -123,6 +123,7 @@ demo.state3.prototype = {
         game.physics.arcade.collide(layer1, cat_boss);
         game.physics.arcade.collide(layer1, yarn_ball);
         game.physics.arcade.collide(layer2, yarn_ball);
+        game.physics.arcade.collide(layer2, cat_boss);
         
         if (player.ballooning){
             chameleon_float()
