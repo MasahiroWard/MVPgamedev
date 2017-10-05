@@ -99,19 +99,25 @@ demo.icestate.prototype = {
     },
     update: function(){
 //      check player position  
-        var tx = icelayer2.getTileX(player.position.x);
-        var ty = icelayer2.getTileY(player.position.y);
         
-        var tileType = iceMap.getTile(tx, ty, icelayer2);
-
-        // check for overlap with the ladder 
-        if (tileType != null){
-            ladder_function();
-        }
+          checkforladders(iceMap, icelayer2);
+//        var tx = icelayer2.getTileX(player.position.x);
+//        var ty = icelayer2.getTileY(player.position.y);
+//        
+//        
+//        var tileType = iceMap.getTile(tx, ty, icelayer2);
+//        
+//
+//        // check for overlap with the ladder 
+//        if (tileType != null){
+//            ladder_function();
+//        }
+        
+        
+        
         
         if (camCount < camIncr){
             camCount += 1;
-//            console.log(game.camera.y);
         }
         else {
             camCount = 0;
@@ -119,9 +125,41 @@ demo.icestate.prototype = {
         }
 
 
+        // check the tile color below the chameleon! 
+        // tile key: 
+        // 1,2,3 = no color
+        // 5,6,7 = blue
+        // 8,9,10 = green
+        // 11,12,13 = purple
+        
+//        var ybelow = icelayer1.getTileY(player.position.y + 33);
+//        console.log(ybelow);
+//        var xbelow = icelayer1.getTileX(player.position.x);
+//        
+//        var tileiceType = iceMap.getTile(xbelow, ybelow, icelayer1);
+//        
+//        var iceTileColor
+//        
+//        if (tileiceType == 5 || tileiceType == 6 || tileiceType == 7){
+//            iceTileColor = "blue"
+//        }
+//        else if (tileiceType == 8 || tileiceType == 9 || tileiceType == 10){
+//            iceTileColor = "green"
+//        }
+//        else if (tileiceType == 11 || tileiceType == 12 || tileiceType == 13){
+//            iceTileColor = "purple"
+//        }
+//        
+        
+        
+        
+        
+        
+        
+        
         
         // colide with grass and allow player to jump 
-        game.physics.arcade.collide(player, icelayer1, jump_function);
+        game.physics.arcade.collide(player, icelayer1, collideIce);
 //        game.physics.arcade.collide(layer1, cat_boss);
         
         

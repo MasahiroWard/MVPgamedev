@@ -27,7 +27,7 @@ function chameleonmove(){
     game.physics.arcade.overlap(player, map_fruits, getfruits, null, this);
     game.physics.arcade.overlap(player, balloon_group, get_balloon, null, this);
 //    game.physics.arcade.overlap(player, ladders, climbLadder, null, this);
-    
+    player.body.gravity.y = 400;
     player.animations.play('walk');
     player.body.velocity.x = 0;
     
@@ -51,6 +51,7 @@ function jump_function(){
 }
 
 function ladder_function(){
+    player.body.gravity.y = 0;
     if (cursors.up.isDown){
         player.body.velocity.y = -100;
     }
@@ -58,7 +59,7 @@ function ladder_function(){
         player.body.velocity.y = 100;
     }
     else{
-        player.body.velocity.y = 0;
+        player.body.velocity.y = -7;
     }
 }
 
