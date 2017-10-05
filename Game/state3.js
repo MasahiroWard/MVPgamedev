@@ -22,6 +22,10 @@ demo.state3.prototype = {
         game.camera.y = 3600;
         
         game.stage.backgroundColor = '#DDDDDD';
+        var bg = game.add.sprite(0, 0, 'bg1');
+        bg.height = 700;
+        bg.width = 1000;
+        bg.fixedToCamera = true;
         addChangeStateEventListeners();
         cursors = game.input.keyboard.createCursorKeys();
 
@@ -117,6 +121,8 @@ demo.state3.prototype = {
         // colide with grass and allow player to jump 
         game.physics.arcade.collide(player, layer1, jump_function);
         game.physics.arcade.collide(layer1, cat_boss);
+        game.physics.arcade.collide(layer1, yarn_ball);
+        game.physics.arcade.collide(layer2, yarn_ball);
         
         if (player.ballooning){
             chameleon_float()

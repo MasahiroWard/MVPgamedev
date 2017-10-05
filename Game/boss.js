@@ -9,11 +9,21 @@ function place_cat_boss(x, y){
     cat_boss_health = 3;
     
     cat_boss.tint = hex_colors['red'];
+    yarn_ball = game.add.sprite(0, 0, "cat_yarn");
+    yarn_ball.scale.setTo(0.1, 0.1);
+    game.physics.arcade.enable(yarn_ball);
+    yarn_ball.color = "black";
+    yarn_ball.body.collideWorldBounds = true;
+    yarn_ball.body.velocity.setTo(500, 500);
+    yarn_ball.body.bounce.set(1);
+    yarn_ball.body.mass = 0.00001;
+    
 }
 
 function cat_boss_move(){
-    game.physics.arcade.collide(platforms, cat_boss);
     game.physics.arcade.collide(player, cat_boss, touch_boss, null, this);
+    game.physics.arcade.collide(player, yarn_ball, hit_enemy);
+    game.physics.arcade.collide(cat_boss, yarn_ball);
     
     if (catMoveTimeStamp < game.time.time){
         // Cat boss changes direction every 2 seconds

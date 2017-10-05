@@ -35,6 +35,7 @@ var birds_group = {}, snakes_group = {};
 // catMoveTimeStamp is used to track how often the catboss changes direction
 // catHitTimeStamp is used to give both the catboss and player 2 seconds of immunity after contact
 var cat_boss, cat_boss_health, catMoveTimeStamp = 0, catHitTimeStamp = 0;
+var yarn_ball;
 
 // Stores platforms and ladders for a stage.  Hope to make these obsolete by creating tilemaps instead.
 var platforms, ladders;
