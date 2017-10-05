@@ -62,8 +62,11 @@ demo.state3.prototype = {
         placeFruit(150, 1000, "greenfruit");
         placeFruit(200, 300, "purplefruit");
 
-        // place enemies 
-        placeBird(300,game.world.height-1000,"blue");
+        // place moving enemy
+        var thisguy = placeBird(300,game.world.height-1000,"blue");
+        game.add.tween(thisguy).to({x:200,y:2000}, 3000, Phaser.Easing.Linear.None, true, 0, Number.MAX_VALUE, true);
+
+        // place static enemy
         placeBird(500,1650,"red");
         placeSnake(800, game.world.height-650, "yellow");
         

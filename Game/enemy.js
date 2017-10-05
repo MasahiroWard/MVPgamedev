@@ -12,6 +12,7 @@ function placeBird(x, y, clr){
     bird.scale.setTo(0.3, 0.3);
     bird.color = clr;
     birds_group.callAll('animations.add','animations', 'fly',[0,1,2],5);
+    return (bird)
 }
 
 function placeSnake(x, y, clr){
@@ -19,14 +20,17 @@ function placeSnake(x, y, clr){
     snake.scale.setTo(0.2, 0.2);
     snake.color = clr;
     snakes_group.callAll('animations.add','animations', 'slither',[0,1,2],5);
+    return snake
 }
 
-function moveBird(){
-    birds_group.callAll('play', null, 'fly');
-    game.physics.arcade.overlap(player, birds_group, hit_enemy, null, this);
+function moveBird(bird){
+    bird.animations.play('fly');
+    if (checkOverlap(bird, player)) {
+        hit_enemy(player, bird);
+    }
 }
 
-function moveSnake(){
+function moveSnake(bird){
     snakes_group.callAll("play", null, 'slither');
     game.physics.arcade.overlap(player, snakes_group, hit_enemy, null, this);
 }
@@ -37,4 +41,13 @@ function hit_enemy(player, enemy){
     } else {
         deadplayer();
     }
+}
+
+function checkOverlap(spriteA, spriteB) {
+
+    var boundsA = spriteA.getBounds();
+    var boundsB = spriteB.getBounds();
+
+    return Phaser.Rectangle.intersects(boundsA, boundsB);
+
 }
