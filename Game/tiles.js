@@ -1,3 +1,13 @@
+function add_game_bg(sprite_name){
+    //game.stage.backgroundColor = '#DDDDDD';
+    var bg = game.add.sprite(0, 0, sprite_name);
+    bg.height = game.world.height;
+    bg.width = game.width;
+    bg.fixedToCamera = true;
+}
+
+
+
 //function tile_collision(fname, map, layer){
 //    
 //}
@@ -16,7 +26,7 @@ function checkforladders(map, layer) {
 
 
 function collideIce(player, layer){
-    jump_function();
+    //jump_function();
     
         // tile key: 
         // 1,2,3 = no color

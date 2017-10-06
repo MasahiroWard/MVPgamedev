@@ -3,6 +3,9 @@
 // demo is the game variable
 var demo = {};
 
+// camCount allows camera to scroll
+var camCount = 0;
+
 // player is your chameleon
 var player;
 

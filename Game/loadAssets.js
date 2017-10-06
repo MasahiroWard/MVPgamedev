@@ -11,6 +11,9 @@ function loadImages(){
     game.load.image('purplefruit', 'assets/sprites/purplefruit.png');
     game.load.image('greenfruit', 'assets/sprites/greenfruit.png');
     
+    // Moving Image
+    game.load.image('platform', 'assets/sprites/platform.png');
+    
     // Items
     game.load.image('balloon', 'assets/sprites/balloon.png')
     
@@ -43,7 +46,6 @@ function loadImages(){
     game.load.spritesheet('green_snake', 'assets/spritesheets/green_m2_spritesheet.png', 332, 494);
     game.load.spritesheet('purple_snake', 'assets/spritesheets/purple_m2_spritesheet.png', 330, 493);
     game.load.spritesheet('orange_snake', 'assets/spritesheets/orange_m2_spritesheet.png', 331, 497);
-
 
     // load in sounds 
     game.load.audio('jump', 'assets/sounds/jump.mp3');

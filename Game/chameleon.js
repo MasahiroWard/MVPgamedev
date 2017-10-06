@@ -5,10 +5,10 @@
 // Put this in create
 
 function createChameleon(xcoor, ycoor){
+    add_chameleon_sound();
     player = game.add.sprite(xcoor, ycoor,'grey_chameleon');
     game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
-    player.body.gravity.y = 400;
     player.animations.add('walk', [0, 1, 2], 5, true);
     player.color = "grey";
     
@@ -26,7 +26,7 @@ function chameleonmove(){
     // Method added to update function for moving the chameleon
     game.physics.arcade.overlap(player, map_fruits, getfruits, null, this);
     game.physics.arcade.overlap(player, balloon_group, get_balloon, null, this);
-//    game.physics.arcade.overlap(player, ladders, climbLadder, null, this);
+
     player.body.gravity.y = 400;
     player.animations.play('walk');
     player.body.velocity.x = 0;
@@ -39,15 +39,20 @@ function chameleonmove(){
         player.scale.setTo(-0.13, 0.13)
         player.body.velocity.x = 300;
     }
-}
-
-
-function jump_function(){
-//    console.log('hitting');
+    // jump if player is blocked on the bottom
     if (cursors.up.isDown && player.body.blocked.down){
         player.body.velocity.y = -375;
         jump1.play('','', 0.2);
-    }    
+    }
+    // Game over if you fall off the screen
+    // Unless you use a balloon
+    if (game.camera.y+game.height < player.body.y) {
+        if (player.has_balloon){
+            use_balloon();
+        } else {
+            deadplayer();
+        }
+    }
 }
 
 function ladder_function(){
@@ -64,7 +69,8 @@ function ladder_function(){
 }
 
 function chameleon_change_color(clr){
-    console.log(clr);
+    // Change color if not already that color
+    // And the player has the right fruit in stomach
     if ((player.color!=clr) && (stomach_fruits[clr]>0)){
         player.color = clr;
         stomach_fruits[clr] -= 1;
@@ -75,4 +81,12 @@ function chameleon_change_color(clr){
 
 function deadplayer(){
     game.state.start('gameover');
+}
+
+function add_chameleon_sound(){
+    jump1 = game.add.audio('jump');
+    eatNoise = game.add.audio('beep');
+    climb1 = game.add.audio('leaves');
+    eatNoise2 = game.add.audio('chirp');
+    balloonNoise = game.add.audio('balloonNoise');
 }

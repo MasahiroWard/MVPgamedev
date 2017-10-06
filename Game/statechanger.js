@@ -1,9 +1,3 @@
-// Functions to change states.  These will have to be changed for the final product
-
-function addChangeStateEventListeners(){
-    game.input.keyboard.addCallbacks(this, null, null, keyPress);
-}
-
 function keyPress(char) {
     //console.log(char)
     if (char == "q"){
