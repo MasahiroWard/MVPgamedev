@@ -1,7 +1,7 @@
 MVP game development - Prismatic Chameleon 
 
 
-To start the game, press 3. 
+Start the game. It automatically starts on the tutorial stage. Press i on the keyboard to go to the first real stage, the Ice Stage.  
 
 To play, use the arrow keys to move and collect fruit. Press qwerty to change colors. 
 

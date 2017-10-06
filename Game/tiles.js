@@ -24,8 +24,8 @@ function collideIce(player, layer){
         // 8,9,10 = green
         // 11,12,13 = purple
     
-    var ybelow = icelayer1.getTileY(player.position.y + 33);
-    var xbelow = icelayer1.getTileX(player.position.x);
+    var ybelow = layer1.getTileY(player.position.y + 33);
+    var xbelow = layer1.getTileX(player.position.x);
     var tileiceType = iceMap.getTile(xbelow, ybelow, icelayer1).index;
     
     var tile_dictionary = {1:player.color, 2:player.color, 3:player.color, 5:"blue", 6:"blue", 7:"blue", 8:"green", 9:"green", 10:"green", 11:"purple", 12:"purple", 13:"purple"}
@@ -37,6 +37,14 @@ function collideIce(player, layer){
     }
     
 }
+
+
+//function checkLadderTop(ladTopIndex){
+//    var ybelow = 
+//    
+//}
+    
+    
 //
 //function incrementCamera(camSpeed){
 //    if (camCount < camIncr){

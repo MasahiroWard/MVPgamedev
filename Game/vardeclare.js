@@ -49,7 +49,7 @@ var camCount = 0;
 var camIncr = 1;
 
 // sound variables
-var jump1, guitar1;
+var jump1, guitar1, eatNoise, climb1, eatNoise2, balloonNoise;
 
 var balloon_start_time = 0;
 
