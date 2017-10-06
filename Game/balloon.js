@@ -18,6 +18,7 @@ function get_balloon(player, balloon){
 }
 
 function use_balloon(){
+    balloonNoise.play('','',0.7);
     player.ballooning = true;
     player.has_balloon = false;
     // 2 seconds for balloon activation
@@ -25,6 +26,9 @@ function use_balloon(){
 }
 
 function chameleon_float(){
+    // add in sound - lol sound starts playing over and over... 
+
+    
     // Method added to update function for moving the chameleon
     game.physics.arcade.overlap(player, map_fruits, getfruits, null, this);
     game.physics.arcade.overlap(player, balloon_group, get_balloon, null, this);
@@ -52,5 +56,6 @@ function chameleon_float(){
         game.physics.arcade.enable(escape_balloon);
         escape_balloon.body.velocity.y = -500;
         escape_balloon.outOfBoundsKill = true;
+        
     }
 }

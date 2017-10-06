@@ -52,3 +52,15 @@ var camIncr = 1;
 var jump1, guitar1;
 
 var balloon_start_time = 0;
+
+// state 3 vars for tilemap and sounds
+var layer1;
+var layer2; 
+var map;
+var eat; 
+
+// ice state tile map variables 
+var icelayer1;
+var icelayer2; 
+var iceMap;
+

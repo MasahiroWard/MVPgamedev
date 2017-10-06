@@ -43,6 +43,7 @@ function loadImages(){
     game.load.audio('beep', 'assets/sounds/beep.mp3');
     game.load.audio('leaves', 'assets/sounds/leaves.mp3');
     game.load.audio('chirp', 'assets/sounds/chirp.mp3')
+    game.load.audio('balloonNoise', 'assets/sounds/balloon.mp3');
     
 }
 

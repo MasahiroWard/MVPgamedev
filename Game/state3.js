@@ -1,7 +1,3 @@
-var layer1;
-var layer2; 
-var map;
-var eat; 
 
 demo.tutorial = function(){};
 demo.tutorial.prototype = {
@@ -91,6 +87,7 @@ demo.tutorial.prototype = {
         eatNoise = game.add.audio('beep');
         climb1 = game.add.audio('leaves');
         eatNoise2 = game.add.audio('chirp');
+        balloonNoise = game.add.audio('balloonNoise');
         
         
         // loops guitar music 

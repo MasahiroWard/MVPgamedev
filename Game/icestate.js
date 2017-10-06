@@ -1,6 +1,4 @@
-var icelayer1;
-var icelayer2; 
-var iceMap;
+
 
 demo.icestate = function(){};
 demo.icestate.prototype = {
