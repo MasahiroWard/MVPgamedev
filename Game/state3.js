@@ -1,9 +1,6 @@
-var layer1;
-var layer2; 
-var map;
 
-demo.state3 = function(){};
-demo.state3.prototype = {
+demo.tutorial = function(){};
+demo.tutorial.prototype = {
     preload: function(){
         loadImages();
         loadCatBoss();
@@ -22,6 +19,10 @@ demo.state3.prototype = {
         game.camera.y = 3600;
         
         game.stage.backgroundColor = '#DDDDDD';
+        var bg = game.add.sprite(0, 0, 'bg1');
+        bg.height = 700;
+        bg.width = 1000;
+        bg.fixedToCamera = true;
         addChangeStateEventListeners();
         cursors = game.input.keyboard.createCursorKeys();
 
@@ -83,10 +84,14 @@ demo.state3.prototype = {
         // load in sound
         jump1 = game.add.audio('jump');
         guitar1 = game.add.audio('guitar');
+        eatNoise = game.add.audio('beep');
+        climb1 = game.add.audio('leaves');
+        eatNoise2 = game.add.audio('chirp');
+        balloonNoise = game.add.audio('balloonNoise');
         
         
         // loops guitar music 
-        guitar1.loopFull();
+        guitar1.loopFull(0.3);
         
         // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 0);
@@ -101,6 +106,7 @@ demo.state3.prototype = {
         // check for overlap with the ladder 
         if (tileType != null){
             ladder_function();
+            
         }
         
         if (camCount < camIncr){
@@ -117,6 +123,9 @@ demo.state3.prototype = {
         // colide with grass and allow player to jump 
         game.physics.arcade.collide(player, layer1, jump_function);
         game.physics.arcade.collide(layer1, cat_boss);
+        game.physics.arcade.collide(layer1, yarn_ball);
+        game.physics.arcade.collide(layer2, yarn_ball);
+        game.physics.arcade.collide(layer2, cat_boss);
         
         if (player.ballooning){
             chameleon_float()

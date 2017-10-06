@@ -13,6 +13,7 @@ function make_fruit_groups(){
 }
 
 function getfruits(player, fruit){
+    eatNoise.play('','',1.5);
     fruit_color = fruit.color;
     fruit.kill();
     stomach_fruits[fruit_color] += 1;

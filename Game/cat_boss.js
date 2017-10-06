@@ -6,14 +6,24 @@ function place_cat_boss(x, y){
     game.physics.arcade.enable(cat_boss)
     cat_boss.color = "red";
     cat_boss.body.collideWorldBounds = true;
-    cat_boss_health = 3;
+    cat_boss.health = 2;
+    cat_boss.body.immovable = true;
+    cat_boss.color_scheme = ['purple', 'green', 'red']
     
     cat_boss.tint = hex_colors['red'];
+    yarn_ball = game.add.sprite(0, 0, "cat_yarn");
+    yarn_ball.scale.setTo(0.1, 0.1);
+    game.physics.arcade.enable(yarn_ball);
+    yarn_ball.color = "black";
+    yarn_ball.body.collideWorldBounds = true;
+    yarn_ball.body.velocity.setTo(300, 300);
+    yarn_ball.body.bounce.set(1);    
 }
 
 function cat_boss_move(){
-    game.physics.arcade.collide(platforms, cat_boss);
     game.physics.arcade.collide(player, cat_boss, touch_boss, null, this);
+    game.physics.arcade.collide(player, yarn_ball, hit_enemy);
+    game.physics.arcade.collide(cat_boss, yarn_ball);
     
     if (catMoveTimeStamp < game.time.time){
         // Cat boss changes direction every 2 seconds
@@ -29,7 +39,7 @@ function cat_boss_move(){
         cat_boss.body.velocity.y = 100 * ydir;
     }
     
-    if (cat_boss_health == 0){
+    if (cat_boss.health < 0){
         game.add.text(cat_boss.x, cat_boss.y, 'VICTORY!')
         cat_boss.kill();
     }
@@ -39,12 +49,11 @@ function touch_boss(){
     if (catHitTimeStamp < game.time.time){
         catHitTimeStamp = game.time.time + 2000;
         if (cat_boss.color == player.color){
-            cat_boss_health -= 1;
-            cat_boss.color = "green";
-            cat_boss.tint = hex_colors['green']; // This will become random eventually
+            cat_boss.health -= 1;
+            cat_boss.color = cat_boss.color_scheme[cat_boss.health]
+            cat_boss.tint = hex_colors[cat_boss.color_scheme[cat_boss.health]];
 
         } else {
-            console.log("Boss")
             deadplayer();
         }
     }

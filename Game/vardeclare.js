@@ -34,7 +34,8 @@ var birds_group = {}, snakes_group = {};
 // Variable associated with the cat boss
 // catMoveTimeStamp is used to track how often the catboss changes direction
 // catHitTimeStamp is used to give both the catboss and player 2 seconds of immunity after contact
-var cat_boss, cat_boss_health, catMoveTimeStamp = 0, catHitTimeStamp = 0;
+var cat_boss, catMoveTimeStamp = 0, catHitTimeStamp = 0;
+var yarn_ball;
 
 // Stores platforms and ladders for a stage.  Hope to make these obsolete by creating tilemaps instead.
 var platforms, ladders;
@@ -48,6 +49,18 @@ var camCount = 0;
 var camIncr = 1;
 
 // sound variables
-var jump1, guitar1;
+var jump1, guitar1, eatNoise, climb1, eatNoise2, balloonNoise;
 
 var balloon_start_time = 0;
+
+// state 3 vars for tilemap and sounds
+var layer1;
+var layer2; 
+var map;
+var eat; 
+
+// ice state tile map variables 
+var icelayer1;
+var icelayer2; 
+var iceMap;
+

@@ -1,6 +1,4 @@
-var icelayer1;
-var icelayer2; 
-var iceMap;
+
 
 demo.icestate = function(){};
 demo.icestate.prototype = {
@@ -27,7 +25,6 @@ demo.icestate.prototype = {
     create: function(){
 //        game.physics.startSystem(Phaser.Physics.ARCADE);
 //        cursors = game.input.keyboard.createCursorKeys();
-
         game.camera.y = 6000;
         
         game.stage.backgroundColor = '#DDDDDD';
@@ -89,45 +86,40 @@ demo.icestate.prototype = {
 //        make_balloon_group();
 //        placeBalloon(200, 2300);
         
-        // load in sound
-        jump1 = game.add.audio('jump');
-        guitar1 = game.add.audio('guitar');
+//        // load in sound
+//        jump1 = game.add.audio('jump');
+//        guitar1 = game.add.audio('guitar');
         
         
         // loops guitar music 
-        guitar1.loopFull();
+//        guitar1.loopFull();
     },
-    update: function(){
-//      check player position  
-        var tx = icelayer2.getTileX(player.position.x);
-        var ty = icelayer2.getTileY(player.position.y);
+    update: function(){        
+          checkforladders(iceMap, icelayer2);
         
-        var tileType = iceMap.getTile(tx, ty, icelayer2);
-
-        // check for overlap with the ladder 
-        if (tileType != null){
-            ladder_function();
-        }
+//        incrementCamera(camSpeed);
         
         if (camCount < camIncr){
             camCount += 1;
-//            console.log(game.camera.y);
         }
         else {
             camCount = 0;
             game.camera.y -= camSpeed;
         }
-
-
+//
+//  
+                
         
-        // colide with grass and allow player to jump 
-        game.physics.arcade.collide(player, icelayer1, jump_function);
-//        game.physics.arcade.collide(layer1, cat_boss);
+        
+        
+        
+        // colide with icelayer and allow player to jump 
+        game.physics.arcade.collide(player, icelayer1, collideIce);
+
         
         
         chameleonmove();
-//        moveBird();
-//        moving_platform_group.forEach(movingPlatformsUpdate, this);
+
 
         // Game over if you fall off the screen
         if (game.camera.y+650 < player.body.y) {

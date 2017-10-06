@@ -11,6 +11,7 @@ function loadImages(){
     
     game.load.image('balloon', 'assets/sprites/balloon.png')
     game.load.image('stomach_background', 'assets/backgrounds/brown_background.png')
+    game.load.image('bg1', 'assets/backgrounds/test_background.png')
     
     // when loading spritesheet, each cell must be the same size.
     game.load.spritesheet('grey_chameleon', 'assets/spritesheets/grey_chameleon_spritesheet.png', 373, 259);
@@ -39,10 +40,15 @@ function loadImages(){
     // load in sounds 
     game.load.audio('jump', 'assets/sounds/jump.mp3');
     game.load.audio('guitar', 'assets/sounds/ElectricGuitarInstrumental.mp3');
+    game.load.audio('beep', 'assets/sounds/beep.mp3');
+    game.load.audio('leaves', 'assets/sounds/leaves.mp3');
+    game.load.audio('chirp', 'assets/sounds/chirp.mp3')
+    game.load.audio('balloonNoise', 'assets/sounds/balloon.mp3');
     
 }
 
 // For special enemies such as bosses, only preload them if required
 function loadCatBoss(){
     game.load.image('cat_boss', 'assets/sprites/boss_cat.png');
+    game.load.image('cat_yarn', 'assets/sprites/yarnball.png');
 }
