@@ -103,17 +103,43 @@ demo.tutorial.prototype = {
         createInventory(0, 0);
     },
     update: function(){
-//      check player position  
+//      check player position and either call ladder function or take into account ladder top 
         var tx = layer2.getTileX(player.position.x);
         var ty = layer2.getTileY(player.position.y);
         
         var tileType = map.getTile(tx, ty, layer2);
+        
+        var ty2 = layer2.getTileY(player.body.bottom+40);
+        var tileType2 = map.getTile(tx, ty2, layer2);
 
-        // check for overlap with the ladder 
-        if (tileType != null){
-            ladder_function();
-            
+        
+        if (tileType2 != null || tileType != null){
+            if(tileType2 != null){
+                if (tileType2.index == 5){
+                    if (cursors.up.isDown){
+                        player.body.velocity.y = -375;}
+                }
+            }
+            if(tileType != null){
+                ladder_function();
+                console.log('ladder');
+            }
         }
+        
+        
+//        if (tileType2.index == 5){
+//            if (cursors.up.isDown){
+//                player.body.velocity.y = -375; 
+//            }
+//        }
+//        else{
+//
+//        // check for overlap with the ladder 
+//            if (tileType != null){
+//                ladder_function();
+//            
+//            }
+//        }
         
         if (camCount < camIncr){
             camCount += 1;

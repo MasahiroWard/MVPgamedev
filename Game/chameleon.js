@@ -51,6 +51,9 @@ function jump_function(){
 }
 
 function ladder_function(){
+    if (climb1.isPlaying == false){
+        climb1.play();
+    }
     player.body.gravity.y = 0;
     if (cursors.up.isDown){
         player.body.velocity.y = -100;
@@ -74,6 +77,7 @@ function chameleon_change_color(clr){
 }
 
 function deadplayer(){
+    // stop all sound and then play the dead sound
     game.sound.stopAll();
     disappointed.play('','',0.6);
     console.log('You dead lol');
