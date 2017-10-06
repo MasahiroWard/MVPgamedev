@@ -27,7 +27,6 @@ demo.icestate.prototype = {
     create: function(){
 //        game.physics.startSystem(Phaser.Physics.ARCADE);
 //        cursors = game.input.keyboard.createCursorKeys();
-
         game.camera.y = 6000;
         
         game.stage.backgroundColor = '#DDDDDD';
@@ -100,6 +99,8 @@ demo.icestate.prototype = {
     update: function(){        
           checkforladders(iceMap, icelayer2);
         
+//        incrementCamera(camSpeed);
+        
         if (camCount < camIncr){
             camCount += 1;
         }
@@ -107,8 +108,8 @@ demo.icestate.prototype = {
             camCount = 0;
             game.camera.y -= camSpeed;
         }
-
-  
+//
+//  
                 
         
         

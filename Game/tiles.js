@@ -37,3 +37,13 @@ function collideIce(player, layer){
     }
     
 }
+//
+//function incrementCamera(camSpeed){
+//    if (camCount < camIncr){
+//        camCount += 1;
+//    }
+//    else {
+//        camcount = 0;
+//        game.camera.y -= camSpeed;
+//    }
+//}
