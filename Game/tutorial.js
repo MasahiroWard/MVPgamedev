@@ -2,17 +2,24 @@
 demo.tutorial = function(){};
 demo.tutorial.prototype = {
     preload: function(){
+        // Always include this line
         loadImages();
+        
+        // Change to the correct boss
         loadCatBoss();
+        
+        // Make this equal to the size of the tilemap
         game.world.setBounds(0, 0, 1000, 3600);
         
-        // load in tile map assets 
+        // load in tile map assets
+        // This should be customized for each stage
         game.load.tilemap('stage', 'assets/tilemaps/TestMapFitted.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('LargeGrass', 'assets/tilemaps/LargeGrass.png');
         game.load.image('LargeLadder', 'assets/tilemaps/LargeLadder.png');
         game.load.image('platform', 'assets/sprites/platform.png')
     },
     create: function(){
+        // This only needs to happen one time.  Add it to the intial state and forget about it after
         game.physics.startSystem(Phaser.Physics.ARCADE);
         cursors = game.input.keyboard.createCursorKeys();
 

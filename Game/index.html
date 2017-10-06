@@ -1,39 +1,41 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script src="phaser/phaser.min.js"></script>
-    <link rel="stylesheet" href="main.css">
-    <script src = "vardeclare.js"></script>
-    <script src="state0.js"></script>
-    <script src="state1.js"></script>
-    <script src="state2.js"></script>
-    <script src="state3.js"></script>
-    <script src="gameover.js"></script>
-    <script src="chameleon.js"></script>
-    <script src="enemy.js"></script>
-    <script src="inventory.js"></script>
-    <script src="cat_boss.js"></script>
-    <script src="loadImagesPre.js"></script>
-    <script src="fruit.js"></script>
-    <script src="statechanger.js"></script>
-    <script src="movingPlatform.js"></script>
-    <script src="balloon.js"></script>
-    <script src="icestate.js"></script>
-    <script src="tiles.js"></script>
-  </head>
-  <body>
-    <script src="main.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
-    <script>
-      // Initialize Firebase
-      var config = {
-        apiKey: "AIzaSyBulDTnGLFflC5sW-6s2UTLME-B2dBdIAc",
-        authDomain: "highscores-daa19.firebaseapp.com",
-        databaseURL: "https://highscores-daa19.firebaseio.com",
-        storageBucket: "highscores-daa19.appspot.com",
-        messagingSenderId: "561693293337"
-      };
-      firebase.initializeApp(config);
-    </script>
-  </body>
+    <head>
+        <script src="phaser/phaser.min.js"></script>
+        <link rel="stylesheet" href="main.css">
+        
+        <script src = "vardeclare.js"></script>
+        <script src="loadAssets.js"></script>
+        
+        <script src="chameleon.js"></script>
+        <script src="enemy.js"></script>
+        <script src="inventory.js"></script>
+        <script src="fruit.js"></script>
+        <script src="balloon.js"></script>
+        <script src="movingPlatform.js"></script>
+        <script src="tiles.js"></script>
+        
+        <script src="statechanger.js"></script>
+        <script src="state0.js"></script>
+        <script src="tutorial.js"></script>
+        <script src="icestate.js"></script>
+        <script src="gameover.js"></script>
+        
+        <script src="cat_boss.js"></script>
+    </head>
+    <body>
+        <script src="main.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.7.2/firebase.js"></script>
+        <script>
+          // Initialize Firebase
+          var config = {
+            apiKey: "AIzaSyBulDTnGLFflC5sW-6s2UTLME-B2dBdIAc",
+            authDomain: "highscores-daa19.firebaseapp.com",
+            databaseURL: "https://highscores-daa19.firebaseio.com",
+            storageBucket: "highscores-daa19.appspot.com",
+            messagingSenderId: "561693293337"
+          };
+          firebase.initializeApp(config);
+        </script>
+    </body>
 </html>
