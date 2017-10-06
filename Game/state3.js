@@ -14,6 +14,7 @@ demo.tutorial.prototype = {
         game.load.image('platform', 'assets/sprites/platform.png')
     },
     create: function(){
+        game.sound.stopAll();
         game.physics.startSystem(Phaser.Physics.ARCADE);
         cursors = game.input.keyboard.createCursorKeys();
 
@@ -90,10 +91,13 @@ demo.tutorial.prototype = {
         climb1 = game.add.audio('leaves');
         eatNoise2 = game.add.audio('chirp');
         balloonNoise = game.add.audio('balloonNoise');
-        
+        disappointed = game.add.audio('disappointed');
+        guitar2 = game.add.audio('guitar2');
         
         // loops guitar music 
-        guitar1.loopFull(0.3);
+        guitar1.play('','',0.3,true,true);
+        
+//        guitar1.loopFull(0.3);
         
         // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 0);

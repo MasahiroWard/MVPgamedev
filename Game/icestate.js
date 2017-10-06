@@ -5,7 +5,6 @@ demo.icestate.prototype = {
     preload: function(){
         loadImages();
 
-
         
         // make sure to set this to the size of the tile map 
         game.world.setBounds(0, 0, 1000, 6000);
@@ -25,7 +24,13 @@ demo.icestate.prototype = {
     create: function(){
 //        game.physics.startSystem(Phaser.Physics.ARCADE);
 //        cursors = game.input.keyboard.createCursorKeys();
+        
+        // stop all other sounds 
+        game.sound.stopAll();
         game.camera.y = 6000;
+        
+        // play background music
+        guitar2.play('','',0.5,true,true);
         
         game.stage.backgroundColor = '#DDDDDD';
 

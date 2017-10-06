@@ -44,6 +44,8 @@ function loadImages(){
     game.load.audio('leaves', 'assets/sounds/leaves.mp3');
     game.load.audio('chirp', 'assets/sounds/chirp.mp3')
     game.load.audio('balloonNoise', 'assets/sounds/balloon.mp3');
+    game.load.audio('disappointed', 'assets/sounds/disappointed.mp3');
+    game.load.audio('guitar2', 'assets/sounds/guitar2.mp3');
     
 }
 
