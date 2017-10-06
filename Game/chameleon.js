@@ -74,5 +74,6 @@ function chameleon_change_color(clr){
 }
 
 function deadplayer(){
+    console.log('You dead lol');
     game.state.start('gameover');
 }

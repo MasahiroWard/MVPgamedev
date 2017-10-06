@@ -10,6 +10,7 @@ demo.tutorial.prototype = {
         game.load.tilemap('stage', 'assets/tilemaps/TestMapFitted.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('LargeGrass', 'assets/tilemaps/LargeGrass.png');
         game.load.image('LargeLadder', 'assets/tilemaps/LargeLadder.png');
+        game.load.image('LargeLadderTop', 'assets/tilemaps/LargeLadderTop.png');
         game.load.image('platform', 'assets/sprites/platform.png')
     },
     create: function(){
@@ -30,6 +31,7 @@ demo.tutorial.prototype = {
         map = game.add.tilemap('stage');
         map.addTilesetImage('LargeGrass');
         map.addTilesetImage('LargeLadder');
+        map.addTilesetImage('LargeLadderTop');
         
         
         layer1 = map.createLayer('Platforms');
