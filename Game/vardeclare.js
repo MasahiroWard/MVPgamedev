@@ -3,6 +3,9 @@
 // demo is the game variable
 var demo = {};
 
+// camCount allows camera to scroll
+var camCount = 0;
+
 // player is your chameleon
 var player;
 
@@ -17,13 +20,17 @@ var map_fruits = {};
 var fruit_colors = {"redfruit": "red", "bluefruit": "blue", "yellowfruit": "yellow", "orangefruit": "orange", "purplefruit": "purple", "greenfruit": "green"};
 
 // Item objects
-var balloon_group;
+// balloon_start_time is used to release balloon after x seconds
+var balloon_group, balloon_start_time = 0;
 
-// Moving platforms
+// Moving platforms group holds all the MovingPlatform objects
+// MovingPlatform class is an extended sprite object
 var moving_platform_group, MovingPlatform;
 
-// Stores colors as hex code.  When calling colors in this game, use the syntax hex_colors["red"]
+/////////////////////////////////////////////////////////////
+// Stores colors as hex code.  Specifically used for changing tints, should become obsolete
 var hex_colors = {"red": 0xff0000, "blue": 0x0000ff, "yellow": 0xffff00, "orange": 0xff8000, "purple": 0x6600cc, "green": 0x00b33c};
+/////////////////////////////////////////////////////////////
 
 // This is a list used to pick random colors or cycle through all colors
 var color_list = ["red", "blue", "yellow", "orange", "purple", "green"];
@@ -32,21 +39,21 @@ var color_list = ["red", "blue", "yellow", "orange", "purple", "green"];
 var birds_group = {}, snakes_group = {};
 
 // Variable associated with the cat boss
-// catMoveTimeStamp is used to track how often the catboss changes direction
-// catHitTimeStamp is used to give both the catboss and player 2 seconds of immunity after contact
-var cat_boss, catMoveTimeStamp = 0, catHitTimeStamp = 0;
-var yarn_ball;
+var cat_boss, yarn_ball;
 
+
+// These should be declared for each stage individually
 // Stores platforms and ladders for a stage.  Hope to make these obsolete by creating tilemaps instead.
-var platforms, ladders;
+// Hopefully obsolete.  Uncomment if game is broken
+//var platforms, ladders;
 
 // Moves the camera vertically at a set pace.
 // increasing camSpeed increases each camera increment amount 
-var camSpeed = 2;
+//var camSpeed = 2;
 // count of frames until camera position can increment
 // keep camCount as 0; camIncr determines the count needed before increment 
-var camCount = 0;
-var camIncr = 1;
+//var camCount = 0;
+//var camIncr = 1;
 
 // sound variables
 var jump1, guitar1, eatNoise, climb1, eatNoise2, balloonNoise;
@@ -54,13 +61,12 @@ var jump1, guitar1, eatNoise, climb1, eatNoise2, balloonNoise;
 var balloon_start_time = 0;
 
 // state 3 vars for tilemap and sounds
-var layer1;
-var layer2; 
-var map;
-var eat; 
+//var layer1;
+//var layer2; 
+//var map;
+//var eat; 
 
 // ice state tile map variables 
 var icelayer1;
 var icelayer2; 
 var iceMap;
-

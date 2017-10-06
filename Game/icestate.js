@@ -30,6 +30,7 @@ demo.icestate.prototype = {
         game.camera.y = 6000;
         
         // play background music
+        guitar2 = game.add.audio('guitar2');
         guitar2.play('','',0.5,true,true);
         
         game.stage.backgroundColor = '#DDDDDD';

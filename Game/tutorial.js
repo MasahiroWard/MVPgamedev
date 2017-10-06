@@ -2,64 +2,77 @@
 demo.tutorial = function(){};
 demo.tutorial.prototype = {
     preload: function(){
+        // Always include this line
         loadImages();
+        
+        // Change to the correct boss
         loadCatBoss();
+        
+        // Make this equal to the size of the tilemap
         game.world.setBounds(0, 0, 1000, 3600);
         
-        // load in tile map assets 
+        
+        ////////////////////////////////////////////////////
+        // possible refactor
+        // load in tile map assets
+        // This should be customized for each stage
         game.load.tilemap('stage', 'assets/tilemaps/TestMapFitted.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('LargeGrass', 'assets/tilemaps/LargeGrass.png');
         game.load.image('LargeLadder', 'assets/tilemaps/LargeLadder.png');
         game.load.image('LargeLadderTop', 'assets/tilemaps/LargeLadderTop.png');
-        game.load.image('platform', 'assets/sprites/platform.png')
     },
     create: function(){
-        game.sound.stopAll();
+        // This only needs to happen one time.  Add it to the intial state and forget about it after
         game.physics.startSystem(Phaser.Physics.ARCADE);
         cursors = game.input.keyboard.createCursorKeys();
 
-        game.camera.y = 3600;
-        
-        game.stage.backgroundColor = '#DDDDDD';
-        var bg = game.add.sprite(0, 0, 'bg1');
-        bg.height = 700;
-        bg.width = 1000;
-        bg.fixedToCamera = true;
-        addChangeStateEventListeners();
-        cursors = game.input.keyboard.createCursorKeys();
+        // Stop sounds when starting a state
+        game.sound.stopAll();
 
+        // start game at bottom of screen
+        game.camera.y = game.world.height;
+        
+        // Add game background
+        add_game_bg('bg1')
+                
+        ///////////////////////////////////////////
+        // Consider refactoring
         // add in the tile map 
         map = game.add.tilemap('stage');
         map.addTilesetImage('LargeGrass');
         map.addTilesetImage('LargeLadder');
         map.addTilesetImage('LargeLadderTop');
-        
-        
+
         layer1 = map.createLayer('Platforms');
         layer2 = map.createLayer('Ladders');
         layer1.resizeWorld();
         layer2.resizeWorld();
-        
         game.physics.arcade.enable(layer1);
         game.physics.arcade.enable(layer2);
         
-        
-        createChameleon(500,game.world.height - 400);
-        place_cat_boss(0,0);
-        
-        
-
-        // set collisions
-
+        // set collisions for the tilemaps
         map.setCollisionBetween(1, 3, true, layer1);
         map.setCollision(4, true, layer2);
         
-        //prep for placing fruit and enemies
+        // load in sound
+        guitar1 = game.add.audio('guitar');
         
-        make_fruit_groups();
-        make_enemy_groups();
+        // loops guitar music 
+        guitar1.loopFull(0.3);
+        /////////////////////////////////////////////
+
+        // Allows keyboard inputs
+        game.input.keyboard.addCallbacks(this, null, null, keyPress);
+
+        
+        // Add chameleon at x,y
+        createChameleon(500,game.world.height - 400);
+        
+        // Add boss at x,y
+        place_cat_boss(0,0);
         
         // place fruit
+        make_fruit_groups();
         placeFruit(700, game.world.height - 450, "bluefruit");
         placeFruit(600, game.world.height - 350, "yellowfruit")
         placeFruit(450, game.world.height -1300,"redfruit");
@@ -67,11 +80,12 @@ demo.tutorial.prototype = {
         placeFruit(150, 1000, "greenfruit");
         placeFruit(200, 300, "purplefruit");
 
-        // place moving enemy
-        var thisguy = placeBird(350,game.world.height-1000,"blue");
-        thisguy.mytween = game.add.tween(thisguy).to({x:[250, 350], y:[game.world.height-1000, game.world.height - 1000]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
-
-        // place static enemy
+        // place enemy
+        make_enemy_groups();
+        var bird1 = placeBird(350,game.world.height-1000,"blue");
+        // make enemy move
+        bird1.mytween = game.add.tween(bird1).to({x:[250, 350], y:[game.world.height-1000, game.world.height - 1000]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        // place static enemies
         placeBird(500,1650,"red");
         placeSnake(800, game.world.height-650, "yellow");
         
@@ -81,29 +95,29 @@ demo.tutorial.prototype = {
         placeMP(400, 1600, 3, 1, 0, 5, 0, 100);
         placeMP(200, 900, 3, 1, 3, 0, 100, 0);
         
+        // place balloons
         make_balloon_group();
         placeBalloon(400, 2800);
         
         // load in sound
-        jump1 = game.add.audio('jump');
         guitar1 = game.add.audio('guitar');
-        eatNoise = game.add.audio('beep');
-        climb1 = game.add.audio('leaves');
-        eatNoise2 = game.add.audio('chirp');
-        balloonNoise = game.add.audio('balloonNoise');
-        disappointed = game.add.audio('disappointed');
-        guitar2 = game.add.audio('guitar2');
         
         // loops guitar music 
         guitar1.play('','',0.3,true,true);
-        
-//        guitar1.loopFull(0.3);
         
         // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 0);
     },
     update: function(){
 //      check player position and either call ladder function or take into account ladder top 
+        move_camera(1,2);
+        
+        var arr = get_surrounding_tiles(layer1, map);
+        console.log(arr);
+        
+        //////////////////////////
+        // needs refactoring
+//      check player position  
         var tx = layer2.getTileX(player.position.x);
         var ty = layer2.getTileY(player.position.y);
         
@@ -125,61 +139,22 @@ demo.tutorial.prototype = {
                 console.log('ladder');
             }
         }
-        
-        
-//        if (tileType2.index == 5){
-//            if (cursors.up.isDown){
-//                player.body.velocity.y = -375; 
-//            }
-//        }
-//        else{
-//
-//        // check for overlap with the ladder 
-//            if (tileType != null){
-//                ladder_function();
-//            
-//            }
-//        }
-        
-        if (camCount < camIncr){
-            camCount += 1;
-            //console.log(game.camera.y);
-        }
-        else {
-            camCount = 0;
-            game.camera.y -= camSpeed;
-        }
 
-        cat_boss_move();
-        
         // colide with grass and allow player to jump 
-        game.physics.arcade.collide(player, layer1, jump_function);
-        game.physics.arcade.collide(layer1, cat_boss);
-        game.physics.arcade.collide(layer1, yarn_ball);
-        game.physics.arcade.collide(layer2, yarn_ball);
-        game.physics.arcade.collide(layer2, cat_boss);
+        game.physics.arcade.collide(player, layer1);
+        /////////////////////////////////////////
         
         if (player.ballooning){
-            chameleon_float()
+            chameleon_float();
         } else {
             chameleonmove();
         }
+        
         birds_group.forEach(moveBird, this);
         snakes_group.forEach(moveSnake, this);
         moving_platform_group.forEach(movingPlatformsUpdate, this);
-//        console.log(game.camera.y, player.body.y)
-        // Game over if you fall off the screen
-        if (game.camera.y+650 < player.body.y) {
-            if (player.has_balloon){
-                use_balloon();
-            } else if (player.ballooning){
-                // prevents dying while the balloon is active
-                chameleon_float();
-            } else {
-                console.log("state")
-                deadplayer();
-            }
-        }
 
+        var boss_collision_list = [layer1, layer2]
+        cat_boss_move(boss_collision_list);
     }
 };

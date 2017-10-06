@@ -1,3 +1,26 @@
+function add_game_bg(sprite_name){
+    //game.stage.backgroundColor = '#DDDDDD';
+    var bg = game.add.sprite(0, 0, sprite_name);
+    bg.height = game.world.height;
+    bg.width = game.width;
+    bg.fixedToCamera = true;
+}
+
+function get_surrounding_tiles(check_layer, map){
+    // Function returns the surrounding tiletypes of a given layer
+    // Returns an array of [topRight, topLeft, bottomRight, bottomLeft] tile indices
+    player.body.top = player.body.bottom - player.body.height;
+    player.body.left = player.body.right - player.body.width;
+    
+    var top_y = check_layer.getTileY(player.body.top);
+    var bottom_y = check_layer.getTileY(player.body.bottom);
+    var right_x = check_layer.getTileX(player.body.right);
+    var left_x = check_layer.getTileX(player.body.left);
+    
+    return ([map.getTile(left_x, top_y, check_layer), map.getTile(right_x, top_y, check_layer), map.getTile(left_x, bottom_y, check_layer), map.getTile(right_x, bottom_y, check_layer)])
+}
+
+
 //function tile_collision(fname, map, layer){
 //    
 //}
@@ -16,8 +39,6 @@ function checkforladders(map, layer) {
 
 
 function collideIce(player, layer){
-    jump_function();
-
         // tile key: 
         // 1,2,3 = no color
         // 5,6,7 = blue
