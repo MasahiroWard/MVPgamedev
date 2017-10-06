@@ -48,6 +48,7 @@ function chameleon_float(){
     }
     
     // End ballooning after 2 seconds
+    // Release balloon
     if (game.time.time > balloon_start_time + 2000){
         player.ballooning = false;
         player.childBalloon.kill()
