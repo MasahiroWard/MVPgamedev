@@ -88,13 +88,13 @@ demo.icestate.prototype = {
 //        make_balloon_group();
 //        placeBalloon(200, 2300);
         
-        // load in sound
-        jump1 = game.add.audio('jump');
-        guitar1 = game.add.audio('guitar');
+//        // load in sound
+//        jump1 = game.add.audio('jump');
+//        guitar1 = game.add.audio('guitar');
         
         
         // loops guitar music 
-        guitar1.loopFull();
+//        guitar1.loopFull();
     },
     update: function(){        
           checkforladders(iceMap, icelayer2);

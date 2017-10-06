@@ -1,6 +1,7 @@
 var layer1;
 var layer2; 
 var map;
+var eat; 
 
 demo.tutorial = function(){};
 demo.tutorial.prototype = {
@@ -87,10 +88,13 @@ demo.tutorial.prototype = {
         // load in sound
         jump1 = game.add.audio('jump');
         guitar1 = game.add.audio('guitar');
+        eatNoise = game.add.audio('beep');
+        climb1 = game.add.audio('leaves');
+        eatNoise2 = game.add.audio('chirp');
         
         
         // loops guitar music 
-        guitar1.loopFull();
+        guitar1.loopFull(0.3);
         
         // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 0);
@@ -105,6 +109,7 @@ demo.tutorial.prototype = {
         // check for overlap with the ladder 
         if (tileType != null){
             ladder_function();
+            
         }
         
         if (camCount < camIncr){

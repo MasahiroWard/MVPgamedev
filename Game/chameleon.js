@@ -46,7 +46,7 @@ function jump_function(){
 //    console.log('hitting');
     if (cursors.up.isDown && player.body.blocked.down){
         player.body.velocity.y = -375;
-        jump1.play();
+        jump1.play('','', 0.2);
     }    
 }
 
