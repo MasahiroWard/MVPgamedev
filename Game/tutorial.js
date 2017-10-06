@@ -100,6 +100,9 @@ demo.tutorial.prototype = {
     update: function(){
         move_camera(1,2);
         
+        var arr = get_surrounding_tiles(layer1, map);
+        console.log(arr);
+        
         //////////////////////////
         // needs refactoring
 //      check player position  

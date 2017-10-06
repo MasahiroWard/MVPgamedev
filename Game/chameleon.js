@@ -1,5 +1,3 @@
-
-
 // Function for chameleon generation and movement
 
 // Put this in create

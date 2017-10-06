@@ -6,7 +6,7 @@ function createInventory(x, y){
     
     var stomach_bg = game.add.sprite(inventory_x, inventory_y, "stomach_background")
     stomach_bg.height = 50;
-    stomach_bg.width = game.world.width;
+    stomach_bg.width = game.width;
     stomach_bg.fixedToCamera = true;
     stomach = game.add.group();
     stomach.fixedToCamera = true;

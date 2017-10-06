@@ -40,20 +40,16 @@ function moveSnake(snake){
 function hit_enemy(player, enemy){
     if (player.color == enemy.color){
         // When enemies have tweens, the kill method doesn't work.
-        // So here is your workaround
+        // So here is the workaround
         enemy.body = null;
         enemy.destroy();
     } else {
-        console.log(enemy.color)
         deadplayer();
     }
 }
 
 function checkOverlap(spriteA, spriteB) {
-
     var boundsA = spriteA.getBounds();
     var boundsB = spriteB.getBounds();
-
     return Phaser.Rectangle.intersects(boundsA, boundsB);
-
 }
