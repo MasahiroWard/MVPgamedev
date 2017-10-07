@@ -53,22 +53,6 @@ function chameleonmove(){
     }
 }
 
-function ladder_function(){
-    if (climb1.isPlaying == false){
-        climb1.play();
-    }
-    player.body.gravity.y = 0;
-    if (cursors.up.isDown){
-        player.body.velocity.y = -100;
-    }
-    else if (cursors.down.isDown){
-        player.body.velocity.y = 100;
-    }
-    else{
-        player.body.velocity.y = -7;
-    }
-}
-
 function chameleon_change_color(clr){
     // Change color if not already that color
     // And the player has the right fruit in stomach

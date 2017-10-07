@@ -20,15 +20,19 @@ demo.tutorial.prototype = {
         game.load.image('LargeGrass', 'assets/tilemaps/LargeGrass.png');
         game.load.image('LargeLadder', 'assets/tilemaps/LargeLadder.png');
         game.load.image('LargeLadderTop', 'assets/tilemaps/LargeLadderTop.png');
+        ///////////////////////////////////////////////////
     },
     create: function(){
         // This only needs to happen one time.  Add it to the intial state and forget about it after
         game.physics.startSystem(Phaser.Physics.ARCADE);
+        // Allows keyboard inputs
         cursors = game.input.keyboard.createCursorKeys();
+        game.input.keyboard.addCallbacks(this, null, null, keyPress);
 
+        
         // Stop sounds when starting a state
         game.sound.stopAll();
-
+        
         // start game at bottom of screen
         game.camera.y = game.world.height;
         
@@ -52,19 +56,14 @@ demo.tutorial.prototype = {
         
         // set collisions for the tilemaps
         map.setCollisionBetween(1, 3, true, layer1);
-        map.setCollision(4, true, layer2);
+        //map.setCollision(4, true, layer2);
         
         // load in sound
-        guitar1 = game.add.audio('guitar');
-        
+        guitar1 = game.add.audio('guitar');        
         // loops guitar music 
-        guitar1.loopFull(0.3);
+        guitar1.play('','',0.3,true,true);
         /////////////////////////////////////////////
 
-        // Allows keyboard inputs
-        game.input.keyboard.addCallbacks(this, null, null, keyPress);
-
-        
         // Add chameleon at x,y
         createChameleon(500,game.world.height - 400);
         
@@ -98,47 +97,41 @@ demo.tutorial.prototype = {
         // place balloons
         make_balloon_group();
         placeBalloon(400, 2800);
-        
-        // load in sound
-        guitar1 = game.add.audio('guitar');
-        
-        // loops guitar music 
-        guitar1.play('','',0.3,true,true);
-        
+                
         // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 0);
     },
     update: function(){
-//      check player position and either call ladder function or take into account ladder top 
+        //      check player position and either call ladder function or take into account ladder top 
         move_camera(1,2);
         
-        var arr = get_surrounding_tiles(layer1, map);
-        console.log(arr);
-        
+        var tile_arr = get_surrounding_tiles(layer2, map);
+        console.log()
+        ladder_movement(tile_arr);
         //////////////////////////
         // needs refactoring
 //      check player position  
-        var tx = layer2.getTileX(player.position.x);
-        var ty = layer2.getTileY(player.position.y);
-        
-        var tileType = map.getTile(tx, ty, layer2);
-        
-        var ty2 = layer2.getTileY(player.body.bottom+40);
-        var tileType2 = map.getTile(tx, ty2, layer2);
+//        var tx = layer2.getTileX(player.position.x);
+//        var ty = layer2.getTileY(player.position.y);
+//        
+//        var tileType = map.getTile(tx, ty, layer2);
+//        
+//        var ty2 = layer2.getTileY(player.body.bottom+40);
+//        var tileType2 = map.getTile(tx, ty2, layer2);
+//        
 
-        
-        if (tileType2 != null || tileType != null){
-            if(tileType2 != null){
-                if (tileType2.index == 5){
-                    if (cursors.up.isDown){
-                        player.body.velocity.y = -375;}
-                }
-            }
-            if(tileType != null){
-                ladder_function();
-                console.log('ladder');
-            }
-        }
+//        if (tileType2 != null || tileType != null){
+//            if(tileType2 != null){
+//                if (tileType2.index == 5){
+//                    if (cursors.up.isDown){
+//                        player.body.velocity.y = -375;}
+//                }
+//            }
+//            if(tileType != null){
+//                ladder_function();
+//                console.log('ladder');
+//            }
+//        }
 
         // colide with grass and allow player to jump 
         game.physics.arcade.collide(player, layer1);

@@ -20,11 +20,6 @@ function get_surrounding_tiles(check_layer, map){
     return ([map.getTile(left_x, top_y, check_layer), map.getTile(right_x, top_y, check_layer), map.getTile(left_x, bottom_y, check_layer), map.getTile(right_x, bottom_y, check_layer)])
 }
 
-
-//function tile_collision(fname, map, layer){
-//    
-//}
-
 // check for ladder collisions - pass in the map name and the layer with the ladders 
 function checkforladders(map, layer) {
     var tx = layer.getTileX(player.position.x);
@@ -36,6 +31,44 @@ function checkforladders(map, layer) {
         ladder_function();
     }
 }
+
+
+function ladder_movement(tile_arr){
+    bottom_left = tile_arr[2]
+    bottom_right = tile_arr[3]
+    if (bottom_right || bottom_left) {
+        if (bottom_left) {
+            var checking = bottom_left;
+        } else if (bottom_right) {
+            var checking = bottom_right;
+        }
+        if (checking.index == 5){
+            ladder_function();
+            if (cursors.up.isDown) {
+                player.body.velocity.y = -350;
+            }
+        } else if (checking.index == 4) {
+                   ladder_function()
+                   }
+    }
+}
+
+function ladder_function(){
+    if (climb1.isPlaying == false){
+        climb1.play();
+    }
+    player.body.gravity.y = 0;
+    if (cursors.up.isDown){
+        player.body.velocity.y = -100;
+    }
+    else if (cursors.down.isDown){
+        player.body.velocity.y = 100;
+    }
+    else{
+        player.body.velocity.y = -7;
+    }
+}
+
 
 
 function collideIce(player, layer){
@@ -59,8 +92,6 @@ function collideIce(player, layer){
     
     
     var tile_dictionary = {1:player.color, 2:player.color, 3:player.color, 5:"blue", 6:"blue", 7:"blue", 8:"green", 9:"green", 10:"green", 11:"purple", 12:"purple", 13:"purple"}
-//    console.log(tileiceType);
-//    console.log(tileiceType, player.color, tile_dictionary.tileiceType);
     
     
     if (player.body.blocked.down){
@@ -71,27 +102,3 @@ function collideIce(player, layer){
         }
     }
 }
-
-//
-//function checkLadderTop(ladTopIndex, layer){
-//    
-//    var ybelow = layer.getTileY(player.position.y + 33);
-//    var xbelow = layer.getTileX(player.position.x);
-//    var tileladType = iceMap.getTile(xbelow, ybelow, icelayer).index;
-//    
-//    if(ladTopIndex == tileladType && cursors.up.isDown){
-//        player.body.velocity.y = -375
-//    }
-//}
-    
-    
-//
-//function incrementCamera(camSpeed){
-//    if (camCount < camIncr){
-//        camCount += 1;
-//    }
-//    else {
-//        camcount = 0;
-//        game.camera.y -= camSpeed;
-//    }
-//}
