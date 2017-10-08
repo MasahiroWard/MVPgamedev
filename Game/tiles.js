@@ -1,7 +1,7 @@
 function add_game_bg(sprite_name){
     //game.stage.backgroundColor = '#DDDDDD';
     var bg = game.add.sprite(0, 0, sprite_name);
-    bg.height = game.world.height;
+    bg.height = game.height;
     bg.width = game.width;
     bg.fixedToCamera = true;
 }
