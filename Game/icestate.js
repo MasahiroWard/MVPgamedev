@@ -104,13 +104,13 @@ demo.icestate.prototype = {
           checkforladders(iceMap, icelayer2);
         
 //        incrementCamera(camSpeed);
-        
-        if (camCount < camIncr){
+        // FIX THIS!!! 
+        if (camCount < 2){
             camCount += 1;
         }
         else {
             camCount = 0;
-            game.camera.y -= camSpeed;
+            game.camera.y -= 1;
         }
 //
 //  
