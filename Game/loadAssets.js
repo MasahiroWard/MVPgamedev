@@ -12,7 +12,7 @@ function loadImages(){
     game.load.image('greenfruit', 'assets/sprites/greenfruit.png');
     
     // Moving Image
-    game.load.image('platform', 'assets/sprites/platform.png');
+    game.load.image('platform', 'assets/sprites/cloud_sprite.png');
     
     // Items
     game.load.image('balloon', 'assets/sprites/balloon.png')

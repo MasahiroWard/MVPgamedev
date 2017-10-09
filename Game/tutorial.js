@@ -17,9 +17,9 @@ demo.tutorial.prototype = {
         // load in tile map assets
         // This should be customized for each stage
         game.load.tilemap('stage', 'assets/tilemaps/TestMapFitted.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('LargeGrass', 'assets/tilemaps/LargeGrass.png');
-        game.load.image('LargeLadder', 'assets/tilemaps/LargeLadder.png');
-        game.load.image('LargeLadderTop', 'assets/tilemaps/LargeLadderTop.png');
+        game.load.image('LargeGrass', 'assets/tilemaps/grass_platform.png');
+        game.load.image('LargeLadder', 'assets/tilemaps/ladder_sprite.png');
+        game.load.image('LargeLadderTop', 'assets/tilemaps/ladder_sprite.png');
         ///////////////////////////////////////////////////
     },
     create: function(){
