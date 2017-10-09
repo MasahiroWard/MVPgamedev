@@ -16,4 +16,7 @@ function keyPress(char) {
     if (char == "i"){
         game.state.start('icestate');
     }
+    else if (char == "u"){
+        game.state.start('tutorial');
+    }
 }

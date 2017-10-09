@@ -52,10 +52,11 @@ function loadImages(){
     game.load.audio('guitar', 'assets/sounds/ElectricGuitarInstrumental.mp3');
     game.load.audio('beep', 'assets/sounds/beep.mp3');
     game.load.audio('leaves', 'assets/sounds/leaves2.mp3');
-    game.load.audio('chirp', 'assets/sounds/chirp.mp3')
+    game.load.audio('chirp', 'assets/sounds/chirp.mp3');
     game.load.audio('balloonNoise', 'assets/sounds/balloon.mp3');
     game.load.audio('disappointed', 'assets/sounds/disappointed.mp3');
     game.load.audio('guitar2', 'assets/sounds/guitar2.mp3');
+    game.load.audio('whistle', 'assets/sounds/whistle.mp3');
     
 }
 

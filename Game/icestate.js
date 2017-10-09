@@ -12,11 +12,11 @@ demo.icestate.prototype = {
         // load in tile map assets 
         game.load.tilemap('iceStage', 'assets/tilemaps/IceMap.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('tempIce', 'assets/tilemaps/tempIce.png');
-        game.load.image('LargeLadderTop', 'assets/tilemaps/LargeLadderTop.png');
+        game.load.image('LargeLadderTop', 'assets/tilemaps/ladder_sprite.png');
         game.load.image('tempBlueBlock', 'assets/tilemaps/tempBlueBlock.png');
         game.load.image('tempGreenBlock', 'assets/tilemaps/tempGreenBlock.png');
         game.load.image('tempPurpleBlock', 'assets/tilemaps/tempPurpleBlock.png');
-        game.load.image('LargeLadder', 'assets/tilemaps/LargeLadder.png');
+        game.load.image('LargeLadder', 'assets/tilemaps/ladder_sprite.png');
     },
     
     
@@ -62,7 +62,7 @@ demo.icestate.prototype = {
         
         
 
-        // set collisions CHANGE THESE!!! *******
+        // set collisions CHANGE THESE!!! *******--
 //
         iceMap.setCollisionBetween(1, 3, true, icelayer1);
         iceMap.setCollisionBetween(5, 13, true, icelayer1)
@@ -74,7 +74,9 @@ demo.icestate.prototype = {
         make_enemy_groups();
         
         // place fruit
-//        placeFruit(700, game.world.height - 450, "bluefruit");
+        placeFruit(700, game.world.height - 450, "bluefruit");
+        placeFruit(700, game.world.height - 450, "greenfruit");
+        placeFruit(700, game.world.height - 450, "purplefruit");
 //        placeFruit(450, game.world.height -1300,"redfruit");
 //        placeFruit(750, game.world.height - 1600, "bluefruit");
 //        placeFruit(150, 1000, "greenfruit");
@@ -101,21 +103,13 @@ demo.icestate.prototype = {
 //        guitar1.loopFull();
     },
     update: function(){        
-          checkforladders(iceMap, icelayer2);
+//        checkforladders(iceMap, icelayer2);
+        var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
+        ladder_movement(tile_arr1);
         
-//        incrementCamera(camSpeed);
-        // FIX THIS!!! 
-        if (camCount < 2){
-            camCount += 1;
-        }
-        else {
-            camCount = 0;
-            game.camera.y -= 1;
-        }
-//
-//  
-                
         
+        // move the camera (if it wasnt obvious)
+        move_camera(1, 1);
         
         
         

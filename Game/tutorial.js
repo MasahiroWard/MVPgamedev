@@ -106,7 +106,7 @@ demo.tutorial.prototype = {
         move_camera(1,2);
         
         var tile_arr = get_surrounding_tiles(layer2, map);
-        console.log()
+//        console.log()
         ladder_movement(tile_arr);
         //////////////////////////
         // needs refactoring

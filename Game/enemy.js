@@ -43,6 +43,7 @@ function hit_enemy(player, enemy){
         // So here is the workaround
         enemy.body = null;
         enemy.destroy();
+        whistle.play();
     } else {
         deadplayer();
     }
