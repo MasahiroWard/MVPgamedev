@@ -37,6 +37,10 @@ function chameleonmove(){
         player.scale.setTo(-0.13, 0.13)
         player.body.velocity.x = 150;
     }
+    if (cursors.down.isDown) {
+        player.body.velocity.y = 375;
+    }
+    
     // jump if player is blocked on the bottom
     if (cursors.up.isDown && player.body.blocked.down){
         player.body.velocity.y = -375;
@@ -59,7 +63,7 @@ function chameleon_change_color(clr){
     if ((player.color!=clr) && (stomach_fruits[clr]>0)){
         player.color = clr;
         stomach_fruits[clr] -= 1;
-        stomach_tracker[clr].text = stomach_fruits[clr];
+        stomach_tracker[clr].text = (stomach_fruits[clr] + " (" + clr_keys[clr] + ")");
         player.loadTexture(clr+'_chameleon', 0, false);
     }
 }

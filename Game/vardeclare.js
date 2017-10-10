@@ -14,6 +14,7 @@ var cursors;
 
 // Dictionaries to keep track of what is in your stomach
 var stomach, stomach_fruits = {}, stomach_icons = {}, stomach_tracker = {};
+var clr_keys = {"red":"Q", "blue":"W", "yellow":"E", "orange":"A", "purple":"S", "green":"D"};
 
 // fruit objects on the map
 var map_fruits = {};

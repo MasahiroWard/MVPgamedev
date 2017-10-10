@@ -10,7 +10,6 @@ demo.tutorial.prototype = {
         // Make this equal to the size of the tilemap
         game.world.setBounds(0, 0, 1000, 3600);
         
-        
         ////////////////////////////////////////////////////
         // possible refactor
         // load in tile map assets
@@ -98,7 +97,7 @@ demo.tutorial.prototype = {
         placeBalloon(400, 2800);
                 
         // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
-        createInventory(0, 0);
+        createInventory(0, 525);
     },
     update: function(){        
         //      check player position and either call ladder function or take into account ladder top 
@@ -106,34 +105,9 @@ demo.tutorial.prototype = {
         
         var tile_arr = get_surrounding_tiles(layer2, map);
         ladder_movement(tile_arr);
-        //////////////////////////
-        // needs refactoring
-//      check player position  
-//        var tx = layer2.getTileX(player.position.x);
-//        var ty = layer2.getTileY(player.position.y);
-//        
-//        var tileType = map.getTile(tx, ty, layer2);
-//        
-//        var ty2 = layer2.getTileY(player.body.bottom+40);
-//        var tileType2 = map.getTile(tx, ty2, layer2);
-//        
-
-//        if (tileType2 != null || tileType != null){
-//            if(tileType2 != null){
-//                if (tileType2.index == 5){
-//                    if (cursors.up.isDown){
-//                        player.body.velocity.y = -375;}
-//                }
-//            }
-//            if(tileType != null){
-//                ladder_function();
-//                console.log('ladder');
-//            }
-//        }
 
         // colide with grass and allow player to jump 
         game.physics.arcade.collide(player, layer1);
-        /////////////////////////////////////////
         
         if (player.ballooning){
             chameleon_float();

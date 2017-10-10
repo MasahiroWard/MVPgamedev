@@ -6,11 +6,11 @@ function keyPress(char) {
         chameleon_change_color("blue")
     } else if (char == "e"){
         chameleon_change_color("yellow")
-    } else if (char == "r"){
+    } else if (char == "a"){
         chameleon_change_color("orange")
-    } else if (char == "t"){
+    } else if (char == "s"){
         chameleon_change_color("purple")
-    } else if (char == "y"){
+    } else if (char == "d"){
         chameleon_change_color("green")
     } 
     if (char == "i"){
@@ -20,5 +20,6 @@ function keyPress(char) {
     }
     if (char == "p"){
         // Switch pausing
-        game.paused = !game.paused;    
+        game.paused = !game.paused;
+    }
 }

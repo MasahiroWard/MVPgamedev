@@ -17,5 +17,5 @@ function getfruits(player, fruit){
     fruit_color = fruit.color;
     fruit.kill();
     stomach_fruits[fruit_color] += 1;
-    stomach_tracker[fruit_color].text = stomach_fruits[fruit_color];
+    stomach_tracker[fruit_color].text = (stomach_fruits[fruit_color] + " (" + clr_keys[fruit_color] + ")");
 }
