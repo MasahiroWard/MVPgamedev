@@ -1,4 +1,3 @@
-
 demo.tutorial = function(){};
 demo.tutorial.prototype = {
     preload: function(){
@@ -101,12 +100,11 @@ demo.tutorial.prototype = {
         // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 0);
     },
-    update: function(){
+    update: function(){        
         //      check player position and either call ladder function or take into account ladder top 
         move_camera(1,2);
         
         var tile_arr = get_surrounding_tiles(layer2, map);
-        console.log()
         ladder_movement(tile_arr);
         //////////////////////////
         // needs refactoring

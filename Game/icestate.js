@@ -27,7 +27,7 @@ demo.icestate.prototype = {
         
         // stop all other sounds 
         game.sound.stopAll();
-        game.camera.y = 6000;
+        game.camera.y = game.world.height;
         
         // play background music
         guitar2 = game.add.audio('guitar2');
@@ -74,11 +74,11 @@ demo.icestate.prototype = {
         make_enemy_groups();
         
         // place fruit
-//        placeFruit(700, game.world.height - 450, "bluefruit");
-//        placeFruit(450, game.world.height -1300,"redfruit");
-//        placeFruit(750, game.world.height - 1600, "bluefruit");
-//        placeFruit(150, 1000, "greenfruit");
-//        placeFruit(200, 300, "purplefruit");
+        placeFruit(700, game.world.height - 300, "bluefruit");
+        placeFruit(650, game.world.height -450,"greenfruit");
+        placeFruit(750, game.world.height - 1600, "bluefruit");
+        placeFruit(150, 1000, "greenfruit");
+        placeFruit(200, 300, "purplefruit");
 //
 //        // place enemies 
 //        placeBird(300,game.world.height-1000,"blue");
@@ -101,24 +101,9 @@ demo.icestate.prototype = {
 //        guitar1.loopFull();
     },
     update: function(){        
-          checkforladders(iceMap, icelayer2);
-        
-//        incrementCamera(camSpeed);
-        // FIX THIS!!! 
-        if (camCount < 2){
-            camCount += 1;
-        }
-        else {
-            camCount = 0;
-            game.camera.y -= 1;
-        }
-//
-//  
-                
-        
-        
-        
-        
+        move_camera(2,3);
+
+        checkforladders(iceMap, icelayer2);
         // colide with icelayer and allow player to jump 
         game.physics.arcade.collide(player, icelayer1, collideIce);
 

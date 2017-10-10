@@ -40,7 +40,7 @@ demo.state0.prototype = {
         
         
     },
-    update: function(){
+    update: function(){        
         chameleonmove();
         moveBird();
         cat_boss_move();

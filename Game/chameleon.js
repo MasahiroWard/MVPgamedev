@@ -32,10 +32,10 @@ function chameleonmove(){
     if (cursors.left.isDown) {
         // flip chameleon sprite according to direction of movement
         player.scale.setTo(0.13, 0.13)
-        player.body.velocity.x = -300;
+        player.body.velocity.x = -150;
     } else if (cursors.right.isDown) {
         player.scale.setTo(-0.13, 0.13)
-        player.body.velocity.x = 300;
+        player.body.velocity.x = 150;
     }
     // jump if player is blocked on the bottom
     if (cursors.up.isDown && player.body.blocked.down){

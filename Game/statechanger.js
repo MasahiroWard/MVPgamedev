@@ -16,4 +16,7 @@ function keyPress(char) {
     if (char == "i"){
         game.state.start('icestate');
     }
+    if (char == "p"){
+        game.paused = false;
+    }
 }
