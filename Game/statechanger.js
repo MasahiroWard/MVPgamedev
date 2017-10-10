@@ -15,8 +15,10 @@ function keyPress(char) {
     } 
     if (char == "i"){
         game.state.start('icestate');
+    } else if (char == "u"){
+        game.state.start('tutorial');
     }
     if (char == "p"){
-        game.paused = false;
-    }
+        // Switch pausing
+        game.paused = !game.paused;    
 }

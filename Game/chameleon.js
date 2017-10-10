@@ -79,4 +79,5 @@ function add_chameleon_sound(){
     eatNoise2 = game.add.audio('chirp');
     balloonNoise = game.add.audio('balloonNoise');
     disappointed = game.add.audio('disappointed');    
+    whistle = game.add.audio('whistle');
 }
