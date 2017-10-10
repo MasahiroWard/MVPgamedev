@@ -33,7 +33,7 @@ function checkforladders(map, layer) {
 }
 
 
-function ladder_movement(tile_arr){
+function ladder_movement(tile_arr, ladTileIndex, ladderTopIndex){
     bottom_left = tile_arr[2]
     bottom_right = tile_arr[3]
     if (bottom_right || bottom_left) {
@@ -42,12 +42,12 @@ function ladder_movement(tile_arr){
         } else if (bottom_right) {
             var checking = bottom_right;
         }
-        if (checking.index == 5){
+        if (checking.index == ladderTopIndex){
             ladder_function();
             if (cursors.up.isDown) {
                 player.body.velocity.y = -350;
             }
-        } else if (checking.index == 4) {
+        } else if (checking.index == ladTileIndex) {
                    ladder_function()
                    }
     }
@@ -62,6 +62,7 @@ function ladder_function(){
         player.body.velocity.y = -100;
     }
     else if (cursors.down.isDown){
+        // Changing this velocity doesnt seem to do anything... 
         player.body.velocity.y = 100;
     }
     else{
