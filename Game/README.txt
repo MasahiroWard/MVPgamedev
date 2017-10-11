@@ -26,3 +26,10 @@ chirp by esperar (https://freesound.org/people/esperar/sounds/170814/),
 Guitar2 by Toivo161 (https://freesound.org/people/Toivo161/sounds/267216/),
 disappointed by Robinhood76 (https://freesound.org/people/Robinhood76/sounds/98874/),
 Slide whistle by InspectorJ (https://freesound.org/people/InspectorJ/sounds/402581/)
+
+
+
+guitar1 includes: 
+Guitalele's Happy Place by Kara Square (c) copyright 2017 
+Uke to Your Heart's Content by Kara Square (c) copyright 2017 Licensed under a Creative Commons Attribution (3.0) license. http://dig.ccmixter.org/files/mindmapthat/56196 
+Dig the Uke by Kara Square (c) copyright 2016 Licensed under a Creative Commons Attribution Noncommercial  (3.0) license. http://dig.ccmixter.org/files/mindmapthat/53304 
