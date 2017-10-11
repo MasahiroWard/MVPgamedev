@@ -21,6 +21,9 @@ function loadImages(){
     game.load.image('stomach_background', 'assets/backgrounds/brown_background.png')
     game.load.image('bg1', 'assets/backgrounds/test_background.png')
     
+    // Sprites used in tutorial messages
+    game.load.image('downarrow', 'assets/sprites/downarrow.png')
+    
     // when loading spritesheet, each cell must be the same size.
     // Chameleon
     game.load.spritesheet('grey_chameleon', 'assets/spritesheets/grey_chameleon_spritesheet.png', 373, 259);

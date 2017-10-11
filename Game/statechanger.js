@@ -13,13 +13,16 @@ function keyPress(char) {
     } else if (char == "d"){
         chameleon_change_color("green")
     } 
+    if (char == "p"){
+        // Switch pausing
+        game.paused = !game.paused;
+    }
+
+    
+    // Temporary method to change states
     if (char == "i"){
         game.state.start('icestate');
     } else if (char == "u"){
         game.state.start('tutorial');
-    }
-    if (char == "p"){
-        // Switch pausing
-        game.paused = !game.paused;
     }
 }

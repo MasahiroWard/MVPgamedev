@@ -18,12 +18,22 @@ var tutorial_msgs = [
 
 function disp_tut_msgs(idx) {
     // Pause the game and move the camera up 2 pixels so the game won't continue to pause
-    game.paused = true;
+    tutorial_paused = true;
     game.camera.y -= 2;
     
     switch(idx) {
         case 0:
             console.log(0);
+            var mytxt = game.add.text(player.x, player.y-100, "This is you.", {font: "65px Arial", align: "center"});
+            mytxt.anchor.setTo(0.5);
+            mytxt.addColor("#FF0000", 0);
+            var arrow = game.add.sprite(player.x, player.y-50, "downarrow")
+            arrow.anchor.setTo(0.5);
+            arrow.scale.setTo(0.1, 0.1);
+
+            if (cursors.up.isDown || cursors.up.isDown || cursors.up.isDown || cursors.up.isDown) {
+                tutorial_paused = false;
+            }
             break;
         case 1:
             console.log(1);
