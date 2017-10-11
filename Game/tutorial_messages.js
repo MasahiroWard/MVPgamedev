@@ -16,13 +16,17 @@ var tutorial_msgs = [
     'Avoid black projectiles.  They will kill you no matter what color you are.'
 ]
 
-function tutorial(ycam) {
+function disp_tut_msgs(idx) {
+    // Pause the game and move the camera up 2 pixels so the game won't continue to pause
     game.paused = true;
-    if (game.camera.y == 2500) {
-        game.camera.y = 2498;
-    } else if (game.camera.y == 2000) {
-        game.camera.y = 1998;
-    } else if (game.camera.y == 300) {
-        game.camera.y = 298;
-    }
+    game.camera.y -= 2;
+    
+    switch(idx) {
+        case 0:
+            console.log(0);
+            break;
+        case 1:
+            console.log(1);
+            break;
+              }
 }

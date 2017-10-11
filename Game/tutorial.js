@@ -54,7 +54,7 @@ demo.tutorial.prototype = {
         
         // set collisions for the tilemaps
         map.setCollisionBetween(1, 3, true, layer1);
-        //map.setCollision(4, true, layer2);
+        map.setCollisionBetween(4, 5, true, layer2);
         
         // load in sound
         guitar1 = game.add.audio('guitar');        
@@ -90,7 +90,7 @@ demo.tutorial.prototype = {
         addMovingPlatforms();
         placeMP(100, 2500, 2, 1, 4, 1, 100, 25);
         placeMP(400, 1600, 3, 1, 0, 5, 0, 100);
-        placeMP(200, 900, 3, 1, 3, 0, 100, 0);
+        placeMP(200, 900, 3, 1, 6, 0, 100, 0);
         
         // place balloons
         make_balloon_group();
@@ -121,5 +121,12 @@ demo.tutorial.prototype = {
 
         var boss_collision_list = [layer1, layer2]
         cat_boss_move(boss_collision_list);
+        
+        var stop_heights = [2500, 2000, 300]
+        var idx = stop_heights.indexOf(game.camera.y);
+        if (idx >= 0) {
+            disp_tut_msgs(idx);
+        }
+        
     }
 };
