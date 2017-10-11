@@ -19,7 +19,6 @@ var tutorial_msgs = [
 function disp_tut_msgs(idx) {
     // Pause the game and move the camera up 2 pixels so the game won't continue to pause
     tutorial_paused = true;
-    game.camera.y -= 2;
     
     switch(idx) {
         case 0:
@@ -31,7 +30,9 @@ function disp_tut_msgs(idx) {
             arrow.anchor.setTo(0.5);
             arrow.scale.setTo(0.1, 0.1);
 
-            if (cursors.up.isDown || cursors.up.isDown || cursors.up.isDown || cursors.up.isDown) {
+            if (cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown) {
+                mytxt.kill();
+                arrow.kill();
                 tutorial_paused = false;
             }
             break;

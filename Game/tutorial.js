@@ -102,37 +102,37 @@ demo.tutorial.prototype = {
         createInventory(0, 525);
     },
     update: function(){
-            // These are the heights at which the game automatically pauses and displays a message
-            console.log(game.camera.y);
-            var stop_heights = [2600, 2000, 300]
-            var idx = stop_heights.indexOf(game.camera.y);
-            if (idx >= 0) {
-                disp_tut_msgs(idx);
-            }
+        // These are the heights at which the game automatically pauses and displays a message
+        console.log(game.camera.y);
+        var stop_heights = [2600, 2000, 300]
+        var idx = stop_heights.indexOf(game.camera.y);
+        if (idx >= 0) {
+            disp_tut_msgs(idx);
+        }
 
         if (!tutorial_paused) {
             //      check player position and either call ladder function or take into account ladder top 
             move_camera(1,2);
-
-            var tile_arr = get_surrounding_tiles(layer2, map);
-            ladder_movement(tile_arr, 4, 5);
-
-            // colide with grass and allow player to jump 
-            game.physics.arcade.collide(player, layer1);
-
-            if (player.ballooning){
-                chameleon_float();
-            } else {
-                chameleonmove();
-            }
-
-            birds_group.forEach(moveBird, this);
-            snakes_group.forEach(moveSnake, this);
-            moving_platform_group.forEach(movingPlatformsUpdate, this);
-
-            var boss_collision_list = [layer1, layer2]
-            cat_boss_move(boss_collision_list);
-
         }
+        
+        var tile_arr = get_surrounding_tiles(layer2, map);
+        ladder_movement(tile_arr, 4, 5);
+
+        // colide with grass and allow player to jump 
+        game.physics.arcade.collide(player, layer1);
+
+        if (player.ballooning){
+            chameleon_float();
+        } else {
+            chameleonmove();
+        }
+
+        birds_group.forEach(moveBird, this);
+        snakes_group.forEach(moveSnake, this);
+        moving_platform_group.forEach(movingPlatformsUpdate, this);
+
+        var boss_collision_list = [layer1, layer2]
+        cat_boss_move(boss_collision_list);
+
     }
 };
