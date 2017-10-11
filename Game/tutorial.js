@@ -104,7 +104,7 @@ demo.tutorial.prototype = {
         move_camera(1,2);
         
         var tile_arr = get_surrounding_tiles(layer2, map);
-        ladder_movement(tile_arr);
+        ladder_movement(tile_arr, 4, 5);
 
         // colide with grass and allow player to jump 
         game.physics.arcade.collide(player, layer1);

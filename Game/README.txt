@@ -19,4 +19,10 @@ Thus, we can change functions once to change game mechanics
 This game uses these sounds from freesound:
 jump05 by jeremysykes ( https://freesound.org/people/jeremysykes/sounds/344500/ ),
 electric guitar by ValentinSosnitskiy ( https://freesound.org/people/ValentinSosnitskiy/sounds/368661/ ),
-beep by yunikon (https://freesound.org/people/yunikon/sounds/333860/), crunchingLeaves by bfederi1 (https://freesound.org/people/bfederi1/sounds/381182/)
+beep by yunikon (https://freesound.org/people/yunikon/sounds/333860/), 
+crunchingLeaves by bfederi1 (https://freesound.org/people/bfederi1/sounds/381182/),
+balloon by TheDweebMan (https://freesound.org/people/TheDweebMan/sounds/277212/),
+chirp by esperar (https://freesound.org/people/esperar/sounds/170814/),
+Guitar2 by Toivo161 (https://freesound.org/people/Toivo161/sounds/267216/),
+disappointed by Robinhood76 (https://freesound.org/people/Robinhood76/sounds/98874/),
+Slide whistle by InspectorJ (https://freesound.org/people/InspectorJ/sounds/402581/)

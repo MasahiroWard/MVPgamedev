@@ -100,11 +100,11 @@ demo.icestate.prototype = {
 //        guitar1.loopFull();
     },
     update: function(){        
-        move_camera(2,3);
+        move_camera(1,1);
 
         checkforladders(iceMap, icelayer2);
         var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
-        ladder_movement(tile_arr1);
+        ladder_movement(tile_arr1, 4, 14);
         
         
         // move the camera (if it wasnt obvious)
