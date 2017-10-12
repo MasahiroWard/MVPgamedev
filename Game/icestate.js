@@ -10,12 +10,12 @@ demo.icestate.prototype = {
         game.world.setBounds(0, 0, 1000, 6000);
         
         // load in tile map assets 
-        game.load.tilemap('iceStage', 'assets/tilemaps/IceMap.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('tempIce', 'assets/tilemaps/tempIce.png');
+        game.load.tilemap('iceStage', 'assets/tilemaps/IceMap2.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.image('tempIce', 'assets/tilemaps/ice_sprite.png');
         game.load.image('LargeLadderTop', 'assets/tilemaps/ladder_sprite.png');
-        game.load.image('tempBlueBlock', 'assets/tilemaps/tempBlueBlock.png');
-        game.load.image('tempGreenBlock', 'assets/tilemaps/tempGreenBlock.png');
-        game.load.image('tempPurpleBlock', 'assets/tilemaps/tempPurpleBlock.png');
+        game.load.image('tempBlueBlock', 'assets/tilemaps/blue_snow.png');
+        game.load.image('tempGreenBlock', 'assets/tilemaps/green_snow.png');
+        game.load.image('tempPurpleBlock', 'assets/tilemaps/purple_snow.png');
         game.load.image('LargeLadder', 'assets/tilemaps/ladder_sprite.png');
     },
     
@@ -31,7 +31,7 @@ demo.icestate.prototype = {
         
         // play background music
         guitar2 = game.add.audio('guitar2');
-        guitar2.play('','',0.5,true,true);
+        guitar2.play('','',0.3,true,true);
         
         game.stage.backgroundColor = '#DDDDDD';
 
@@ -64,8 +64,8 @@ demo.icestate.prototype = {
 
         // set collisions CHANGE THESE!!! *******--
 //
-        iceMap.setCollisionBetween(1, 3, true, icelayer1);
-        iceMap.setCollisionBetween(5, 13, true, icelayer1)
+        iceMap.setCollision(1, true, icelayer1);
+        iceMap.setCollisionBetween(4, 13, true, icelayer1)
 //        iceMap.setCollision(4, true, layer2);
         
         //prep for placing fruit and enemies
@@ -79,6 +79,7 @@ demo.icestate.prototype = {
         placeFruit(750, game.world.height - 1600, "bluefruit");
         placeFruit(150, 1000, "greenfruit");
         placeFruit(200, 300, "purplefruit");
+        placeFruit(500, game.world.height - 1600, "purplefruit");
 //        // place enemies 
 //        placeBird(300,game.world.height-1000,"blue");
 //        placeBird(500,1650,"red");
@@ -99,15 +100,16 @@ demo.icestate.prototype = {
         // loops guitar music 
 //        guitar1.loopFull();
     },
-    update: function(){        
+    update: function(){ 
+            // move the camera (if it wasnt obvious)
         move_camera(1,1);
 
         checkforladders(iceMap, icelayer2);
         var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
-        ladder_movement(tile_arr1, 4, 14);
+        ladder_movement(tile_arr1, 13, 14);
         
         
-        // move the camera (if it wasnt obvious)
+
         // colide with icelayer and allow player to jump 
         game.physics.arcade.collide(player, icelayer1, collideIce);
 

@@ -58,7 +58,7 @@ function loadImages(){
     game.load.audio('chirp', 'assets/sounds/chirp.mp3');
     game.load.audio('balloonNoise', 'assets/sounds/balloon.mp3');
     game.load.audio('disappointed', 'assets/sounds/disappointed.mp3');
-    game.load.audio('guitar2', 'assets/sounds/guitar2.mp3');
+    game.load.audio('guitar2', 'assets/sounds/almost_reggae.mp3');
     game.load.audio('whistle', 'assets/sounds/whistle.mp3');
     
 }

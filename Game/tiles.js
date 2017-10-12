@@ -74,10 +74,10 @@ function ladder_function(){
 
 function collideIce(player, layer){
         // tile key: 
-        // 1,2,3 = no color
-        // 5,6,7 = blue
-        // 8,9,10 = green
-        // 11,12,13 = purple
+        // 1 = no color
+        // 4,5,6 = blue
+        // 7,8,9 = green
+        // 10,11,12 = purple
     
     var ybelow = icelayer1.getTileY(player.position.y + 33);
 
@@ -92,7 +92,7 @@ function collideIce(player, layer){
     }
     
     
-    var tile_dictionary = {1:player.color, 2:player.color, 3:player.color, 5:"blue", 6:"blue", 7:"blue", 8:"green", 9:"green", 10:"green", 11:"purple", 12:"purple", 13:"purple"}
+    var tile_dictionary = {1:player.color, 2:player.color, 3:player.color, 4:"blue", 5:"blue", 6:"blue", 7:"green", 8:"green", 9:"green", 10:"purple", 11:"purple", 12:"purple"}
     
     
     if (player.body.blocked.down){
