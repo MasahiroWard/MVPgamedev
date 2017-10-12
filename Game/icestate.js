@@ -57,7 +57,7 @@ demo.icestate.prototype = {
         game.physics.arcade.enable(icelayer2);
         
         
-        createChameleon(550,game.world.height - 350);
+        createChameleon(550,game.world.height - 300);
 
         
         
@@ -82,8 +82,10 @@ demo.icestate.prototype = {
         placeFruit(500, game.world.height - 1600, "purplefruit");
         
         
-//        // place enemies 
-        var snake1 = placeSnake(100,5000,"green");
+//        // place enemies ( note don't put anything with y pos above 5050 )
+        placeBird(275,5050,"green");
+        placeBird(575,3875,"blue");
+
 //        console.log("snake", snake1.body.position.x, snake1.body.position.y);
         
 //        placeBird(500,1650,"red");
@@ -105,10 +107,13 @@ demo.icestate.prototype = {
         var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
         ladder_movement(tile_arr1, 10, 11);
         
+        var tile_arr2 = get_surrounding_tiles(icelayer1, iceMap);
+        collideIce(tile_arr2);
+        
         
 
         // colide with icelayer and allow player to jump 
-        game.physics.arcade.collide(player, icelayer1, collideIce);
+        game.physics.arcade.collide(player, icelayer1);
 
         
         

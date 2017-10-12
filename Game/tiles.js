@@ -1,3 +1,4 @@
+
 function add_game_bg(sprite_name){
     //game.stage.backgroundColor = '#DDDDDD';
     var bg = game.add.sprite(0, 0, sprite_name);
@@ -72,34 +73,33 @@ function ladder_function(){
 
 
 
-function collideIce(player, layer){
+function collideIce(arr1){
         // tile key: 
         // 12 = no color
         // 1,2,3 = blue
         // 4,5,6 = green
         // 7,8,9 = purple
+     
     
-    var ybelow = icelayer1.getTileY(player.position.y + 33);
-
-    var xbelow = icelayer1.getTileX(player.position.x);
-    var tileInfo = iceMap.getTile(xbelow, ybelow, icelayer1);
+    bottom_left = arr1[2]
+    bottom_right = arr1[3]
     
-    if (tileInfo != null){
-        var tileiceType = tileInfo.index;
-    }
-    else{
-        tileiceType = 12;
-    }
-    
+// set default values as the non-color ice  
+    var checking1 = 12;
+    var checking2 = 12;
     
     var tile_dictionary = {1:"blue", 2:"blue", 3:"blue", 4:"green", 5:"green", 6:"green", 7:"purple", 8:"purple", 9:"purple", 10:player.color, 11:player.color, 12:player.color}
     
+    if (bottom_right != null){
+        checking1 = bottom_right.index;
+    }
+    if (bottom_left != null){
+        checking2 = bottom_left.index;
+    }
     
-    if (player.body.blocked.down){
-        if (player.color != tile_dictionary[tileiceType]){
-            console.log(tile_dictionary[tileiceType]);
-            console.log(tileiceType);
-            deadplayer();
+    if (bottom_right || bottom_left){
+        if(player.color != tile_dictionary[checking1] || player.color != tile_dictionary[checking2]){
+            deadplayer()
         }
     }
 }
