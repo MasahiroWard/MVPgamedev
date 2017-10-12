@@ -11,7 +11,7 @@ demo.icestate.prototype = {
         
         // load in tile map assets 
         game.load.tilemap('iceStage', 'assets/tilemaps/IceMap2.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('tempIce', 'assets/tilemaps/ice_sprite.png');
+        game.load.image('ice_sprite', 'assets/tilemaps/ice_sprite.png');
         game.load.image('LargeLadderTop', 'assets/tilemaps/ladder_sprite.png');
         game.load.image('tempBlueBlock', 'assets/tilemaps/blue_snow.png');
         game.load.image('tempGreenBlock', 'assets/tilemaps/green_snow.png');
@@ -39,7 +39,7 @@ demo.icestate.prototype = {
 
         // add in the tile map * make into function - creates dictionary and cycles through dictionary 
         iceMap = game.add.tilemap('iceStage');
-        iceMap.addTilesetImage('tempIce');
+        iceMap.addTilesetImage('ice_sprite');
         iceMap.addTilesetImage('LargeLadder');
         iceMap.addTilesetImage('LargeLadderTop');
         iceMap.addTilesetImage('tempBlueBlock');
@@ -57,15 +57,15 @@ demo.icestate.prototype = {
         game.physics.arcade.enable(icelayer2);
         
         
-        createChameleon(500,game.world.height - 400);
+        createChameleon(550,game.world.height - 350);
 
         
         
 
-        // set collisions CHANGE THESE!!! *******--
+
 //
-        iceMap.setCollision(1, true, icelayer1);
-        iceMap.setCollisionBetween(4, 13, true, icelayer1)
+        iceMap.setCollision(12, true, icelayer1);
+        iceMap.setCollisionBetween(1, 9, true, icelayer1)
 //        iceMap.setCollision(4, true, layer2);
         
         //prep for placing fruit and enemies
@@ -80,8 +80,12 @@ demo.icestate.prototype = {
         placeFruit(150, 1000, "greenfruit");
         placeFruit(200, 300, "purplefruit");
         placeFruit(500, game.world.height - 1600, "purplefruit");
+        
+        
 //        // place enemies 
-//        placeBird(300,game.world.height-1000,"blue");
+        var snake1 = placeSnake(100,5000,"green");
+//        console.log("snake", snake1.body.position.x, snake1.body.position.y);
+        
 //        placeBird(500,1650,"red");
 //        
 //        // place moving platforms
@@ -91,22 +95,15 @@ demo.icestate.prototype = {
 //        
 //        make_balloon_group();
 //        placeBalloon(200, 2300);
-        
-//        // load in sound
-//        jump1 = game.add.audio('jump');
-//        guitar1 = game.add.audio('guitar');
-        
-        
-        // loops guitar music 
-//        guitar1.loopFull();
+
     },
     update: function(){ 
-            // move the camera (if it wasnt obvious)
+        // move the camera (if it wasnt obvious)
         move_camera(1,1);
 
         checkforladders(iceMap, icelayer2);
         var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
-        ladder_movement(tile_arr1, 13, 14);
+        ladder_movement(tile_arr1, 10, 11);
         
         
 
@@ -116,13 +113,24 @@ demo.icestate.prototype = {
         
         
         chameleonmove();
-
+        
+        // check for ballooning 
+        if (player.ballooning){
+            chameleon_float();
+        } else {
+            chameleonmove();
+        }
 
         // Game over if you fall off the screen
         if (game.camera.y+650 < player.body.y) {
             console.log("ICE")
             deadplayer()
         }
+        
+        // move enemies 
+        birds_group.forEach(moveBird, this);
+        snakes_group.forEach(moveSnake, this);
+        
 
     }
 };
