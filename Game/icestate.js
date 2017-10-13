@@ -80,21 +80,23 @@ demo.icestate.prototype = {
         placeFruit(150, 1000, "greenfruit");
         placeFruit(200, 300, "purplefruit");
         placeFruit(500, game.world.height - 1600, "purplefruit");
-        
+        placeFruit(825, 5025, "bluefruit");
+        placeFruit(725, 3275, "greenfruit"); // put in moving platform to get to here 
         
 //        // place enemies ( note don't put anything with y pos above 5050 )
         var bird1 = placeBird(275,5050,"green");
         var bird2 = placeBird(575,3875,"blue");
-        bird2.mytween = game.add.tween(bird2).to({x:[500, 600], y:[3875,3875]}, 7000, Phaser.Easing.Linear.None, true, 0, -1, false);
-
+        bird2.mytween = game.add.tween(bird2).to({x:[600, 650], y:[3875,3875]}, 1000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        placeSnake(125,3475, "purple");
+        placeSnake(125, 4875, "purple"); // TWEEN THIS ENEMY! 
 //        console.log("snake", snake1.body.position.x, snake1.body.position.y);
-        
+        placeSnake(475, 775, "blue");
 //        placeBird(500,1650,"red");
 //        
 //        // place moving platforms
         addMovingPlatforms();
-        placeMP(325, 4025, 2, 1, 6, 0, 100, 25);
-//        placeMP(500, 1600, 3, 1, 0, 5, 0, 100);
+        placeMP(325, 4025, 2, 1, 6, 0, 100, 0);
+        placeMP(525, 3225, 3, 1, 4, 0, 300, 0);
 //        
 //        make_balloon_group();
 //        placeBalloon(200, 2300);

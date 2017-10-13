@@ -75,7 +75,7 @@ function ladder_function(){
         player.body.velocity.y = 100;
     }
     else{
-        player.body.velocity.y = 0;
+        player.body.velocity.y = -7;
     }
 }
 
