@@ -114,7 +114,7 @@ demo.tutorial.prototype = {
     },
     update: function(){
         // These are the heights at which the game automatically pauses and displays a message
-        var stop_heights = [2650, 2625, 2500, 2350, 1895, 1894, 1893, 1620, 4, 2];
+        var stop_heights = [2650, 2625, 2620, 2500, 2350, 1895, 1894, 1893, 1620, 4, 2];
         idx = stop_heights.indexOf(game.camera.y);
         console.log(idx, prev_idx);
         if (idx >= 0 && prev_idx!=idx) {
