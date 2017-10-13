@@ -76,6 +76,9 @@ function disp_tut_msgs(idx) {
         case 10:
             movement_msgs10()
             break
+        case 11:
+            movement_msgs11()
+            break
         }
 }
 
@@ -124,7 +127,7 @@ function movement_msgs1() {
         tutorial_txt.anchor.setTo(0.5, 0);
     }
     if (!tutorial_sprite) {
-        tutorial_sprite = game.add.sprite(700, 3000, "arrowkeys")
+        tutorial_sprite = game.add.sprite(650, 2900, "arrowkeys")
         tutorial_sprite.scale.setTo(0.4, 0.4);
     }
     if (cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown || game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
@@ -210,7 +213,7 @@ function movement_msgs7() {
 
 function movement_msgs8() {
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(250, 1650, "Attack an enemy of the \nsame color to defeat it!", {font: "30px Arial", fill: "White"});
+        tutorial_txt = game.add.text(250, 1750, "Touch an enemy of the \nsame color to defeat it!", {font: "30px Arial", fill: "White"});
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
         continue_playing();
@@ -219,14 +222,34 @@ function movement_msgs8() {
 
 function movement_msgs9() {
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(200, 300, "Bosses are powerful enemies with multiple health.", {font: "30px Arial", fill: "White"});
+        tutorial_txt = game.add.text(500, 1750, "Press P at any time to pause the game.", {font: "30px Arial", fill: "White"});
+        tutorial_txt.anchor.setTo(0.5, 0);
+    }
+    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+        continue_playing();
+    }
+    if (game.input.keyboard.isDown(Phaser.Keyboard.P)) {
+        // If user clicks P, we must switch pausing twice
+        game.paused = !game.paused;
+        if (pause_darkener.alpha == 0){
+            pause_darkener.alpha = 0.5;
+        } else {
+            pause_darkener.alpha = 0;
+        }
+        continue_playing();
+    }    
+}
+
+function movement_msgs10() {
+    if (!tutorial_txt) {
+        tutorial_txt = game.add.text(200, 300, "Bosses are powerful enemies with lots of health.", {font: "30px Arial", fill: "White"});
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
         continue_playing();
     }
 }
 
-function movement_msgs10() {
+function movement_msgs11() {
     if (!tutorial_txt) {
         tutorial_txt = game.add.text(200, 300, "Beware of black projectiles.\nThese will damage you no matter what color you are.", {font: "30px Arial", fill: "White"});
     }

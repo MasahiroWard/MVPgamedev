@@ -81,12 +81,14 @@ demo.tutorial.prototype = {
         // place fruit
         make_fruit_groups();
         placeFruit(500, game.world.height - 400, "redfruit")
-//        placeFruit(200, game.world.height - 750, "bluefruit");
-//        placeFruit(500, game.world.height - 350, "yellowfruit")
         placeFruit(450, game.world.height -1300,"redfruit");
-        placeFruit(750, game.world.height - 1600, "bluefruit");
         placeFruit(150, 1000, "greenfruit");
-        placeFruit(200, 300, "purplefruit");
+        placeFruit(200, 300, "redfruit");
+        placeFruit(150, 350, "greenfruit");
+        placeFruit(500, 250, "redfruit");
+        placeFruit(750, 150, "greenfruit");
+        placeFruit(950, 150, "purplefruit");
+        placeFruit(60, 200, "purplefruit");
 
         // place enemy
         make_enemy_groups();
@@ -101,12 +103,12 @@ demo.tutorial.prototype = {
         // place moving platforms
         addMovingPlatforms();
         placeMP(150, 2150, 2, 1, 0, 6, 0, 100);
-        placeMP(350, 1600, 3, 1, 0, 5, 0, 100);
+        placeMP(350, 1600, 3, 1, 0, 6, 0, 100);
         placeMP(200, 900, 3, 1, 8, 0, 100, 0);
         
         // place balloons
         make_balloon_group();
-        placeBalloon(400, 2800);
+        //placeBalloon(400, 2800);
                 
         // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 525);
@@ -114,9 +116,9 @@ demo.tutorial.prototype = {
     },
     update: function(){
         // These are the heights at which the game automatically pauses and displays a message
-        var stop_heights = [2650, 2625, 2620, 2500, 2350, 1895, 1894, 1893, 1620, 4, 2];
+        var stop_heights = [2650, 2625, 2620, 2500, 2350, 1895, 1894, 1893, 1620, 1500, 4, 2];
         idx = stop_heights.indexOf(game.camera.y);
-        console.log(idx, prev_idx);
+//        console.log(idx, prev_idx);
         if (idx >= 0 && prev_idx!=idx) {
             disp_tut_msgs(idx);
         }
@@ -136,6 +138,7 @@ demo.tutorial.prototype = {
                 // Force the player onto the platform until the boss is fully revealed if the player is on the highest platform
                 player.body.velocity.x = 0;
                 player.body.velocity.y = 50;
+                // If player is frozen, move camera up faster
             } else if (player.ballooning){
                 chameleon_float();
             } else {
