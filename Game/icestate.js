@@ -83,8 +83,9 @@ demo.icestate.prototype = {
         
         
 //        // place enemies ( note don't put anything with y pos above 5050 )
-        placeBird(275,5050,"green");
-        placeBird(575,3875,"blue");
+        var bird1 = placeBird(275,5050,"green");
+        var bird2 = placeBird(575,3875,"blue");
+        bird2.mytween = game.add.tween(bird2).to({x:[500, 600], y:[3875,3875]}, 7000, Phaser.Easing.Linear.None, true, 0, -1, false);
 
 //        console.log("snake", snake1.body.position.x, snake1.body.position.y);
         
@@ -118,7 +119,7 @@ demo.icestate.prototype = {
         
         
         chameleonmove();
-        
+        console.log(player.tint);
         // check for ballooning 
         if (player.ballooning){
             chameleon_float();
@@ -128,8 +129,8 @@ demo.icestate.prototype = {
 
         // Game over if you fall off the screen
         if (game.camera.y+650 < player.body.y) {
-            console.log("ICE")
-            deadplayer()
+            console.log("ICE");
+            deadplayer(true);
         }
         
         // move enemies 
