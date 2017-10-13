@@ -3,6 +3,11 @@ var tutorial_txt = false;
 var tutorial_sprite = false;
 var prev_player_vel_y = 0;
 var tutorial_OK_txt = false;
+var tutorial_time = 0;
+
+// Used to prevent pesky bug where camera is in the same location for multiple frames.  Tutorial message should only show once
+var prev_idx = -2;
+var idx = -1;
 
 demo.tutorial = function(){};
 demo.tutorial.prototype = {
@@ -32,7 +37,6 @@ demo.tutorial.prototype = {
         // Allows keyboard inputs
         cursors = game.input.keyboard.createCursorKeys();
         game.input.keyboard.addCallbacks(this, null, null, keyPress);
-
         
         // Stop sounds when starting a state
         game.sound.stopAll();
@@ -76,6 +80,7 @@ demo.tutorial.prototype = {
         
         // place fruit
         make_fruit_groups();
+        placeFruit(500, game.world.height - 400, "redfruit")
 //        placeFruit(200, game.world.height - 750, "bluefruit");
 //        placeFruit(500, game.world.height - 350, "yellowfruit")
         placeFruit(450, game.world.height -1300,"redfruit");
@@ -96,7 +101,7 @@ demo.tutorial.prototype = {
         // place moving platforms
         addMovingPlatforms();
         placeMP(150, 2150, 2, 1, 0, 6, 0, 100);
-        placeMP(400, 1600, 3, 1, 0, 5, 0, 100);
+        placeMP(350, 1600, 3, 1, 0, 5, 0, 100);
         placeMP(200, 900, 3, 1, 8, 0, 100, 0);
         
         // place balloons
@@ -107,18 +112,13 @@ demo.tutorial.prototype = {
         createInventory(0, 525);
     },
     update: function(){
-        console.log(game.camera.y);
         // These are the heights at which the game automatically pauses and displays a message
-        var stop_heights = [];
-        var stop_heights = [2650, 2625, 2500, 2350, 1895, 1890, 1885, 1620, 4, 2];
-        var idx = stop_heights.indexOf(game.camera.y);
-        if (idx >= 0) {
+        var stop_heights = [2650, 2625, 2500, 2350, 1895, 1894, 1893, 1620, 4, 2];
+        idx = stop_heights.indexOf(game.camera.y);
+        console.log(idx, prev_idx);
+        if (idx >= 0 && prev_idx!=idx) {
             disp_tut_msgs(idx);
         }
-
-        //      check player position and either call ladder function or take into account ladder top 
-        var tile_arr = get_surrounding_tiles(layer2, map);
-        ladder_movement(tile_arr, 4, 5);
 
         // colide with grass and allow player to jump 
         game.physics.arcade.collide(player, layer1);
@@ -127,19 +127,22 @@ demo.tutorial.prototype = {
         var boss_collision_list = [layer1, layer2]
         cat_boss_move(boss_collision_list);
 
-        
+//        console.log(player.body.x, player.body.y);
         if (!tutorial_paused) {
             // Pause the camera and the player when pausing the game
             move_camera(1,1);
             
-            if (game.camera.y != 0 && player.body.y <= 566 && player.body.x >= 715 && player.body.x <= 945){
-                // Freeze the player until the boss is fully revealed if the player is on the highest platform
+            if (game.camera.y != 0 && player.body.bottom <= 650 && player.body.right-player.body.width >= 725 && player.body.right <= 925){
+                // Force the player onto the platform until the boss is fully revealed if the player is on the highest platform
                 player.body.velocity.x = 0;
-                player.body.velocity.y = 0;
+                player.body.velocity.y = 50;
             } else if (player.ballooning){
                 chameleon_float();
             } else {
                 chameleonmove();
+                //      check player position and either call ladder function or take into account ladder top 
+                var tile_arr = get_surrounding_tiles(layer2, map);
+                ladder_movement(tile_arr, 4, 5);
             }
             
             birds_group.forEach(moveBird, this);
