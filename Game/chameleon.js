@@ -15,6 +15,9 @@ function createChameleon(xcoor, ycoor){
     player.scale.setTo(0.13,0.13)
     player.has_balloon = false;
     player.ballooning = false;
+    
+    // put in player health
+    player.health = 100;
 }
 
 
@@ -70,10 +73,16 @@ function chameleon_change_color(clr){
 
 function deadplayer(){
     // stop all sound and then play the dead sound
+    if (player.health > 0){
+        player.health -=1;
+        console.log('lose health');
+    }
+    else{
     game.sound.stopAll();
     disappointed.play('','',0.6);
     console.log('You dead lol');
     game.state.start('gameover');
+    }
 }
 
 function add_chameleon_sound(){
@@ -85,3 +94,15 @@ function add_chameleon_sound(){
     disappointed = game.add.audio('disappointed');    
     whistle = game.add.audio('whistle');
 }
+
+// work in progress: 
+//function display_health(){
+//    var startx;
+//    var starty;
+//    
+//    var healthbar = game.add.sprite(startx, starty, "stomach_background");
+//    healthbar.height = 500;
+//    healthbar.width = 300;
+//    healthbar.fixedToCamera = true;
+//
+//}
