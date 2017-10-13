@@ -74,3 +74,7 @@ var balloon_start_time = 0;
 var icelayer1;
 var icelayer2; 
 var iceMap;
+
+
+// time of last chameleon hit 
+var chameleonWasHit = 0;

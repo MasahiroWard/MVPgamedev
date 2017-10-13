@@ -17,7 +17,7 @@ function createChameleon(xcoor, ycoor){
     player.ballooning = false;
     
     // put in player health
-    player.health = 100;
+    player.health = 3;
 }
 
 
@@ -41,7 +41,7 @@ function chameleonmove(){
         player.body.velocity.x = 150;
     }
     if (cursors.down.isDown) {
-        player.body.velocity.y = 375;
+        player.body.velocity.y = 150;
     }
     
     // jump if player is blocked on the bottom
@@ -55,8 +55,16 @@ function chameleonmove(){
         if (player.has_balloon){
             use_balloon();
         } else {
-            deadplayer();
+            deadplayer(true);
         }
+    }
+    
+    // chameleon flashes if just hit
+    if (chameleonWasHit > game.time.time){
+        chameleon_flash(chameleonWasHit - game.time.time);
+    } 
+    else {
+        player.alpha = 1;
     }
 }
 
@@ -71,19 +79,27 @@ function chameleon_change_color(clr){
     }
 }
 
-function deadplayer(){
-    // stop all sound and then play the dead sound
-    if (player.health > 0){
-        player.health -=1;
-        console.log('lose health');
+function deadplayer(instakill=false){
+    if (instakill){
+        player.health = 0;
     }
-    else{
-    game.sound.stopAll();
-    disappointed.play('','',0.6);
-    console.log('You dead lol');
-    game.state.start('gameover');
+    if (chameleonWasHit < game.time.time || instakill){
+        if (player.health > 0){
+            player.health -= 1;
+            console.log('lose a life');
+            chameleonWasHit = game.time.time + 3000;
+        }
+        else{
+            game.sound.stopAll();
+            disappointed.play('','',0.6);
+            console.log('you dead lol');
+            game.state.start('gameover');
+        }
     }
 }
+
+
+
 
 function add_chameleon_sound(){
     jump1 = game.add.audio('jump');
@@ -106,3 +122,13 @@ function add_chameleon_sound(){
 //    healthbar.fixedToCamera = true;
 //
 //}
+
+//
+function chameleon_flash(duration){
+    if (duration % 800 > 400){
+        player.alpha = 0;
+    }
+    else {
+        player.alpha = 1;
+    }
+}
