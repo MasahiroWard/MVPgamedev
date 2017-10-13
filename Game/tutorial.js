@@ -76,8 +76,8 @@ demo.tutorial.prototype = {
         
         // place fruit
         make_fruit_groups();
-        placeFruit(200, game.world.height - 750, "bluefruit");
-        //placeFruit(500, game.world.height - 350, "yellowfruit")
+//        placeFruit(200, game.world.height - 750, "bluefruit");
+//        placeFruit(500, game.world.height - 350, "yellowfruit")
         placeFruit(450, game.world.height -1300,"redfruit");
         placeFruit(750, game.world.height - 1600, "bluefruit");
         placeFruit(150, 1000, "greenfruit");
@@ -85,9 +85,9 @@ demo.tutorial.prototype = {
 
         // place enemy
         make_enemy_groups();
-        var bird1 = placeBird(350,game.world.height-1000,"blue");
+        var bird1 = placeBird(400,game.world.height-1000,"blue");
         // make enemy move
-        bird1.mytween = game.add.tween(bird1).to({x:[150, 350], y:[game.world.height-1000, game.world.height - 1000]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        bird1.mytween = game.add.tween(bird1).to({x:[100, 400], y:[game.world.height-1000, game.world.height - 1000]}, 7000, Phaser.Easing.Linear.None, true, 0, -1, false);
         // place static enemies
         placeBird(500,1650,"red");
         var snake1 = placeSnake(800, game.world.height-650, "yellow");
@@ -109,7 +109,8 @@ demo.tutorial.prototype = {
     update: function(){
         console.log(game.camera.y);
         // These are the heights at which the game automatically pauses and displays a message
-        var stop_heights = [2650, 2625, 2500, 2400, 2350]
+        var stop_heights = [];
+        var stop_heights = [2650, 2625, 2500, 2350, 1895, 1890, 1885, 1620, 4, 2];
         var idx = stop_heights.indexOf(game.camera.y);
         if (idx >= 0) {
             disp_tut_msgs(idx);
@@ -131,7 +132,11 @@ demo.tutorial.prototype = {
             // Pause the camera and the player when pausing the game
             move_camera(1,1);
             
-            if (player.ballooning){
+            if (game.camera.y != 0 && player.body.y <= 566 && player.body.x >= 715 && player.body.x <= 945){
+                // Freeze the player until the boss is fully revealed if the player is on the highest platform
+                player.body.velocity.x = 0;
+                player.body.velocity.y = 0;
+            } else if (player.ballooning){
                 chameleon_float();
             } else {
                 chameleonmove();
