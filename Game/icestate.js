@@ -91,8 +91,8 @@ demo.icestate.prototype = {
 //        placeBird(500,1650,"red");
 //        
 //        // place moving platforms
-//        addMovingPlatforms();
-//        placeMP(100, 2500, 2, 1, 4, 1, 100, 25);
+        addMovingPlatforms();
+        placeMP(325, 4025, 2, 1, 6, 0, 100, 25);
 //        placeMP(500, 1600, 3, 1, 0, 5, 0, 100);
 //        
 //        make_balloon_group();
@@ -135,7 +135,10 @@ demo.icestate.prototype = {
         // move enemies 
         birds_group.forEach(moveBird, this);
         snakes_group.forEach(moveSnake, this);
+        moving_platform_group.forEach(movingPlatformsUpdate, this);
         
 
     }
+    // doesnt work rn :
+//    display_health();
 };
