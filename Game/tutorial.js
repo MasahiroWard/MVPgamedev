@@ -1,4 +1,8 @@
 var tutorial_paused = false;
+var tutorial_txt = false;
+var tutorial_sprite = false;
+var prev_player_vel_y = 0;
+var tutorial_OK_txt = false;
 
 demo.tutorial = function(){};
 demo.tutorial.prototype = {
@@ -61,7 +65,7 @@ demo.tutorial.prototype = {
         // load in sound
         guitar1 = game.add.audio('guitar');        
         // loops guitar music 
-        guitar1.play('','',0.3,true,true);
+        guitar1.play('','',0.5,true,true);
         /////////////////////////////////////////////
 
         // Add chameleon at x,y
@@ -72,8 +76,8 @@ demo.tutorial.prototype = {
         
         // place fruit
         make_fruit_groups();
-        placeFruit(700, game.world.height - 450, "bluefruit");
-        placeFruit(600, game.world.height - 350, "yellowfruit")
+        placeFruit(200, game.world.height - 750, "bluefruit");
+        //placeFruit(500, game.world.height - 350, "yellowfruit")
         placeFruit(450, game.world.height -1300,"redfruit");
         placeFruit(750, game.world.height - 1600, "bluefruit");
         placeFruit(150, 1000, "greenfruit");
@@ -83,16 +87,17 @@ demo.tutorial.prototype = {
         make_enemy_groups();
         var bird1 = placeBird(350,game.world.height-1000,"blue");
         // make enemy move
-        bird1.mytween = game.add.tween(bird1).to({x:[250, 350], y:[game.world.height-1000, game.world.height - 1000]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        bird1.mytween = game.add.tween(bird1).to({x:[150, 350], y:[game.world.height-1000, game.world.height - 1000]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
         // place static enemies
         placeBird(500,1650,"red");
-        placeSnake(800, game.world.height-650, "yellow");
+        var snake1 = placeSnake(800, game.world.height-650, "yellow");
+        snake1.mytween = game.add.tween(snake1).to({x:[650, 800], y:[game.world.height-650,game.world.height-650]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
         
         // place moving platforms
         addMovingPlatforms();
-        placeMP(100, 2500, 2, 1, 4, 1, 100, 25);
+        placeMP(150, 2150, 2, 1, 0, 6, 0, 100);
         placeMP(400, 1600, 3, 1, 0, 5, 0, 100);
-        placeMP(200, 900, 3, 1, 6, 0, 100, 0);
+        placeMP(200, 900, 3, 1, 8, 0, 100, 0);
         
         // place balloons
         make_balloon_group();
@@ -102,37 +107,39 @@ demo.tutorial.prototype = {
         createInventory(0, 525);
     },
     update: function(){
-        // These are the heights at which the game automatically pauses and displays a message
         console.log(game.camera.y);
-        var stop_heights = [2600, 2000, 300]
+        // These are the heights at which the game automatically pauses and displays a message
+        var stop_heights = [2650, 2625, 2500, 2400, 2350]
         var idx = stop_heights.indexOf(game.camera.y);
         if (idx >= 0) {
             disp_tut_msgs(idx);
         }
 
-        if (!tutorial_paused) {
-            //      check player position and either call ladder function or take into account ladder top 
-            move_camera(1,2);
-        }
-        
+        //      check player position and either call ladder function or take into account ladder top 
         var tile_arr = get_surrounding_tiles(layer2, map);
         ladder_movement(tile_arr, 4, 5);
 
         // colide with grass and allow player to jump 
         game.physics.arcade.collide(player, layer1);
-
-        if (player.ballooning){
-            chameleon_float();
-        } else {
-            chameleonmove();
-        }
-
-        birds_group.forEach(moveBird, this);
-        snakes_group.forEach(moveSnake, this);
         moving_platform_group.forEach(movingPlatformsUpdate, this);
 
         var boss_collision_list = [layer1, layer2]
         cat_boss_move(boss_collision_list);
 
+        
+        if (!tutorial_paused) {
+            // Pause the camera and the player when pausing the game
+            move_camera(1,1);
+            
+            if (player.ballooning){
+                chameleon_float();
+            } else {
+                chameleonmove();
+            }
+            
+            birds_group.forEach(moveBird, this);
+            snakes_group.forEach(moveSnake, this);
+
+        }
     }
 };

@@ -8,7 +8,7 @@ function addMovingPlatforms(){
 function placeMP(x, y, xlength, ylength, xmove_tiles, ymove_tiles, xspeed, yspeed) {
     // x and y are the top left corner of the platform
     // xlength and ylength are integer numbers, in the form of number of tile lengths
-    // xmove and ymove determines how far the platform moves
+    // xmove and ymove determines how far the platform moves, again in number of tile lengths
     var mp = game.add.sprite(x,y, "platform");
     game.physics.arcade.enable(mp)
     

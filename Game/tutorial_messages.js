@@ -19,25 +19,204 @@ var tutorial_msgs = [
 function disp_tut_msgs(idx) {
     // Pause the game and move the camera up 2 pixels so the game won't continue to pause
     tutorial_paused = true;
+    player.body.velocity.x = 0;
+
+    // store last velocity to prevent locking up when paused
+    if (player.body.velocity.y != 0) {
+        prev_player_vel_y = player.body.velocity.y;
+    }
+    
+    player.body.velocity.y = 0;
+    player.body.gravity.y = 0;
+    
+    if (!tutorial_OK_txt) {
+        var style = {font: "30px Arial", backgroundColor: "black", fill: "White"}
+        tutorial_OK_txt = game.add.text(1000, game.camera.y+650, "Press Enter to continue.", style);
+        tutorial_OK_txt.anchor.setTo(1, 1)
+    }
     
     switch(idx) {
         case 0:
-            console.log(0);
-            var mytxt = game.add.text(player.x, player.y-100, "This is you.", {font: "65px Arial", align: "center"});
-            mytxt.anchor.setTo(0.5);
-            mytxt.addColor("#FF0000", 0);
-            var arrow = game.add.sprite(player.x, player.y-50, "downarrow")
-            arrow.anchor.setTo(0.5);
-            arrow.scale.setTo(0.1, 0.1);
-
-            if (cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown) {
-                mytxt.kill();
-                arrow.kill();
-                tutorial_paused = false;
-            }
+            movement_msgs0()
             break;
         case 1:
-            console.log(1);
+            movement_msgs1()
             break;
+        case 2:
+            movement_msgs2()
+            break;
+        case 3:
+            movement_msgs3()
+            break;
+        case 4:
+            movement_msgs4()
+            break
+        case 5:
+            movement_msgs5()
+            break
+        case 6:
+            movement_msgs6()
+            break
+        case 7:
+            movement_msgs7()
+            break
+        case 8:
+            movement_msgs8()
+            break
+        case 9:
+            movement_msgs9()
+            break
+        case 10:
+            movement_msgs10()
+            break
+        case 11:
+            movement_msgs11()
+            break
+        case 12:
+            movement_msgs12()
+            break
+        case 13:
+            movement_msgs13()
+            break
+        case 14:
+            movement_msgs14()
+            break
+            
               }
+}
+
+function continue_playing() {
+    if (tutorial_txt) {
+        tutorial_txt.kill();
+        tutorial_txt = false;
+    }
+    if (tutorial_sprite) {
+        tutorial_sprite.kill();
+        tutorial_sprite = false;
+    }
+    tutorial_paused = false;
+    player.body.velocity.y = prev_player_vel_y;
+    tutorial_OK_txt.kill();
+    tutorial_OK_txt = false;
+}
+
+function movement_msgs0() {
+    // Only make one tutorial text and tutorial sprite
+    if (!tutorial_txt) {
+        tutorial_txt = game.add.text(player.x, player.y-125, "This is you.", {font: "50px Arial", align: "center"});
+        tutorial_txt.anchor.setTo(0.5,0);
+        tutorial_txt.addColor("#FF0000", 0);
+        tutorial_txt.addColor("#FFFF00", 12);
+    }
+    if (!tutorial_sprite) {
+        tutorial_sprite = game.add.sprite(player.x, player.y-50, "downarrow")
+        tutorial_sprite.anchor.setTo(0.5, 0.5);
+        tutorial_sprite.scale.setTo(0.1, 0.1);
+    }
+    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+        continue_playing()
+    }
+}
+
+function movement_msgs1() {
+    // Only make one tutorial text and tutorial sprite
+    if (!tutorial_txt) {
+        tutorial_txt = game.add.text(500, 2900, "Use Arrow keys to move.", {font: "48px Arial", align: "center"});
+        tutorial_txt.anchor.setTo(0.5, 0);
+        tutorial_txt.addColor("#FF0000", 0);
+    }
+    if (!tutorial_sprite) {
+        tutorial_sprite = game.add.sprite(700, 3000, "arrowkeys")
+        tutorial_sprite.anchor.setTo(0.5, 0.5);
+        tutorial_sprite.scale.setTo(0.4, 0.4);
+    }
+    if (cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown || game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+        continue_playing();
+    }
+}
+
+function movement_msgs2() {
+    // Only make one tutorial text and tutorial sprite
+    if (!tutorial_txt) {
+        tutorial_txt = game.add.text(650, 2575, "Avoid enemies that are a \ndifferent color from you.", {font: "30px Arial", align: "center"});
+        tutorial_txt.anchor.setTo(0,0);
+        tutorial_txt.addColor("#FF0000", 0);
+    }
+    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+        continue_playing()
+    }
+}
+
+function movement_msgs3() {
+    // Only make one tutorial text and tutorial sprite
+    if (!tutorial_txt) {
+        tutorial_txt = game.add.text(525, game.world.height-850, "Move up and down \na ladder using arrow keys.", {font: "30px Arial", align: "center", fontweight: "Bold", fill: "red"});
+        tutorial_txt.anchor.setTo(0.5,0);
+    }
+    if (!tutorial_sprite) {
+        tutorial_sprite = game.add.sprite(200, game.world.height-775, "downarrow")
+        tutorial_sprite.anchor.setTo(0,0);
+        tutorial_sprite.scale.setTo(0.1, 0.1);
+    }
+    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+        continue_playing();
+    }
+    
+}
+
+function movement_msgs4() {
+    // Only make one tutorial text and tutorial sprite
+    if (!tutorial_txt) {
+        tutorial_txt = game.add.text(200, game.world.height-850, "Eat fruit to power \nyour color change.", {font: "30px Arial", align: "center", fontweight: "Bold", fill: "blue"});
+        tutorial_txt.anchor.setTo(0.5,0);
+//        tutorial_txt.addColor("#00FFFF", 0);
+    }
+    if (!tutorial_sprite) {
+        tutorial_sprite = game.add.sprite(200, game.world.height-775, "downarrow")
+        tutorial_sprite.anchor.setTo(0,0);
+        tutorial_sprite.scale.setTo(0.1, 0.1);
+    }
+    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+        continue_playing();
+    }
+}
+
+function movement_msgs5() {
+    console.log("Change Color")
+}
+
+function movement_msgs6() {
+    console.log("Inventory Explanation")
+}
+
+function movement_msgs7() {
+    console.log("Enemy warning")
+}
+
+function movement_msgs8() {
+    console.log("Enemy warning")
+}
+
+function movement_msgs9() {
+    console.log("Enemy warning")
+}
+
+function movement_msgs10() {
+    console.log("Enemy warning")
+}
+
+function movement_msgs11() {
+    console.log("Enemy warning")
+}
+
+function movement_msgs12() {
+    console.log("Enemy warning")
+}
+
+function movement_msgs13() {
+    console.log("Enemy warning")
+}
+
+function movement_msgs14() {
+    console.log("Enemy warning")
 }

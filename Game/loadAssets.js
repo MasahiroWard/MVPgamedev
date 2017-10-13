@@ -23,6 +23,7 @@ function loadImages(){
     
     // Sprites used in tutorial messages
     game.load.image('downarrow', 'assets/sprites/downarrow.png')
+    game.load.image('arrowkeys', 'assets/sprites/arrowkeys.png')
     
     // when loading spritesheet, each cell must be the same size.
     // Chameleon
