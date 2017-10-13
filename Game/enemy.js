@@ -54,3 +54,15 @@ function checkOverlap(spriteA, spriteB) {
     var boundsB = spriteB.getBounds();
     return Phaser.Rectangle.intersects(boundsA, boundsB);
 }
+
+function pause_enemy_tweening(enemy) {
+    if (enemy.mytween) {
+        enemy.mytween.pause();
+    }
+}
+
+function resume_enemy_tweening(enemy) {
+    if (enemy.mytween) {
+        enemy.mytween.resume();
+    }
+}

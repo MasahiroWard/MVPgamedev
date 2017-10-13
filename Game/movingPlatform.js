@@ -24,8 +24,8 @@ function placeMP(x, y, xlength, ylength, xmove_tiles, ymove_tiles, xspeed, yspee
     mp.body.immovable = true;
     
     // Initialize movement
-    mp.body.velocity.x = xspeed;
-    mp.body.velocity.y = yspeed;
+    mp.prev_x = xspeed;
+    mp.prev_y = yspeed;
     
     moving_platform_group.add(mp);
 };
@@ -36,12 +36,21 @@ function movingPlatformsUpdate(platform) {
         platform.body.velocity.x = platform.xspeed;
     } else if (platform.body.x >= platform.rightbound){
         platform.body.velocity.x = -platform.xspeed
+    } else {
+        platform.body.velocity.x = platform.prev_x;
     }
+    platform.prev_x = platform.body.velocity.x;
+    
     if (platform.body.y <= platform.upperbound) {
         platform.body.velocity.y = platform.yspeed;
     } else if (platform.body.y >= platform.lowerbound) {
         platform.body.velocity.y = -platform.yspeed;
+    } else {
+        platform.body.velocity.y = platform.prev_y;
     }
+    platform.prev_y = platform.body.velocity.y;
+    
+    
     // Allow player to jump from the platform
     game.physics.arcade.collide(player, moving_platform_group, player_on_platform, null, this);
     
@@ -54,4 +63,16 @@ function player_on_platform(player, mp) {
         player.body.velocity.y = -375;
         jump1.play();
     }
+}
+
+function stopMPs(platform) {
+    if (platform.body.velocity.x != 0) {
+        platform.prev_x = platform.body.velocity.x;
+        platform.body.velocity.x = 0;
+    }
+    if (platform.body.velocity.y != 0) {
+        platform.prev_y = platform.body.velocity.y;
+        platform.body.velocity.y = 0;
+    }
+    game.physics.arcade.collide(player, moving_platform_group, null, null, this);
 }
