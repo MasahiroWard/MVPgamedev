@@ -119,7 +119,7 @@ demo.icestate.prototype = {
         
         
         chameleonmove();
-        console.log(player.tint);
+        player.tint = 0xffffff;
         // check for ballooning 
         if (player.ballooning){
             chameleon_float();

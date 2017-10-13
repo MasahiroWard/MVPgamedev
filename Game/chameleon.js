@@ -55,8 +55,16 @@ function chameleonmove(){
         if (player.has_balloon){
             use_balloon();
         } else {
-            deadplayer();
+            deadplayer(true);
         }
+    }
+    
+    // chameleon flashes if just hit
+    if (chameleonWasHit > game.time.time){
+        chameleon_flash(chameleonWasHit - game.time.time);
+    } 
+    else {
+        player.alpha = 1;
     }
 }
 
@@ -114,3 +122,13 @@ function add_chameleon_sound(){
 //    healthbar.fixedToCamera = true;
 //
 //}
+
+//
+function chameleon_flash(duration){
+    if (duration % 800 > 400){
+        player.alpha = 0;
+    }
+    else {
+        player.alpha = 1;
+    }
+}
