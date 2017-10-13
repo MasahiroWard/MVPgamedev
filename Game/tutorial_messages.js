@@ -20,18 +20,21 @@ function disp_tut_msgs(idx) {
     // Pause the game and move the camera up 2 pixels so the game won't continue to pause
     tutorial_paused = true;
     player.body.velocity.x = 0;
+    pause_darkener.alpha = 0.5;
 
     // store last velocity to prevent locking up when paused
     if (player.body.velocity.y != 0) {
         prev_player_vel_y = player.body.velocity.y;
     }
     
+    // Stop the player where they are
     player.body.velocity.y = 0;
     player.body.gravity.y = 0;
     
+    
     if (!tutorial_OK_txt) {
         tutorial_time = game.time.time + 1000;
-        var style = {font: "30px Arial", backgroundColor: "black", fill: "White"}
+        var style = {font: "30px Arial", fill: "White"}
         tutorial_OK_txt = game.add.text(1000, game.camera.y+650, "Press Enter to continue.", style);
         tutorial_OK_txt.anchor.setTo(1, 1)
     }
@@ -67,6 +70,9 @@ function disp_tut_msgs(idx) {
         case 9:
             movement_msgs9()
             break
+        case 10:
+            movement_msgs10()
+            break
         }
 }
 
@@ -85,20 +91,21 @@ function continue_playing() {
         tutorial_paused = false;
         player.body.velocity.y = prev_player_vel_y;
         tutorial_OK_txt.kill();
-        tutorial_OK_txt = false;        
+        tutorial_OK_txt = false;
+        pause_darkener.alpha = 0;
     }
 }
 
 function movement_msgs0() {
     // Only make one tutorial text and tutorial sprite
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(player.x, player.y-125, "This is you.", {font: "30px Arial", backgroundColor: "black", fill: "White"});
+        tutorial_txt = game.add.text(player.x, player.y-125, "This is you.", {font: "30px Arial", fill: "White"});
         tutorial_txt.anchor.setTo(0.5,0);
     }
     if (!tutorial_sprite) {
         tutorial_sprite = game.add.sprite(player.x, player.y-50, "downarrow")
         tutorial_sprite.anchor.setTo(0.5, 0.5);
-        tutorial_sprite.scale.setTo(0.1, 0.1);
+        tutorial_sprite.scale.setTo(0.2, 0.25);
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
         continue_playing()
@@ -108,12 +115,11 @@ function movement_msgs0() {
 function movement_msgs1() {
     // Only make one tutorial text and tutorial sprite
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(500, 2900, "Use Arrow keys to move.", {font: "30px Arial", backgroundColor: "black", fill: "White"});
+        tutorial_txt = game.add.text(500, 2900, "Use Arrow keys to move.", {font: "30px Arial", fill: "White"});
         tutorial_txt.anchor.setTo(0.5, 0);
     }
     if (!tutorial_sprite) {
         tutorial_sprite = game.add.sprite(700, 3000, "arrowkeys")
-        tutorial_sprite.anchor.setTo(0.5, 0.5);
         tutorial_sprite.scale.setTo(0.4, 0.4);
     }
     if (cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown || game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
@@ -124,39 +130,53 @@ function movement_msgs1() {
 function movement_msgs2() {
     // Only make one tutorial text and tutorial sprite
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(650, 2575, "Avoid enemies that are a \ndifferent color from you.", {font: "30px Arial", backgroundColor: "black", fill: "White"});
+        tutorial_txt = game.add.text(500, 2620+550, "Don't fall off the bottom of the map!", {font: "30px Arial", fill: "White"});
+        tutorial_txt.anchor.setTo(0.5,0);
+    }
+    if (!tutorial_sprite) {
+        tutorial_sprite = game.add.sprite(500, 2620+575, "downarrow")
+        tutorial_sprite.anchor.setTo(0.5, 0);
+        tutorial_sprite.scale.setTo(0.2, 0.25);
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
         continue_playing()
     }
 }
 
+
 function movement_msgs3() {
     // Only make one tutorial text and tutorial sprite
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(400, 2450, "Move up and down \na ladder using arrow keys.", {font: "30px Arial", backgroundColor: "black", fill: "White"});
+        tutorial_txt = game.add.text(650, 2575, "Avoid enemies that are a \ndifferent color from you.", {font: "30px Arial", fill: "White"});
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
-        continue_playing();
+        continue_playing()
     }
-    
 }
 
 function movement_msgs4() {
     // Only make one tutorial text and tutorial sprite
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(475, 2100, "Eat fruit to power \nyour color change.", {font: "30px Arial", backgroundColor: "black", fill: "White"});
-        tutorial_txt.anchor.setTo(0.5, 0);
+        tutorial_txt = game.add.text(400, 2450, "Move up and down \na ladder using arrow keys.", {font: "30px Arial", fill: "White"});
     }
-    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER) || cursors.down.isDown || cursors.up.isDown) {
         continue_playing();
     }
+    
 }
 
 function movement_msgs5() {
+    // Only make one tutorial text and tutorial sprite
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(10, 2300, "Your inventory tells you \nhow many times you can \nbecome a certain color", {font: "30px Arial", backgroundColor: "black", fill: "White"});
+        tutorial_txt = game.add.text(475, 2100, "Eat fruit to power \nyour color change.", {font: "30px Arial", fill: "White"});
+        tutorial_txt.anchor.setTo(0.5, 0);
     }
+    if (!tutorial_sprite) {
+        tutorial_sprite = game.add.sprite(475, 2050, "uparrow")
+        tutorial_sprite.anchor.setTo(0.5, 0);
+        tutorial_sprite.scale.setTo(0.1, 0.12);
+    }
+
     if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
         continue_playing();
     }
@@ -164,26 +184,28 @@ function movement_msgs5() {
 
 function movement_msgs6() {
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(500, 2200, "Try it now!\nPress 'Q' to become red.", {font: "30px Arial", backgroundColor: "black", fill: "White"});
-        tutorial_txt.anchor.setTo(0.5, 0);
-    }
-    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER) ||game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
-        continue_playing();
-    }
-}
-
-function movement_msgs7() {
-    if (!tutorial_txt) {
-        tutorial_txt = game.add.text(250, 1650, "Attack an enemy of the \nsame color to defeat it!", {font: "30px Arial", backgroundColor: "black", fill: "White"});
+        tutorial_txt = game.add.text(10, 2300, "Your inventory tells you \nhow many times you can \nbecome a certain color", {font: "30px Arial", fill: "White"});
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
         continue_playing();
     }
 }
 
+function movement_msgs7() {
+    if (!tutorial_txt) {
+        tutorial_txt = game.add.text(500, 2200, "Try it now!\nPress 'Q' to become RED.", {font: "30px Arial"});
+        tutorial_txt.anchor.setTo(0.5, 0);
+        tutorial_txt.addColor("#FFFFFF", 0);
+        tutorial_txt.addColor("#FF0000", 30);
+    }
+    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER) ||game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
+        continue_playing();
+    }
+}
+
 function movement_msgs8() {
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(200, 300, "Bosses are powerful enemies with multiple health.", {font: "30px Arial", backgroundColor: "black", fill: "White"});
+        tutorial_txt = game.add.text(250, 1650, "Attack an enemy of the \nsame color to defeat it!", {font: "30px Arial", fill: "White"});
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
         continue_playing();
@@ -192,7 +214,16 @@ function movement_msgs8() {
 
 function movement_msgs9() {
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(200, 300, "Beware of black projectiles.  These will kill you no matter what color you are.", {font: "30px Arial", backgroundColor: "black", fill: "White"});
+        tutorial_txt = game.add.text(200, 300, "Bosses are powerful enemies with multiple health.", {font: "30px Arial", fill: "White"});
+    }
+    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+        continue_playing();
+    }
+}
+
+function movement_msgs10() {
+    if (!tutorial_txt) {
+        tutorial_txt = game.add.text(200, 300, "Beware of black projectiles.\nThese will damage you no matter what color you are.", {font: "30px Arial", fill: "White"});
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
         continue_playing();

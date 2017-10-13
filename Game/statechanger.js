@@ -16,6 +16,12 @@ function keyPress(char) {
     if (char == "p"){
         // Switch pausing
         game.paused = !game.paused;
+        if (pause_darkener.alpha == 0){
+            pause_darkener.alpha = 0.5;
+        } else {
+            pause_darkener.alpha = 0;
+        }
+        
     }
 
     

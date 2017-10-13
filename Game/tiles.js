@@ -7,6 +7,14 @@ function add_game_bg(sprite_name){
     bg.fixedToCamera = true;
 }
 
+function add_pause_darkener(){
+    pause_darkener = game.add.sprite(0, 0, "pause_darkener");
+    pause_darkener.height = game.height;
+    pause_darkener.width = game.width;
+    pause_darkener.fixedToCamera = true;
+    pause_darkener.alpha = 0;
+}
+
 function get_surrounding_tiles(check_layer, map){
     // Function returns the surrounding tiletypes of a given layer
     // Returns an array of [topRight, topLeft, bottomRight, bottomLeft] tile indices
