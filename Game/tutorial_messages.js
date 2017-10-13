@@ -31,6 +31,9 @@ function disp_tut_msgs(idx) {
     player.body.velocity.y = 0;
     player.body.gravity.y = 0;
     
+    birds_group.forEach(pause_enemy_tweening, this);
+    snakes_group.forEach(pause_enemy_tweening, this);
+    moving_platform_group.forEach(stopMPs, this);
     
     if (!tutorial_OK_txt) {
         tutorial_time = game.time.time + 1000;
@@ -93,6 +96,8 @@ function continue_playing() {
         tutorial_OK_txt.kill();
         tutorial_OK_txt = false;
         pause_darkener.alpha = 0;
+        birds_group.forEach(resume_enemy_tweening, this);
+        snakes_group.forEach(resume_enemy_tweening, this);
     }
 }
 

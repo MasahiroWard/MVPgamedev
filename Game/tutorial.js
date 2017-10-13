@@ -123,7 +123,6 @@ demo.tutorial.prototype = {
 
         // colide with grass and allow player to jump 
         game.physics.arcade.collide(player, layer1);
-        moving_platform_group.forEach(movingPlatformsUpdate, this);
 
         var boss_collision_list = [layer1, layer2]
         cat_boss_move(boss_collision_list);
@@ -148,6 +147,7 @@ demo.tutorial.prototype = {
             
             birds_group.forEach(moveBird, this);
             snakes_group.forEach(moveSnake, this);
+            moving_platform_group.forEach(movingPlatformsUpdate, this);
 
         }
     }
