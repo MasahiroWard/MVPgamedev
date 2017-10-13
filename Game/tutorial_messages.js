@@ -167,7 +167,7 @@ function movement_msgs6() {
         tutorial_txt = game.add.text(500, 2200, "Try it now!\nPress 'Q' to become red.", {font: "30px Arial", backgroundColor: "black", fill: "White"});
         tutorial_txt.anchor.setTo(0.5, 0);
     }
-    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER) ||game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
         continue_playing();
     }
 }

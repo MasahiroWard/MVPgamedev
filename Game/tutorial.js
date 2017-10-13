@@ -127,23 +127,23 @@ demo.tutorial.prototype = {
         var boss_collision_list = [layer1, layer2]
         cat_boss_move(boss_collision_list);
 
-        console.log(player.body.x, player.body.y);
+//        console.log(player.body.x, player.body.y);
         if (!tutorial_paused) {
             // Pause the camera and the player when pausing the game
             move_camera(1,1);
             
-            if (game.camera.y != 0 && player.body.y <= 566 && player.body.x >= 715 && player.body.x <= 945){
-                // Freeze the player until the boss is fully revealed if the player is on the highest platform
+            if (game.camera.y != 0 && player.body.bottom <= 650 && player.body.right-player.body.width >= 725 && player.body.right <= 925){
+                // Force the player onto the platform until the boss is fully revealed if the player is on the highest platform
                 player.body.velocity.x = 0;
-                player.body.velocity.y = 0;
+                player.body.velocity.y = 50;
             } else if (player.ballooning){
                 chameleon_float();
             } else {
                 chameleonmove();
+                //      check player position and either call ladder function or take into account ladder top 
+                var tile_arr = get_surrounding_tiles(layer2, map);
+                ladder_movement(tile_arr, 4, 5);
             }
-            //      check player position and either call ladder function or take into account ladder top 
-            var tile_arr = get_surrounding_tiles(layer2, map);
-            ladder_movement(tile_arr, 4, 5);
             
             birds_group.forEach(moveBird, this);
             snakes_group.forEach(moveSnake, this);
