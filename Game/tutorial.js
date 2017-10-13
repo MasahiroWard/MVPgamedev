@@ -110,6 +110,7 @@ demo.tutorial.prototype = {
                 
         // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 525);
+        add_pause_darkener();
     },
     update: function(){
         // These are the heights at which the game automatically pauses and displays a message

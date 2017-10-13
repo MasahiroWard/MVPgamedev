@@ -20,6 +20,7 @@ function loadImages(){
     // Backgrounds
     game.load.image('stomach_background', 'assets/backgrounds/brown_background.png')
     game.load.image('bg1', 'assets/backgrounds/test_background.png')
+    game.load.image('pause_darkener', 'assets/backgrounds/black_rectangle.png')
     
     // Sprites used in tutorial messages
     game.load.image('downarrow', 'assets/sprites/downarrow.png')

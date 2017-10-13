@@ -12,6 +12,9 @@ var player;
 // cursors allows use of arrow keys
 var cursors;
 
+// A method to darken the background when paused
+var pause_darkener;
+
 // Dictionaries to keep track of what is in your stomach
 var stomach, stomach_fruits = {}, stomach_icons = {}, stomach_tracker = {};
 var clr_keys = {"red":"Q", "blue":"W", "yellow":"E", "orange":"A", "purple":"S", "green":"D"};

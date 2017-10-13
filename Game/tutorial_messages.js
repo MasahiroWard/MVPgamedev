@@ -20,14 +20,17 @@ function disp_tut_msgs(idx) {
     // Pause the game and move the camera up 2 pixels so the game won't continue to pause
     tutorial_paused = true;
     player.body.velocity.x = 0;
+    pause_darkener.alpha = 0.5;
 
     // store last velocity to prevent locking up when paused
     if (player.body.velocity.y != 0) {
         prev_player_vel_y = player.body.velocity.y;
     }
     
+    // Stop the player where they are
     player.body.velocity.y = 0;
     player.body.gravity.y = 0;
+    
     
     if (!tutorial_OK_txt) {
         tutorial_time = game.time.time + 1000;
@@ -85,7 +88,8 @@ function continue_playing() {
         tutorial_paused = false;
         player.body.velocity.y = prev_player_vel_y;
         tutorial_OK_txt.kill();
-        tutorial_OK_txt = false;        
+        tutorial_OK_txt = false;
+        pause_darkener.alpha = 0;
     }
 }
 
