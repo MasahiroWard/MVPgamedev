@@ -124,8 +124,8 @@ function add_chameleon_sound(){
 //}
 
 function chameleon_flash(duration){
-    if (duration % 800 > 400){
-        player.alpha = 0;
+    if (duration % 200 > 100){
+        player.alpha = 0.5;
     }
     else {
         player.alpha = 1;

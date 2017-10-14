@@ -8,6 +8,7 @@ function createInventory(x, y){
     stomach_bg.height = 125;
     stomach_bg.width = 300;
     stomach_bg.fixedToCamera = true;
+    stomach_bg.alpha = 0.3;
     stomach = game.add.group();
     stomach.fixedToCamera = true;
     

@@ -112,22 +112,13 @@ demo.icestate.prototype = {
     update: function(){ 
         // move the camera (if it wasnt obvious)
         move_camera(1,1);
-
-        checkforladders(iceMap, icelayer2);
-        var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
-        ladder_movement(tile_arr1, 10, 11);
         
         var tile_arr2 = get_surrounding_tiles(icelayer1, iceMap);
         collideIce(tile_arr2);
         
-        
-
         // colide with icelayer and allow player to jump 
         game.physics.arcade.collide(player, icelayer1);
 
-        
-        
-        chameleonmove();
         player.tint = 0xffffff;
         // check for ballooning 
         if (player.ballooning){
@@ -147,6 +138,10 @@ demo.icestate.prototype = {
         snakes_group.forEach(moveSnake, this);
         moving_platform_group.forEach(movingPlatformsUpdate, this);
         
+        //checkforladders(iceMap, icelayer2);
+        var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
+        ladder_movement(tile_arr1, 10, 11);
+
 
     }
     // doesnt work rn :
