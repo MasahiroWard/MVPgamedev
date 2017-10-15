@@ -57,11 +57,10 @@ demo.icestate.prototype = {
         game.physics.arcade.enable(icelayer2);
         
         
-        createChameleon(550,game.world.height - 300);
+        createChameleon(500,game.world.height - 300);
 
         
-        
-
+    
 
 //
         iceMap.setCollision(12, true, icelayer1);
@@ -107,6 +106,10 @@ demo.icestate.prototype = {
 //        
 //        make_balloon_group();
 //        placeBalloon(200, 2300);
+        
+        
+        // place health bar
+        place_hearts(450, 0);
 
     },
     update: function(){ 
@@ -141,9 +144,10 @@ demo.icestate.prototype = {
         //checkforladders(iceMap, icelayer2);
         var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
         ladder_movement(tile_arr1, 10, 11);
+        
+        update_health(player.health);
+        
 
 
     }
-    // doesnt work rn :
-//    display_health();
 };

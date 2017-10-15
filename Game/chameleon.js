@@ -88,6 +88,7 @@ function deadplayer(instakill=false){
             player.health -= 1;
             console.log('lose a life');
             chameleonWasHit = game.time.time + 3000;
+            bing.play('','',0.7);
         }
         else{
             game.sound.stopAll();
@@ -109,19 +110,10 @@ function add_chameleon_sound(){
     balloonNoise = game.add.audio('balloonNoise');
     disappointed = game.add.audio('disappointed');    
     whistle = game.add.audio('whistle');
+    bing = game.add.audio('bing');
 }
 
-// work in progress: 
-//function display_health(){
-//    var startx;
-//    var starty;
-//    
-//    var healthbar = game.add.sprite(startx, starty, "stomach_background");
-//    healthbar.height = 500;
-//    healthbar.width = 300;
-//    healthbar.fixedToCamera = true;
-//
-//}
+
 
 function chameleon_flash(duration){
     if (duration % 200 > 100){
@@ -130,4 +122,42 @@ function chameleon_flash(duration){
     else {
         player.alpha = 1;
     }
+}
+
+
+
+// to put in health bar - put place_hearts in create and update_health in update 
+function place_hearts(startx, starty){
+    var startx;
+    var starty;
+    
+    heart1 = game.add.sprite(startx, starty, "heart");
+    heart2 = game.add.sprite(startx+50, starty, "heart");
+    heart3 = game.add.sprite(startx+100, starty, "heart");
+
+    heart1.fixedToCamera = true;
+    heart2.fixedToCamera = true;
+    heart3.fixedToCamera = true;
+    
+    heart1.scale.setTo(0.05, 0.05);
+    heart2.scale.setTo(0.05, 0.05);
+    heart3.scale.setTo(0.05, 0.05);
+    
+}
+
+// display health (default 3 hearts) 
+function update_health(health){
+    console.log(health);
+    
+    if (health == 2){
+        heart3.kill();
+    }
+    else if (health == 1){
+        heart2.kill();
+    }
+    else if (health == 0){
+        heart1.kill();
+    }
+
+
 }

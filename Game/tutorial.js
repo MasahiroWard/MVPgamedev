@@ -113,6 +113,10 @@ demo.tutorial.prototype = {
         // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 525);
         add_pause_darkener();
+        
+        // place health hearts *****
+        place_hearts(450, 0);
+        
     },
     update: function(){
         // These are the heights at which the game automatically pauses and displays a message
@@ -153,5 +157,8 @@ demo.tutorial.prototype = {
             moving_platform_group.forEach(movingPlatformsUpdate, this);
 
         }
+        
+        // PLAYER HEALTH UPDATE - MAYBE PUT IT SOMEWHERE ELSE !!!!!!!!!!!!!!!!!!!!!!!!!
+        update_health(player.health);
     }
 };

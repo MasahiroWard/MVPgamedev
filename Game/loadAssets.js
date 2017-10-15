@@ -63,7 +63,10 @@ function loadImages(){
     game.load.audio('disappointed', 'assets/sounds/disappointed.mp3');
     game.load.audio('guitar2', 'assets/sounds/almost_reggae.mp3');
     game.load.audio('whistle', 'assets/sounds/whistle.mp3');
+    game.load.audio('bing', 'assets/sounds/bing.mp3');
     
+    // health bar assets 
+    game.load.image('heart', 'assets/sprites/heart.png');
 }
 
 // For special enemies such as bosses, only preload them if required

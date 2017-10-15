@@ -78,3 +78,5 @@ var iceMap;
 
 // time of last chameleon hit 
 var chameleonWasHit = 0;
+
+var heart1, heart2, heart3;
