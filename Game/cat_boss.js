@@ -57,6 +57,7 @@ function cat_boss_move(layer_list){
         // This needs to be something cooler
         game.add.text(cat_boss.x, cat_boss.y, 'VICTORY!')
         cat_boss.kill();
+        disp_tut_msgs('beat_cat_boss')
     }
 }
 

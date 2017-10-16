@@ -41,7 +41,7 @@ function chameleonmove(){
         player.body.velocity.x = 150;
     }
     if (cursors.down.isDown) {
-        player.body.velocity.y = 150;
+        player.body.velocity.y = 200;
     }
     
     // jump if player is blocked on the bottom
@@ -84,7 +84,7 @@ function deadplayer(instakill=false){
         player.health = 0;
     }
     if (chameleonWasHit < game.time.time || instakill){
-        if (player.health > 0){
+        if (player.health > 1){
             player.health -= 1;
             console.log('lose a life');
             chameleonWasHit = game.time.time + 3000;
@@ -131,17 +131,17 @@ function place_hearts(startx, starty){
     var startx;
     var starty;
     
-    heart1 = game.add.sprite(startx, starty, "heart");
-    heart2 = game.add.sprite(startx+50, starty, "heart");
-    heart3 = game.add.sprite(startx+100, starty, "heart");
+    heart1 = game.add.sprite(startx, starty+20, "heart");
+    heart2 = game.add.sprite(startx+50, starty+20, "heart");
+    heart3 = game.add.sprite(startx+100, starty+20, "heart");
 
     heart1.fixedToCamera = true;
     heart2.fixedToCamera = true;
     heart3.fixedToCamera = true;
     
-    heart1.scale.setTo(0.05, 0.05);
-    heart2.scale.setTo(0.05, 0.05);
-    heart3.scale.setTo(0.05, 0.05);
+    heart1.scale.setTo(0.07, 0.07);
+    heart2.scale.setTo(0.07, 0.07);
+    heart3.scale.setTo(0.07, 0.07);
     
 }
 

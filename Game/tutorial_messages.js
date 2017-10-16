@@ -38,7 +38,7 @@ function disp_tut_msgs(idx) {
     if (!tutorial_OK_txt) {
         tutorial_time = game.time.time + 1000;
         var style = {font: "30px Arial", fill: "White"}
-        tutorial_OK_txt = game.add.text(1000, game.camera.y+650, "Press Enter to continue.", style);
+        tutorial_OK_txt = game.add.text(1000, game.camera.y+650, "Press SPACEBAR to continue.", style);
         tutorial_OK_txt.anchor.setTo(1, 1)
     }
     
@@ -79,6 +79,9 @@ function disp_tut_msgs(idx) {
         case 11:
             movement_msgs11()
             break
+        case 'beat_cat_boss':
+            movement_msgs_beatcatboss()
+            break
         }
 }
 
@@ -115,7 +118,7 @@ function movement_msgs0() {
         tutorial_sprite.anchor.setTo(0.5, 0.5);
         tutorial_sprite.scale.setTo(0.2, 0.25);
     }
-    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
         continue_playing()
     }
 }
@@ -130,7 +133,7 @@ function movement_msgs1() {
         tutorial_sprite = game.add.sprite(650, 2900, "arrowkeys")
         tutorial_sprite.scale.setTo(0.4, 0.4);
     }
-    if (cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown || game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+    if (cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown || game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
         continue_playing();
     }
 }
@@ -146,7 +149,7 @@ function movement_msgs2() {
         tutorial_sprite.anchor.setTo(0.5, 0);
         tutorial_sprite.scale.setTo(0.2, 0.25);
     }
-    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
         continue_playing()
     }
 }
@@ -157,7 +160,7 @@ function movement_msgs3() {
     if (!tutorial_txt) {
         tutorial_txt = game.add.text(650, 2575, "Avoid enemies that are a \ndifferent color from you.", {font: "30px Arial", fill: "White"});
     }
-    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
         continue_playing()
     }
 }
@@ -167,7 +170,7 @@ function movement_msgs4() {
     if (!tutorial_txt) {
         tutorial_txt = game.add.text(400, 2450, "Move up and down \na ladder using arrow keys.", {font: "30px Arial", fill: "White"});
     }
-    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER) || cursors.down.isDown || cursors.up.isDown) {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) || cursors.down.isDown || cursors.up.isDown) {
         continue_playing();
     }
     
@@ -185,7 +188,7 @@ function movement_msgs5() {
         tutorial_sprite.scale.setTo(0.1, 0.12);
     }
 
-    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
         continue_playing();
     }
 }
@@ -194,7 +197,7 @@ function movement_msgs6() {
     if (!tutorial_txt) {
         tutorial_txt = game.add.text(10, 2300, "Your inventory tells you \nhow many times you can \nbecome a certain color", {font: "30px Arial", fill: "White"});
     }
-    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
         continue_playing();
     }
 }
@@ -206,7 +209,7 @@ function movement_msgs7() {
         tutorial_txt.addColor("#FFFFFF", 0);
         tutorial_txt.addColor("#FF0000", 30);
     }
-    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER) ||game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) ||game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
         continue_playing();
     }
 }
@@ -215,7 +218,7 @@ function movement_msgs8() {
     if (!tutorial_txt) {
         tutorial_txt = game.add.text(250, 1750, "Touch an enemy of the \nsame color to defeat it!", {font: "30px Arial", fill: "White"});
     }
-    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
         continue_playing();
     }
 }
@@ -225,17 +228,17 @@ function movement_msgs9() {
         tutorial_txt = game.add.text(500, 1750, "Press P at any time to pause the game.", {font: "30px Arial", fill: "White"});
         tutorial_txt.anchor.setTo(0.5, 0);
     }
-    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
         continue_playing();
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.P)) {
         // If user clicks P, we must switch pausing twice
-        game.paused = !game.paused;
-        if (pause_darkener.alpha == 0){
-            pause_darkener.alpha = 0.5;
-        } else {
-            pause_darkener.alpha = 0;
-        }
+//        game.paused = !game.paused;
+//        if (pause_darkener.alpha == 0){
+//            pause_darkener.alpha = 0.5;
+//        } else {
+//            pause_darkener.alpha = 0;
+//        }
         continue_playing();
     }    
 }
@@ -244,7 +247,7 @@ function movement_msgs10() {
     if (!tutorial_txt) {
         tutorial_txt = game.add.text(200, 300, "Bosses are powerful enemies with lots of health.", {font: "30px Arial", fill: "White"});
     }
-    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
         continue_playing();
     }
 }
@@ -253,7 +256,16 @@ function movement_msgs11() {
     if (!tutorial_txt) {
         tutorial_txt = game.add.text(200, 300, "Beware of black projectiles.\nThese will damage you no matter what color you are.", {font: "30px Arial", fill: "White"});
     }
-    if (game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+        continue_playing();
+    }
+}
+
+function movement_msgs_beatcatboss() {
+    if (!tutorial_txt) {
+        tutorial_txt = game.add.text(200, 300, "Press 'i' to continue to the next stage.", {font: "30px Arial", fill: "White"});
+    }
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) ||game.input.keyboard.isDown(Phaser.Keyboard.I)) {
         continue_playing();
     }
 }
