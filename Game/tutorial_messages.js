@@ -204,19 +204,19 @@ function movement_msgs6() {
 
 function movement_msgs7() {
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(500, 2200, "Try it now!\nPress 'Q' to become RED.", {font: "30px Arial"});
+        tutorial_txt = game.add.text(500, 2200, "Try it now!\nPress 'A' to become BLUE.", {font: "30px Arial"});
         tutorial_txt.anchor.setTo(0.5, 0);
         tutorial_txt.addColor("#FFFFFF", 0);
-        tutorial_txt.addColor("#FF0000", 30);
+        tutorial_txt.addColor("#0000FF", 30);
     }
-    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) ||game.input.keyboard.isDown(Phaser.Keyboard.Q)) {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) ||game.input.keyboard.isDown(Phaser.Keyboard.A)) {
         continue_playing();
     }
 }
 
 function movement_msgs8() {
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(250, 1750, "Touch an enemy of the \nsame color to defeat it!", {font: "30px Arial", fill: "White"});
+        tutorial_txt = game.add.text(250, 1600, "Touch an enemy of the \nsame color to defeat it!", {font: "30px Arial", fill: "White"});
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
         continue_playing();
