@@ -42,9 +42,6 @@ var color_list = ["red", "blue", "yellow", "orange", "purple", "green"];
 // Groups for enemies
 var birds_group = {}, snakes_group = {};
 
-// Variable associated with the cat boss
-var cat_boss, yarn_ball;
-
 
 // These should be declared for each stage individually
 // Stores platforms and ladders for a stage.  Hope to make these obsolete by creating tilemaps instead.
