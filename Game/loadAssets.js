@@ -26,6 +26,7 @@ function loadImages(){
     game.load.image('downarrow', 'assets/sprites/white_downarrow.png')
     game.load.image('uparrow', 'assets/sprites/white_uparrow.png')
     game.load.image('arrowkeys', 'assets/sprites/arrowkeys.png')
+    game.load.image('updown_arrowkeys', 'assets/sprites/updown_arrowkeys.png')
     
     // when loading spritesheet, each cell must be the same size.
     // Chameleon

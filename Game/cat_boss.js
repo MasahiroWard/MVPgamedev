@@ -48,10 +48,15 @@ function place_cat_boss(x, y){
     yarn_ball.body.tilePadding.y = 25
 }
 
+function cat_boss_throw() {
+    cat_boss.loadTexture('throw_cat');
+    game.physics.arcade.moveToObject(yarn_ball, player, 200);
+}
+
 function cat_boss_move(layer_list){
     game.physics.arcade.collide(player, cat_boss, touch_boss, null, this);
     game.physics.arcade.collide(player, yarn_ball, hit_enemy);
-    game.physics.arcade.collide(cat_boss, yarn_ball, throw_yarn);
+    game.physics.arcade.collide(cat_boss, yarn_ball, cat_boss_throw);
     for (l in layer_list){
         game.physics.arcade.collide(cat_boss, layer_list[l]);
         game.physics.arcade.collide(yarn_ball, layer_list[l]);
@@ -92,8 +97,4 @@ function touch_boss(){
             deadplayer();
         }
     }
-}
-
-function throw_yarn(){
-    game.physics.arcade.moveToObject(yarn_ball, player, 200);
 }

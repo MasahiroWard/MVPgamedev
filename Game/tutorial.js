@@ -80,31 +80,32 @@ demo.tutorial.prototype = {
         
         // place fruit
         make_fruit_groups();
-        placeFruit(500, game.world.height - 400, "bluefruit")
-        placeFruit(450, game.world.height -1300,"bluefruit");
-        placeFruit(150, 1000, "greenfruit");
-        placeFruit(200, 300, "bluefruit");
-        placeFruit(150, 350, "greenfruit");
-        placeFruit(500, 250, "bluefruit");
-        placeFruit(750, 150, "greenfruit");
-        placeFruit(950, 150, "purplefruit");
-        placeFruit(60, 200, "purplefruit");
+        placeFruit(300, 2300, "bluefruit")
+//        placeFruit(450, game.world.height -1300,"bluefruit");
+//        placeFruit(150, 1000, "greenfruit");
+//        placeFruit(200, 300, "bluefruit");
+//        placeFruit(150, 350, "greenfruit");
+//        placeFruit(500, 250, "bluefruit");
+//        placeFruit(750, 150, "greenfruit");
+//        placeFruit(950, 150, "purplefruit");
+//        placeFruit(60, 200, "purplefruit");
 
         // place enemy
         make_enemy_groups();
-        var bird1 = placeBird(400,game.world.height-1000,"purple");
-        // make enemy move
-        bird1.mytween = game.add.tween(bird1).to({x:[100, 400], y:[game.world.height-1000, game.world.height - 1000]}, 7000, Phaser.Easing.Linear.None, true, 0, -1, false);
-        // place static enemies
-        placeBird(500,1650,"blue");
-        var snake1 = placeSnake(800, game.world.height-650, "purple");
-        snake1.mytween = game.add.tween(snake1).to({x:[650, 800], y:[game.world.height-650,game.world.height-650]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        var snake1 = placeSnake(0, 1950, "purple");
+        snake1.mytween = game.add.tween(snake1).to({x:[200, 0], y:[1950,1950]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+
+//        var bird1 = placeBird(400,game.world.height-1000,"purple");
+//        // make enemy move
+//        bird1.mytween = game.add.tween(bird1).to({x:[100, 400], y:[game.world.height-1000, game.world.height - 1000]}, 7000, Phaser.Easing.Linear.None, true, 0, -1, false);
+//        // place static enemies
+//        placeBird(500,1650,"blue");
         
         // place moving platforms
         addMovingPlatforms();
-        placeMP(150, 2150, 2, 1, 0, 6, 0, 100);
-        placeMP(350, 1600, 3, 1, 0, 6, 0, 100);
-        placeMP(200, 900, 3, 1, 8, 0, 100, 0);
+//        placeMP(700, 2150, 2, 1, 0, 7, 0, 100);
+//        placeMP(350, 1600, 3, 1, 0, 6, 0, 100);
+//        placeMP(200, 900, 3, 1, 8, 0, 100, 0);
         
         // place balloons
         make_balloon_group();
@@ -120,7 +121,7 @@ demo.tutorial.prototype = {
     },
     update: function(){
         // These are the heights at which the game automatically pauses and displays a message
-        var stop_heights = [2626, 2625, 2624, 2623, 2622, 1895, 1894, 1893, 1620, 1500, 4, 2];
+        var stop_heights = [2626, 2625, 2624, 2623, 2622, 1500, 1501, 1502, 1503, 1504, 2, 1];
         idx = stop_heights.indexOf(game.camera.y);
 //        console.log(idx, prev_idx);
         if (idx >= 0 && prev_idx!=idx) {

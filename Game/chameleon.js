@@ -24,6 +24,7 @@ function createChameleon(xcoor, ycoor){
 // Put this in update
 
 function chameleonmove(){
+    console.log(player.body.x, player.body.y);
     // Method added to update function for moving the chameleon
     game.physics.arcade.overlap(player, map_fruits, getfruits, null, this);
     game.physics.arcade.overlap(player, balloon_group, get_balloon, null, this);
@@ -44,15 +45,15 @@ function chameleonmove(){
     } else {
         player.animations.stop()
     }
-    if (cursors.down.isDown) {
-        player.body.velocity.y = 200;
-    }
     
     // jump if player is blocked on the bottom
     if (cursors.up.isDown && player.body.blocked.down){
         player.body.velocity.y = -375;
         jump1.play('','', 0.2);
+    } else if (cursors.down.isDown) {
+        player.body.velocity.y = 200;
     }
+
     // Game over if you fall off the screen
     // Unless you use a balloon
     if (game.camera.y+game.height < player.body.y) {
@@ -103,9 +104,6 @@ function deadplayer(instakill=false){
     }
 }
 
-
-
-
 function add_chameleon_sound(){
     jump1 = game.add.audio('jump');
     eatNoise = game.add.audio('beep');
@@ -117,8 +115,6 @@ function add_chameleon_sound(){
     bing = game.add.audio('bing');
 }
 
-
-
 function chameleon_flash(duration){
     if (duration % 200 > 100){
         player.alpha = 0.5;
@@ -127,8 +123,6 @@ function chameleon_flash(duration){
         player.alpha = 1;
     }
 }
-
-
 
 // to put in health bar - put place_hearts in create and update_health in update 
 function place_hearts(startx, starty){
@@ -151,7 +145,7 @@ function place_hearts(startx, starty){
 
 // display health (default 3 hearts) 
 function update_health(health){
-    console.log(health);
+//    console.log(health);
     
     if (health == 2){
         heart3.kill();
@@ -162,6 +156,4 @@ function update_health(health){
     else if (health == 0){
         heart1.kill();
     }
-
-
 }
