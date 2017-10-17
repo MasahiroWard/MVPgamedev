@@ -12,11 +12,11 @@ demo.icestate.prototype = {
         // load in tile map assets 
         game.load.tilemap('iceStage', 'assets/tilemaps/IceMap2.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('ice_sprite', 'assets/tilemaps/ice_sprite.png');
-        game.load.image('LargeLadderTop', 'assets/tilemaps/ladder_sprite.png');
+        game.load.image('LargeLadderTop', 'assets/tilemaps/ice_ladder_sprite.png');
         game.load.image('tempBlueBlock', 'assets/tilemaps/blue_snow.png');
         game.load.image('tempGreenBlock', 'assets/tilemaps/green_snow.png');
         game.load.image('tempPurpleBlock', 'assets/tilemaps/purple_snow.png');
-        game.load.image('LargeLadder', 'assets/tilemaps/ladder_sprite.png');
+        game.load.image('LargeLadder', 'assets/tilemaps/ice_ladder_sprite.png');
     },
     
     
