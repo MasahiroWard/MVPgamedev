@@ -26,9 +26,9 @@ demo.tutorial.prototype = {
         // load in tile map assets
         // This should be customized for each stage
         game.load.tilemap('stage', 'assets/tilemaps/TestMapFitted.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('LargeGrass', 'assets/tilemaps/grass_platform.png');
-        game.load.image('LargeLadder', 'assets/tilemaps/ladder_sprite.png');
-        game.load.image('LargeLadderTop', 'assets/tilemaps/ladder_sprite.png');
+        game.load.image('grass_platform', 'assets/tilemaps/grass_platform.png');
+        game.load.image('ladder_sprite', 'assets/tilemaps/ladder_sprite.png');
+        game.load.image('ladder_sprite_top', 'assets/tilemaps/ladder_sprite.png');
         ///////////////////////////////////////////////////
     },
     create: function(){
@@ -51,9 +51,9 @@ demo.tutorial.prototype = {
         // Consider refactoring
         // add in the tile map 
         map = game.add.tilemap('stage');
-        map.addTilesetImage('LargeGrass');
-        map.addTilesetImage('LargeLadder');
-        map.addTilesetImage('LargeLadderTop');
+        map.addTilesetImage('grass_platform');
+        map.addTilesetImage('ladder_sprite');
+        map.addTilesetImage('ladder_sprite_top');
 
         layer1 = map.createLayer('Platforms');
         layer2 = map.createLayer('Ladders');
