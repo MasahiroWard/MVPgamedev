@@ -31,4 +31,7 @@ function keyPress(char) {
     } else if (char == "u"){
         game.state.start('tutorial');
     }
+    else if (char == "t"){
+        game.state.start('trialstate');
+    }
 }

@@ -77,3 +77,7 @@ var iceMap;
 var chameleonWasHit = 0;
 
 var heart1, heart2, heart3;
+
+
+// trial state tile map 
+var triallayer1, triallayer2, trialMap;
