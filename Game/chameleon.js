@@ -4,11 +4,11 @@
 
 function createChameleon(xcoor, ycoor){
     add_chameleon_sound();
-    player = game.add.sprite(xcoor, ycoor,'grey_chameleon');
+    player = game.add.sprite(xcoor, ycoor,'green_chameleon');
     game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
     player.animations.add('walk', [0, 1, 2], 5, true);
-    player.color = "grey";
+    player.color = "green";
     
     // Use this later to flip sprite
     player.anchor.setTo(0.5,0.5);
@@ -29,16 +29,20 @@ function chameleonmove(){
     game.physics.arcade.overlap(player, balloon_group, get_balloon, null, this);
 
     player.body.gravity.y = 400;
-    player.animations.play('walk');
     player.body.velocity.x = 0;
+    player.animations.play('walk');
     
     if (cursors.left.isDown) {
+        
         // flip chameleon sprite according to direction of movement
         player.scale.setTo(0.13, 0.13)
         player.body.velocity.x = -150;
     } else if (cursors.right.isDown) {
+//        player.animations.play('walk');
         player.scale.setTo(-0.13, 0.13)
         player.body.velocity.x = 150;
+    } else {
+        player.animations.stop()
     }
     if (cursors.down.isDown) {
         player.body.velocity.y = 200;

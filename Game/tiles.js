@@ -111,3 +111,35 @@ function collideIce(arr1){
         }
     }
 }
+
+// quick fix copy and pasted previous function (collide ice) so that I could put in different dictionary values - this can be removed later and collide Ice can be modified to do both, 
+function collideTrial(arr1){
+        // tile key: 
+        // 1 = no color
+        // 3,2 = blue
+        // 4,5 = green
+        // 6,7 = purple
+     
+    
+    bottom_left = arr1[2]
+    bottom_right = arr1[3]
+    
+// set default values as the non-color ice  
+    var checking1 = 1;
+    var checking2 = 1;
+    
+    var tile_dictionary = {1: player.color, 2:"blue", 3:"blue", 4:"green", 5:"green", 6:"purple", 7:"purple"}
+    
+    if (bottom_right != null){
+        checking1 = bottom_right.index;
+    }
+    if (bottom_left != null){
+        checking2 = bottom_left.index;
+    }
+    
+    if (bottom_right || bottom_left){
+        if(player.color != tile_dictionary[checking1] || player.color != tile_dictionary[checking2]){
+            deadplayer()
+        }
+    }
+}

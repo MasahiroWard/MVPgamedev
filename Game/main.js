@@ -5,4 +5,5 @@ game.state.add('state1', demo.state1);
 game.state.add('state2', demo.state2);
 game.state.add('tutorial', demo.tutorial);
 game.state.add('icestate', demo.icestate);
+game.state.add('trialstate', demo.trial);
 game.state.start('tutorial');

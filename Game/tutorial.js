@@ -26,9 +26,9 @@ demo.tutorial.prototype = {
         // load in tile map assets
         // This should be customized for each stage
         game.load.tilemap('stage', 'assets/tilemaps/TestMapFitted.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('LargeGrass', 'assets/tilemaps/grass_platform.png');
-        game.load.image('LargeLadder', 'assets/tilemaps/ladder_sprite.png');
-        game.load.image('LargeLadderTop', 'assets/tilemaps/ladder_sprite.png');
+        game.load.image('grass_platform', 'assets/tilemaps/grass_platform.png');
+        game.load.image('ladder_sprite', 'assets/tilemaps/ladder_sprite.png');
+        game.load.image('ladder_sprite_top', 'assets/tilemaps/ladder_sprite.png');
         ///////////////////////////////////////////////////
     },
     create: function(){
@@ -51,9 +51,9 @@ demo.tutorial.prototype = {
         // Consider refactoring
         // add in the tile map 
         map = game.add.tilemap('stage');
-        map.addTilesetImage('LargeGrass');
-        map.addTilesetImage('LargeLadder');
-        map.addTilesetImage('LargeLadderTop');
+        map.addTilesetImage('grass_platform');
+        map.addTilesetImage('ladder_sprite');
+        map.addTilesetImage('ladder_sprite_top');
 
         layer1 = map.createLayer('Platforms');
         layer2 = map.createLayer('Ladders');
@@ -80,24 +80,24 @@ demo.tutorial.prototype = {
         
         // place fruit
         make_fruit_groups();
-        placeFruit(500, game.world.height - 400, "redfruit")
-        placeFruit(450, game.world.height -1300,"redfruit");
+        placeFruit(500, game.world.height - 400, "bluefruit")
+        placeFruit(450, game.world.height -1300,"bluefruit");
         placeFruit(150, 1000, "greenfruit");
-        placeFruit(200, 300, "redfruit");
+        placeFruit(200, 300, "bluefruit");
         placeFruit(150, 350, "greenfruit");
-        placeFruit(500, 250, "redfruit");
+        placeFruit(500, 250, "bluefruit");
         placeFruit(750, 150, "greenfruit");
         placeFruit(950, 150, "purplefruit");
         placeFruit(60, 200, "purplefruit");
 
         // place enemy
         make_enemy_groups();
-        var bird1 = placeBird(400,game.world.height-1000,"blue");
+        var bird1 = placeBird(400,game.world.height-1000,"purple");
         // make enemy move
         bird1.mytween = game.add.tween(bird1).to({x:[100, 400], y:[game.world.height-1000, game.world.height - 1000]}, 7000, Phaser.Easing.Linear.None, true, 0, -1, false);
         // place static enemies
-        placeBird(500,1650,"red");
-        var snake1 = placeSnake(800, game.world.height-650, "yellow");
+        placeBird(500,1650,"blue");
+        var snake1 = placeSnake(800, game.world.height-650, "purple");
         snake1.mytween = game.add.tween(snake1).to({x:[650, 800], y:[game.world.height-650,game.world.height-650]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
         
         // place moving platforms
@@ -120,7 +120,7 @@ demo.tutorial.prototype = {
     },
     update: function(){
         // These are the heights at which the game automatically pauses and displays a message
-        var stop_heights = [2650, 2625, 2620, 2500, 2350, 1895, 1894, 1893, 1620, 1500, 4, 2];
+        var stop_heights = [2626, 2625, 2624, 2623, 2622, 1895, 1894, 1893, 1620, 1500, 4, 2];
         idx = stop_heights.indexOf(game.camera.y);
 //        console.log(idx, prev_idx);
         if (idx >= 0 && prev_idx!=idx) {
@@ -138,11 +138,12 @@ demo.tutorial.prototype = {
             // Pause the camera and the player when pausing the game
             move_camera(1,1);
             
-            if (game.camera.y != 0 && player.body.bottom <= 650 && player.body.right-player.body.width >= 725 && player.body.right <= 925){
+            if (game.camera.y >=8 && player.body.bottom <= 650 && player.body.right-player.body.width >= 725 && player.body.right <= 925){
                 // Force the player onto the platform until the boss is fully revealed if the player is on the highest platform
                 player.body.velocity.x = 0;
                 player.body.velocity.y = 50;
                 // If player is frozen, move camera up faster
+                move_camera(1, 4);
             } else if (player.ballooning){
                 chameleon_float();
             } else {

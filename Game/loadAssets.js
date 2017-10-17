@@ -69,8 +69,3 @@ function loadImages(){
     game.load.image('heart', 'assets/sprites/heart.png');
 }
 
-// For special enemies such as bosses, only preload them if required
-function loadCatBoss(){
-    game.load.image('cat_boss', 'assets/sprites/boss_cat.png');
-    game.load.image('cat_yarn', 'assets/sprites/yarnball.png');
-}

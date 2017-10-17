@@ -17,11 +17,11 @@ var pause_darkener;
 
 // Dictionaries to keep track of what is in your stomach
 var stomach, stomach_fruits = {}, stomach_icons = {}, stomach_tracker = {};
-var clr_keys = {"red":"Q", "blue":"W", "yellow":"E", "orange":"A", "purple":"S", "green":"D"};
+var clr_keys = {"red":"Q", "yellow":"W", "orange":"E", "blue":"A", "green":"S", "purple":"D"};
 
 // fruit objects on the map
 var map_fruits = {};
-var fruit_colors = {"redfruit": "red", "bluefruit": "blue", "yellowfruit": "yellow", "orangefruit": "orange", "purplefruit": "purple", "greenfruit": "green"};
+var fruit_colors = {"redfruit": "red", "yellowfruit": "yellow", "orangefruit": "orange", "bluefruit": "blue", "greenfruit": "green", "purplefruit": "purple",};
 
 // Item objects
 // balloon_start_time is used to release balloon after x seconds
@@ -41,9 +41,6 @@ var color_list = ["red", "blue", "yellow", "orange", "purple", "green"];
 
 // Groups for enemies
 var birds_group = {}, snakes_group = {};
-
-// Variable associated with the cat boss
-var cat_boss, yarn_ball;
 
 
 // These should be declared for each stage individually
@@ -80,3 +77,7 @@ var iceMap;
 var chameleonWasHit = 0;
 
 var heart1, heart2, heart3;
+
+
+// trial state tile map 
+var triallayer1, triallayer2, trialMap;
