@@ -90,10 +90,19 @@ demo.icestate.prototype = {
         
 //        // place enemies ( note don't put anything with y pos above 5050 )
         var bird1 = placeBird(275,5050,"green");
+        
+        // tween bird 2
         var bird2 = placeBird(575,3875,"blue");
         bird2.mytween = game.add.tween(bird2).to({x:[650, 575], y:[3875,3875]}, 1000, Phaser.Easing.Linear.None, true, 0, -1, false);
-        placeSnake(125,3475, "purple");
-        placeSnake(125, 4875, "purple"); // TWEEN THIS ENEMY! 
+        
+        
+        placeSnake(325,3475, "purple");
+
+        
+        // tween snake 
+        var snake1 = placeSnake(325, 4875, "purple"); // TWEEN THIS ENEMY! 
+        snake1.mytween = game.add.tween(snake1).to({x:[125, 325], y:[4875,4875]}, 1000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        
 //        placeSnake(475, 775, "blue");
         placeBird(350,2475,"purple");
         placeBird(500, 2475, "green");
