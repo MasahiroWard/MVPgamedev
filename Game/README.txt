@@ -7,6 +7,8 @@ To play, use the arrow keys to move and collect fruit. Press qwerty to change co
 
 Avoid enemies or kill enemies of the same color and get to the top of the stage. 
 
+When stepping on colored ice, make sure you are the same color as the ice, otherwise you take damage. 
+
 
 Coding setup:
 Each js file should look at a single object in the game
@@ -36,3 +38,5 @@ Dig the Uke by Kara Square (c) copyright 2016 Licensed under a Creative Commons 
 
 
 Almost Reggae by unreal_dm (c) copyright 2014 
+
+Supernatural(Instrumental) by Alex (c) copyright 2016 Licensed under a Creative Commons Attribution Noncommercial  (3.0) license. http://dig.ccmixter.org/files/AlexBeroza/54902 Ft: Snowflake
