@@ -5,7 +5,7 @@ var cat_boss, yarn_ball;
 
 // For special enemies such as bosses, only preload them if required
 function loadCatBoss(){
-    game.load.image('cat_yarn', 'assets/sprites/yarnball.png');
+    game.load.image('cat_yarn', 'assets/sprites/black_yarnball2.png');
     game.load.spritesheet('sleep_cat', 'assets/spritesheets/sleep_cat_spritesheet.png',162,111);
     game.load.spritesheet('throw_cat', 'assets/spritesheets/throw_cat_spritesheet.png',146,192);
     game.load.spritesheet('blue_cat', 'assets/spritesheets/blue_catwalk_spritesheet.png',158,146);
@@ -39,7 +39,7 @@ function place_cat_boss(x, y){
 
     // Bouncy ball of death
     yarn_ball = game.add.sprite(0, 0, "cat_yarn");
-    yarn_ball.scale.setTo(0.1,0.1);
+    yarn_ball.scale.setTo(0.6,0.6);
     game.physics.arcade.enable(yarn_ball);
     yarn_ball.color = "black";
     yarn_ball.body.collideWorldBounds = true;
