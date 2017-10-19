@@ -134,7 +134,7 @@ function cat_boss_move(layer_list){
         cat_boss.scale.setTo(1, 1);
     }
     
-    console.log(cat_boss.action);
+//    console.log(cat_boss.action);
 //    console.log(game.time.time);
     game.physics.arcade.collide(player, cat_boss, touch_boss, null, this);
     
