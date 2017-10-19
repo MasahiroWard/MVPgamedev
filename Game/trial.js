@@ -141,5 +141,8 @@ demo.trial.prototype = {
         cat_boss_move(layer_list)
 
 
-    }
+    },
+//    render: function() {
+//        game.debug.body(cat_boss)
+//    }
 };

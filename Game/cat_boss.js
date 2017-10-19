@@ -20,7 +20,8 @@ function place_cat_boss(x, y){
     cat_boss = game.add.sprite(x,y,"sleep_cat");
     game.physics.arcade.enable(cat_boss);
     cat_boss.body.collideWorldBounds = true;
-    cat_boss.animations.add('move', [0, 1, 2, 3], 5, true)
+    cat_boss.animations.add('move', [0, 1, 2, 3], 4, true)
+    cat_boss.animations.add('throw', [0, 1, 2, 3], 2, true)
     cat_boss.health = 2;
 //    cat_boss.scale.setTo(1,1);
     cat_boss.action = 'sleeping';
@@ -31,8 +32,9 @@ function place_cat_boss(x, y){
     cat_boss.color = cat_boss.color_scheme[cat_boss.health];
             
     cat_boss.hit_recently_timer = game.time.time + 2000;
-//    cat_boss.change_direction_timer = 0;
-//    cat_boss.hit_recently_timer = 0;
+    cat_boss.throw_ball_timer = game.time.time + 10000;
+    cat_boss.change_direction_timer = 0;
+    cat_boss.hit_recently_timer = 0;
 
     // Bouncy ball of death
     yarn_ball = game.add.sprite(0, 0, "cat_yarn");
@@ -58,26 +60,39 @@ function cat_boss_fall_asleep() {
 }
 
 function cat_boss_sleep() {
-    // Move downwards slowly when asleep
-    cat_boss.body.velocity.y = 50;
+    // Move to center top when asleep
+    if (Math.abs(cat_boss.body.x-500) + Math.abs(cat_boss.body.y-50) > 50) {
+        game.physics.arcade.moveToXY(cat_boss, 500, 50);
+    } else {
+        cat_boss.body.velocity.x = 0;
+        cat_boss.body.velocity.y = 0;
+    }
 }
 
 function cat_touch_yarn() {
     cat_boss.action = 'throwing';
     cat_boss.loadTexture('throw_cat');
-    cat_boss.body.setSize(146, 192);
+//    cat_boss.body.setSize(146, 192);
     game.physics.arcade.moveToObject(yarn_ball, cat_boss, 400);
+    cat_boss.throw_ball_timer = game.time.time + 10000;
+    cat_boss.animations.stop()
+    cat_boss.animations.play('throw')
 }
 
 function cat_boss_throw() {
     cat_boss.body.velocity.x = 0;
     cat_boss.body.velocity.y = 0;
-    if (cat_boss.animations.currentAnim.frame == 0) {
-        game.physics.arcade.moveToObject(yarn_ball, cat_boss, 200);
+    console.log(Math.abs(yarn_ball.body.x - cat_boss.body.x));
+    console.log(Math.abs(yarn_ball.body.x - cat_boss.body.x));
+    if (Math.abs(yarn_ball.body.x - cat_boss.body.x) > 50 || Math.abs(yarn_ball.body.y - cat_boss.body.y) > 50) {
+        cat_touch_yarn();
     } else if (cat_boss.animations.currentAnim.frame == 3) {
         // Throw ball of yarn and go back to normal
         game.physics.arcade.moveToObject(yarn_ball, player, 400);
         cat_boss_regular_move();
+    } else if (cat_boss.animations.currentAnim.frame <=2) {
+        yarn_ball.body.velocity.x = 0;
+        yarn_ball.body.velocity.y = 0;
     }
 }
 
@@ -88,21 +103,30 @@ function cat_boss_regular_move() {
 }
 
 function cat_boss_moving() {
-    // Move towards player
-    cat_boss.body.velocity.y = -(player.body.y - cat_boss.body.y);
-    cat_boss.body.velocity.x = -(player.body.x - cat_boss.body.x);
+//   console.log(cat_boss.change_direction_timer, game.time.time);
+    // Twice as likely to move towards player as away
+    if (cat_boss.change_direction_timer < game.time.time) {
+        var mover = randomIntFromInterval(-1, 1);
+        cat_boss.body.velocity.y = mover * (player.body.y - cat_boss.body.y)/2;
+        cat_boss.body.velocity.x = mover * (player.body.x - cat_boss.body.x)/2;
+        cat_boss.change_direction_timer = game.time.time + 2000;
+    }
 }
 
 function cat_boss_damaged() {
     // If damaged, move up (away from player)
-    cat_boss.body.velocity.y = -50;
+    cat_boss.body.velocity.y = -3*(player.body.y - cat_boss.body.y);
+    cat_boss.body.velocity.x = -3*(player.body.x - cat_boss.body.x);
+
     if (cat_boss.hit_recently_timer < game.time.time){
-        cat_boss.action = 'moving'
+        cat_touch_yarn();
     }
 }
 
 
 function cat_boss_move(layer_list){
+    cat_boss.animations.play("move");
+
     console.log(cat_boss.action);
 //    console.log(game.time.time);
     game.physics.arcade.collide(player, cat_boss, touch_boss, null, this);
@@ -110,8 +134,9 @@ function cat_boss_move(layer_list){
     game.physics.arcade.collide(player, yarn_ball, hit_enemy);
     
     // If not in the middle of throwing yarn, throw yarn if hit
-    if (cat_boss.action != "throwing") {
-        game.physics.arcade.collide(cat_boss, yarn_ball, cat_touch_yarn);
+//    game.physics.arcade.collide(cat_boss, yarn_ball);
+    if (cat_boss.throw_ball_timer < game.time.time) {
+        cat_touch_yarn();
     }
         
     for (l in layer_list){
@@ -119,7 +144,6 @@ function cat_boss_move(layer_list){
         game.physics.arcade.collide(yarn_ball, layer_list[l]);
     }
         
-    cat_boss.animations.play("move");
     switch(cat_boss.action) {
         case 'sleeping':
             cat_boss_sleep()
@@ -159,4 +183,11 @@ function touch_boss(){
             deadplayer();
         }
     }
+}
+
+
+// thank you stack overflow
+function randomIntFromInterval(min,max)
+{
+    return Math.floor(Math.random()*(max-min+1)+min);
 }
