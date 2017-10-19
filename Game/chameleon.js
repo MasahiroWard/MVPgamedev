@@ -24,7 +24,6 @@ function createChameleon(xcoor, ycoor){
 // Put this in update
 
 function chameleonmove(){
-    console.log(player.body.x, player.body.y);
     // Method added to update function for moving the chameleon
     game.physics.arcade.overlap(player, map_fruits, getfruits, null, this);
     game.physics.arcade.overlap(player, balloon_group, get_balloon, null, this);

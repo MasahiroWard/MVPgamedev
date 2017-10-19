@@ -4,7 +4,6 @@ demo.trial = function(){};
 demo.trial.prototype = {
     preload: function(){
         loadImages();
-
         
         // make sure to set this to the size of the tile map 
         game.world.setBounds(0, 0, 1000,1000);
@@ -17,6 +16,8 @@ demo.trial.prototype = {
         game.load.image('green_snow', 'assets/tilemaps/green_snow.png');
         game.load.image('purple_snow', 'assets/tilemaps/purple_snow.png');
         game.load.image('ladder_sprite_top', 'assets/tilemaps/ladder_sprite.png');
+        
+        loadCatBoss();
     },
     
     
@@ -60,40 +61,28 @@ demo.trial.prototype = {
         game.physics.arcade.enable(triallayer2);
         
         
-        createChameleon(500, 500);
-
-        
-    
-
+        createChameleon(500, 600);
 
         trialMap.setCollisionBetween(1, 10, true, triallayer1)
+        trialMap.setCollisionBetween(11, 12, true, triallayer2)
+
 
         
         //prep for placing fruit and enemies
-        createInventory(0,0);
         make_fruit_groups();
         make_enemy_groups();
         
         // place fruit
-//        placeFruit(700, game.world.height - 300, "bluefruit");
-//        placeFruit(650, game.world.height -450,"greenfruit");
-//        placeFruit(750, game.world.height - 1600, "bluefruit");
-//        placeFruit(150, 1000, "greenfruit");
-//        placeFruit(200, 300, "purplefruit");
-//        placeFruit(500, game.world.height - 1600, "purplefruit");
-//        placeFruit(825, 5025, "bluefruit");
-//        placeFruit(725, 3275, "greenfruit"); // put in moving platform to get to here 
-//        placeFruit(400, 3125, "greenfruit");
-//        placeFruit(450, 2475, "bluefruit");
-//        placeFruit(675,1925, "purplefruit");
-//        placeFruit(275,8575,"greenfruit");
-//        placeFruit(775,875,"purplefruit");
+        placeFruit(500, 600, "bluefruit");
+        placeFruit(500, 600, "redfruit");
+        placeFruit(500, 600, "greenfruit");
+        placeFruit(500, 600, "yellowfruit");
+        placeFruit(500, 600, "purplefruit");
+        placeFruit(500, 600, "orangefruit");        
         
-        
-//        // place enemies ( note don't put anything with y pos above 5050 )
-//        var bird1 = placeBird(275,5050,"green");
-//        var bird2 = placeBird(575,3875,"blue");
-//        bird2.mytween = game.add.tween(bird2).to({x:[650, 575], y:[3875,3875]}, 1000, Phaser.Easing.Linear.None, true, 0, -1, false);
+//        var bird1 = placeBird(275,400,"green");
+//        var bird2 = placeBird(575,200,"blue");
+//        bird2.mytween = game.add.tween(bird2).to({x:[750, 600], y:[200,200]}, 1000, Phaser.Easing.Linear.None, true, 0, -1, false);
 //        placeSnake(125,3475, "purple");
 //        placeSnake(125, 4875, "purple"); // TWEEN THIS ENEMY! 
 ////        placeSnake(475, 775, "blue");
@@ -101,18 +90,18 @@ demo.trial.prototype = {
 //        placeBird(500, 2475, "green");
 ////        placeBird(500,1650,"red");
 ////        
-////        // place moving platforms
-//        addMovingPlatforms();
-//        placeMP(325, 4025, 2, 1, 6, 0, 100, 0);
-//        placeMP(525, 3325, 3, 1, 4, 0, 150, 0);
-//        
+        // place moving platforms
+        addMovingPlatforms();
+        placeMP(150, 200, 3, 1, 0, 3, 0, 100);
+          
 //        make_balloon_group();
 //        placeBalloon(200, 2300);
         
+        place_cat_boss(600, 200);
         
         // place health bar
         place_hearts(450, 0);
-
+        createInventory(0,525);
     },
     update: function(){ 
         // move the camera (if it wasnt obvious)
@@ -124,7 +113,6 @@ demo.trial.prototype = {
         // colide with icelayer and allow player to jump 
         game.physics.arcade.collide(player, triallayer1);
 
-        player.tint = 0xffffff;
         // check for ballooning 
         if (player.ballooning){
             chameleon_float();
@@ -139,9 +127,9 @@ demo.trial.prototype = {
         }
         
         // move enemies 
-//        birds_group.forEach(moveBird, this);
-//        snakes_group.forEach(moveSnake, this);
-//        moving_platform_group.forEach(movingPlatformsUpdate, this);
+        birds_group.forEach(moveBird, this);
+        snakes_group.forEach(moveSnake, this);
+        moving_platform_group.forEach(movingPlatformsUpdate, this);
         
         //checkforladders(iceMap, icelayer2);
         var tile_arr1 = get_surrounding_tiles(triallayer2, trialMap);
@@ -149,6 +137,8 @@ demo.trial.prototype = {
         
         update_health(player.health);
         
+        var layer_list = [triallayer1, triallayer2]
+        cat_boss_move(layer_list)
 
 
     }

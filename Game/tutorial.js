@@ -42,7 +42,8 @@ demo.tutorial.prototype = {
         game.sound.stopAll();
         
         // start game at bottom of screen
-        game.camera.y = game.world.height;
+//        game.camera.y = game.world.height;
+        game.camera.y = 1800
         
         // Add game background
         add_game_bg('bg1')
@@ -73,7 +74,8 @@ demo.tutorial.prototype = {
         /////////////////////////////////////////////
 
         // Add chameleon at x,y
-        createChameleon(500,game.world.height - 400);
+//        createChameleon(500,game.world.height - 400);
+        createChameleon(550, 1950);
         
         // Add boss at x,y
         place_cat_boss(0,0);
@@ -81,7 +83,7 @@ demo.tutorial.prototype = {
         // place fruit
         make_fruit_groups();
         placeFruit(300, 2300, "bluefruit")
-//        placeFruit(450, game.world.height -1300,"bluefruit");
+        placeFruit(700, 1800,"bluefruit");
 //        placeFruit(150, 1000, "greenfruit");
 //        placeFruit(200, 300, "bluefruit");
 //        placeFruit(150, 350, "greenfruit");
@@ -95,9 +97,9 @@ demo.tutorial.prototype = {
         var snake1 = placeSnake(0, 1950, "purple");
         snake1.mytween = game.add.tween(snake1).to({x:[200, 0], y:[1950,1950]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
 
-//        var bird1 = placeBird(400,game.world.height-1000,"purple");
-//        // make enemy move
-//        bird1.mytween = game.add.tween(bird1).to({x:[100, 400], y:[game.world.height-1000, game.world.height - 1000]}, 7000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        var bird1 = placeBird(300, 700,"blue");
+        // make enemy move
+        bird1.mytween = game.add.tween(bird1).to({x:[100, 300], y:[950, 700]}, 7000, Phaser.Easing.Linear.None, true, 0, -1, false);
 //        // place static enemies
 //        placeBird(500,1650,"blue");
         
@@ -105,11 +107,11 @@ demo.tutorial.prototype = {
         addMovingPlatforms();
 //        placeMP(700, 2150, 2, 1, 0, 7, 0, 100);
 //        placeMP(350, 1600, 3, 1, 0, 6, 0, 100);
-//        placeMP(200, 900, 3, 1, 8, 0, 100, 0);
+        placeMP(200, 900, 3, 1, 8, 0, 100, 0);
         
         // place balloons
         make_balloon_group();
-        //placeBalloon(400, 2800);
+        placeBalloon(50, 900);
                 
         // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 525);
@@ -120,8 +122,10 @@ demo.tutorial.prototype = {
         
     },
     update: function(){
+        console.log(player.body.x, player.body.y);
         // These are the heights at which the game automatically pauses and displays a message
-        var stop_heights = [2626, 2625, 2624, 2623, 2622, 1500, 1501, 1502, 1503, 1504, 2, 1];
+//        var stop_heights = [2626, 2625, 2624, 2623, 2622, 1500, 1501, 1502, 1503, 1504, 2, 1];
+        var stop_heights = [];
         idx = stop_heights.indexOf(game.camera.y);
 //        console.log(idx, prev_idx);
         if (idx >= 0 && prev_idx!=idx) {
@@ -139,12 +143,12 @@ demo.tutorial.prototype = {
             // Pause the camera and the player when pausing the game
             move_camera(1,1);
             
-            if (game.camera.y >=8 && player.body.bottom <= 650 && player.body.right-player.body.width >= 725 && player.body.right <= 925){
+            if (game.camera.y >=12 && player.body.bottom <= 650 && player.body.right-player.body.width >= 725 && player.body.right <= 925){
                 // Force the player onto the platform until the boss is fully revealed if the player is on the highest platform
                 player.body.velocity.x = 0;
                 player.body.velocity.y = 50;
                 // If player is frozen, move camera up faster
-                move_camera(1, 4);
+                move_camera(1, 6);
             } else if (player.ballooning){
                 chameleon_float();
             } else {

@@ -66,7 +66,7 @@ function disp_tut_msgs(idx) {
         case 'beat_cat_boss':
             movement_msgs_beatcatboss()
             break
-        }
+                }
 }
 
 function continue_playing() {
