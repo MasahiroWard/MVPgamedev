@@ -81,6 +81,7 @@ function cat_touch_yarn() {
 }
 
 function cat_boss_throw() {
+    cat_boss.alpha = 1;
     cat_boss.body.velocity.x = 0;
     cat_boss.body.velocity.y = 0;
 //    console.log(Math.abs(yarn_ball.body.x - cat_boss.body.x));
@@ -117,6 +118,10 @@ function cat_boss_damaged() {
     // If damaged, move up (away from player)
     cat_boss.body.velocity.y = -3*(player.body.y - cat_boss.body.y);
     cat_boss.body.velocity.x = -3*(player.body.x - cat_boss.body.x);
+
+    if (cat_boss.hit_recently_timer > game.time.time) {
+        cat_boss_flash(cat_boss.hit_recently_timer - game.time.time);
+    }
 
     if (cat_boss.hit_recently_timer < game.time.time){
         cat_touch_yarn();
@@ -164,12 +169,12 @@ function cat_boss_move(layer_list){
         case 'damaged':
             cat_boss_damaged()
             break
-                          }
-    
+                          }    
     if (cat_boss.health < 0){
         // This needs to be something cooler
         game.add.text(cat_boss.x, cat_boss.y, 'VICTORY!')
         cat_boss.kill();
+        yarn_ball.kill();
 //        disp_tut_msgs('beat_cat_boss')
     }
 }
@@ -197,4 +202,12 @@ function touch_boss(){
 function randomIntFromInterval(min,max)
 {
     return Math.floor(Math.random()*(max-min+1)+min);
+}
+
+function cat_boss_flash(duration) {
+    if (duration % 200 > 100) {
+        cat_boss.alpha = 0.5;
+    } else {
+        cat_boss.alpha = 1;
+    }
 }

@@ -84,13 +84,13 @@ demo.tutorial.prototype = {
         make_fruit_groups();
         placeFruit(300, 2300, "bluefruit")
         placeFruit(700, 1800,"bluefruit");
-//        placeFruit(150, 1000, "greenfruit");
-//        placeFruit(200, 300, "bluefruit");
-//        placeFruit(150, 350, "greenfruit");
-//        placeFruit(500, 250, "bluefruit");
-//        placeFruit(750, 150, "greenfruit");
-//        placeFruit(950, 150, "purplefruit");
-//        placeFruit(60, 200, "purplefruit");
+        placeFruit(150, 1000, "greenfruit");
+        placeFruit(200, 300, "bluefruit");
+        placeFruit(150, 350, "greenfruit");
+        placeFruit(500, 250, "bluefruit");
+        placeFruit(750, 150, "greenfruit");
+        placeFruit(950, 150, "purplefruit");
+        placeFruit(60, 200, "purplefruit");
 
         // place enemy
         make_enemy_groups();
@@ -135,6 +135,10 @@ demo.tutorial.prototype = {
         // colide with grass and allow player to jump 
         game.physics.arcade.collide(player, layer1);
 
+        if (game.camera.y != 0) {
+            // catboss stays asleep until 3 seconds after player sees her
+            cat_boss.throw_ball_timer = game.time.time + 3000;
+        }
         var boss_collision_list = [layer1, layer2]
         cat_boss_move(boss_collision_list);
 
@@ -148,7 +152,7 @@ demo.tutorial.prototype = {
                 player.body.velocity.x = 0;
                 player.body.velocity.y = 50;
                 // If player is frozen, move camera up faster
-                move_camera(1, 6);
+                move_camera(0,2);
             } else if (player.ballooning){
                 chameleon_float();
             } else {
