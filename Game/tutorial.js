@@ -136,7 +136,7 @@ demo.tutorial.prototype = {
         game.physics.arcade.collide(player, layer1);
 
         if (game.camera.y != 0) {
-            // catboss stays asleep until 3 seconds after player sees her
+            // catboss stays asleep until 3 seconds after camera reaches the top            
             cat_boss.throw_ball_timer = game.time.time + 3000;
         }
         var boss_collision_list = [layer1, layer2]
