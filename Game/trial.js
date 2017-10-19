@@ -138,6 +138,10 @@ demo.trial.prototype = {
         update_health(player.health);
         
         var layer_list = [triallayer1, triallayer2]
+        if (game.camera.y != 0) {
+            // catboss doesn't wake up until camera reaches 0
+            cat_boss.throw_ball_timer = game.time.time + 1000;
+        }
         cat_boss_move(layer_list)
 
 

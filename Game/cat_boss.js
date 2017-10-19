@@ -25,6 +25,7 @@ function place_cat_boss(x, y){
     cat_boss.health = 2;
 //    cat_boss.scale.setTo(1,1);
     cat_boss.action = 'sleeping';
+    cat_boss.anchor.setTo(0.5, 0.5);
 
     // Color of boss at 0, 1, and 2 health
     // boss dies when hit at 0 health
@@ -82,9 +83,9 @@ function cat_touch_yarn() {
 function cat_boss_throw() {
     cat_boss.body.velocity.x = 0;
     cat_boss.body.velocity.y = 0;
-    console.log(Math.abs(yarn_ball.body.x - cat_boss.body.x));
-    console.log(Math.abs(yarn_ball.body.x - cat_boss.body.x));
-    if (Math.abs(yarn_ball.body.x - cat_boss.body.x) > 50 || Math.abs(yarn_ball.body.y - cat_boss.body.y) > 50) {
+//    console.log(Math.abs(yarn_ball.body.x - cat_boss.body.x));
+//    console.log(Math.abs(yarn_ball.body.y - cat_boss.body.y));
+    if (Math.abs(yarn_ball.body.x - cat_boss.body.center.x) > 50 || Math.abs(yarn_ball.body.y - cat_boss.body.center.y) > 50) {
         cat_touch_yarn();
     } else if (cat_boss.animations.currentAnim.frame == 3) {
         // Throw ball of yarn and go back to normal
@@ -106,9 +107,8 @@ function cat_boss_moving() {
 //   console.log(cat_boss.change_direction_timer, game.time.time);
     // Twice as likely to move towards player as away
     if (cat_boss.change_direction_timer < game.time.time) {
-        var mover = randomIntFromInterval(-1, 1);
-        cat_boss.body.velocity.y = mover * (player.body.y - cat_boss.body.y)/2;
-        cat_boss.body.velocity.x = mover * (player.body.x - cat_boss.body.x)/2;
+        cat_boss.body.velocity.y = randomIntFromInterval(-1, 1) * (player.body.y - cat_boss.body.y)/2;
+        cat_boss.body.velocity.x = randomIntFromInterval(-1, 1) * (player.body.x - cat_boss.body.x)/2;
         cat_boss.change_direction_timer = game.time.time + 2000;
     }
 }
@@ -126,7 +126,14 @@ function cat_boss_damaged() {
 
 function cat_boss_move(layer_list){
     cat_boss.animations.play("move");
-
+    
+    // catboss turns to face the player
+    if (cat_boss.action != 'sleeping' && player.body.x > cat_boss.body.x) {
+        cat_boss.scale.setTo(-1, 1);
+    } else {
+        cat_boss.scale.setTo(1, 1);
+    }
+    
     console.log(cat_boss.action);
 //    console.log(game.time.time);
     game.physics.arcade.collide(player, cat_boss, touch_boss, null, this);
