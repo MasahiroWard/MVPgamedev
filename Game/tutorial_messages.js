@@ -145,7 +145,7 @@ function movement_msgs2() {
 function movement_msgs3() {
     // Only make one tutorial text and tutorial sprite
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(500, 2800, "While jumping, you can\nfall quickly by pressing down.", {font: "30px Arial", fill: "White", align: "center"});
+        tutorial_txt = game.add.text(500, 2800, "While jumping, you can fall\nquickly by pressing down.", {font: "30px Arial", fill: "White", align: "center"});
         tutorial_txt.anchor.setTo(0.5,0);
     }
     if (!tutorial_sprite) {
@@ -161,7 +161,7 @@ function movement_msgs3() {
 function movement_msgs4() {
     // Only make one tutorial text and tutorial sprite
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(500, 2800, "Move up and down \na ladders using arrow keys.", {font: "30px Arial", fill: "White", align: "center"});
+        tutorial_txt = game.add.text(500, 2800, "Move up and down a\nladder using arrow keys.", {font: "30px Arial", fill: "White", align: "center"});
         tutorial_txt.anchor.setTo(0.5,0);
     }
     if (!tutorial_sprite) {
@@ -228,6 +228,9 @@ function movement_msgs9() {
         tutorial_txt.anchor.setTo(0.5, 0);
         tutorial_txt.addColor("#FFFFFF", 0);
         tutorial_txt.addColor("#0000FF", 30);
+        tutorial_txt.stroke = '#FFFFFF';
+        tutorial_txt.addStrokeColor('#000000', 30);
+        tutorial_txt.strokeThickness = 2;
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) ||game.input.keyboard.isDown(Phaser.Keyboard.A)) {
         continue_playing();
