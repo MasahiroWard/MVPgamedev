@@ -73,6 +73,9 @@ demo.icestate.prototype = {
         make_fruit_groups();
         make_enemy_groups();
         make_healthpack_groups(); 
+        make_balloon_group();
+        
+        placeBalloon(500, 3925);
         
         // place fruit
         placeHealthpack (700, 5400);
@@ -92,7 +95,7 @@ demo.icestate.prototype = {
         placeFruit(775,875,"purplefruit");
         placeHealthpack(25, 250);
         placeFruit(925, 250, "greenfruit");
-        placeFruit(450,2775, "purplefruit");
+        placeFruit(400,2775, "purplefruit");
         
         placeHealthpack(500, 550);
         
