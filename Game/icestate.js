@@ -60,19 +60,18 @@ demo.icestate.prototype = {
         createChameleon(500,game.world.height - 300);
 
         
-    
-
-//
         iceMap.setCollision(12, true, icelayer1);
         iceMap.setCollisionBetween(1, 9, true, icelayer1)
-//        iceMap.setCollision(4, true, layer2);
+
         
-        //prep for placing fruit and enemies
+        //prep for placing fruit and enemies and health packs 
         createInventory(0,0);
         make_fruit_groups();
         make_enemy_groups();
+        make_healthpack_groups(); ///////////THIS ONE OMG 
         
         // place fruit
+        placeHealthpack (700, 5400);
         placeFruit(700, game.world.height - 300, "bluefruit");
         placeFruit(650, game.world.height -450,"greenfruit");
         placeFruit(750, game.world.height - 1600, "bluefruit");
@@ -154,6 +153,7 @@ demo.icestate.prototype = {
         var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
         ladder_movement(tile_arr1, 10, 11);
         
+
         update_health(player.health);
         
 

@@ -27,7 +27,7 @@ function chameleonmove(){
     // Method added to update function for moving the chameleon
     game.physics.arcade.overlap(player, map_fruits, getfruits, null, this);
     game.physics.arcade.overlap(player, balloon_group, get_balloon, null, this);
-//    game.physics.arcade.overlap(player,healthpack_group, get_healthpack, null, this); ADD THIS IN WHEN HEALTHPACKS STUFF IS FINISHED!!!!S
+    game.physics.arcade.overlap(player, healthpack_group, get_healthpack, null, this); //ADD THIS IN WHEN HEALTHPACKS STUFF IS FINISHED!!!!S
 
     player.body.gravity.y = 400;
     player.body.velocity.x = 0;
@@ -141,19 +141,27 @@ function place_hearts(startx, starty){
     heart2.scale.setTo(0.07, 0.07);
     heart3.scale.setTo(0.07, 0.07);
     
+    heart1.alpha = 0.7;
+    heart2.alpha = 0.7;
+    heart3.alpha = 0.7;
+    
 }
 
 // display health (default 3 hearts) 
 function update_health(health){
 //    console.log(health);
-    
-    if (health == 2){
-        heart3.kill();
+    if (health == 3){
+        heart3.alpha = 0.7;
+    }
+    else if (health == 2){
+        heart2.alpha = 0.7;
+        heart3.alpha = 0;
     }
     else if (health == 1){
-        heart2.kill();
+        heart1.alpha = 0.7
+        heart2.alpha = 0;
     }
     else if (health == 0){
-        heart1.kill();
+        heart1.alpha = 0;
     }
 }

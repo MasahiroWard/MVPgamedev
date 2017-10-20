@@ -1,4 +1,4 @@
-function make_healthpack_group() {
+function make_healthpack_groups() {
     healthpack_group = game.add.group();
     healthpack_group.enableBody = true;
 }
@@ -16,3 +16,4 @@ function get_healthpack(player, healthpack){
         player.health += 1;
     }
 }
+

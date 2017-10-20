@@ -68,5 +68,8 @@ function loadImages(){
     
     // health bar assets 
     game.load.image('heart', 'assets/sprites/heart.png');
+    
+    // healthpack 
+    game.load.image('healthpack', 'assets/sprites/temp_health.png');
 }
 
