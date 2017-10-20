@@ -94,7 +94,7 @@ demo.tutorial.prototype = {
 
         // place enemy
         make_enemy_groups();
-        var snake1 = placeSnake(0, 1950, ["purple","blue"], health=1);
+        var snake1 = placeSnake(0, 1950, ["purple"]);
         snake1.mytween = game.add.tween(snake1).to({x:[200, 0], y:[1950,1950]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
 
         var bird1 = placeBird(300, 700,["blue"]);
@@ -103,7 +103,7 @@ demo.tutorial.prototype = {
 //        // place static enemies
         placeBird(500,1650,["blue"]);
         
-        bigbird = placeBird(50,50,['purple','green','blue'], health=2);
+        bigbird = placeBird(50,50,['purple','green','blue']);
         bigbird.scale.setTo(1,1);
         bigbird.mytween = game.add.tween(bigbird).to({x:[700, 700, 50, 50], y:[150, 50, 150, 50]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
         
