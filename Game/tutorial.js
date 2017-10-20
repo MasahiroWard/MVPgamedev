@@ -42,8 +42,8 @@ demo.tutorial.prototype = {
         game.sound.stopAll();
         
         // start game at bottom of screen
-//        game.camera.y = game.world.height;
-        game.camera.y = 1800
+        game.camera.y = game.world.height;
+//        game.camera.y = 1800
         
         // Add game background
         add_game_bg('bg1')
@@ -74,8 +74,8 @@ demo.tutorial.prototype = {
         /////////////////////////////////////////////
 
         // Add chameleon at x,y
-//        createChameleon(500,game.world.height - 400);
-        createChameleon(550, 1950);
+        createChameleon(500,game.world.height - 400);
+//        createChameleon(550, 1950);
         
         // Add boss at x,y
         place_cat_boss(0,0);
@@ -83,7 +83,7 @@ demo.tutorial.prototype = {
         // place fruit
         make_fruit_groups();
         placeFruit(300, 2300, "bluefruit")
-        placeFruit(700, 1800,"bluefruit");
+        placeFruit(600, 1700,"bluefruit");
         placeFruit(150, 1000, "greenfruit");
         placeFruit(200, 300, "bluefruit");
         placeFruit(150, 350, "greenfruit");
@@ -101,11 +101,13 @@ demo.tutorial.prototype = {
         // make enemy move
         bird1.mytween = game.add.tween(bird1).to({x:[100, 300], y:[950, 700]}, 7000, Phaser.Easing.Linear.None, true, 0, -1, false);
 //        // place static enemies
-//        placeBird(500,1650,"blue");
+        placeBird(500,1650,"blue");
         
         // place moving platforms
         addMovingPlatforms();
-//        placeMP(700, 2150, 2, 1, 0, 7, 0, 100);
+        placeMP(150, 2450, 2, 1, 5, 0, 100, 0);
+        placeMP(100, 2300, 2, 1, 7, 0, 150, 0);
+        placeMP(50, 2150, 2, 1, 9, 0, 200, 0);
 //        placeMP(350, 1600, 3, 1, 0, 6, 0, 100);
         placeMP(200, 900, 3, 1, 8, 0, 100, 0);
         
@@ -124,8 +126,8 @@ demo.tutorial.prototype = {
     update: function(){
         console.log(player.body.x, player.body.y);
         // These are the heights at which the game automatically pauses and displays a message
-//        var stop_heights = [2626, 2625, 2624, 2623, 2622, 1500, 1501, 1502, 1503, 1504, 2, 1];
-        var stop_heights = [];
+        var stop_heights = [2627, 2626, 2625, 2624, 2623, 2622, 1500, 1499, 1498, 1497, 1496, 2, 1];
+//        var stop_heights = [];
         idx = stop_heights.indexOf(game.camera.y);
 //        console.log(idx, prev_idx);
         if (idx >= 0 && prev_idx!=idx) {
