@@ -31,6 +31,8 @@ demo.icestate.prototype = {
         
         // play background music
         guitar2 = game.add.audio('guitar2');
+        bossMusic = game.add.audio('bossMusic'); // MUSIC FOR BOSS BATTLE !
+        
         guitar2.play('','',0.3,true,true);
         
         game.stage.backgroundColor = '#DDDDDD';
@@ -68,7 +70,7 @@ demo.icestate.prototype = {
         createInventory(0,0);
         make_fruit_groups();
         make_enemy_groups();
-        make_healthpack_groups(); ///////////THIS ONE OMG 
+        make_healthpack_groups(); 
         
         // place fruit
         placeHealthpack (700, 5400);
