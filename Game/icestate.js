@@ -65,7 +65,8 @@ demo.icestate.prototype = {
 
         
         iceMap.setCollision(12, true, icelayer1);
-        iceMap.setCollisionBetween(1, 9, true, icelayer1)
+        iceMap.setCollisionBetween(1, 9, true, icelayer1);
+        iceMap.setCollisionBetween(10, 11, true, icelayer2);
 
         
         //prep for placing fruit and enemies and health packs 
