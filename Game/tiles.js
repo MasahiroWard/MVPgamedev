@@ -64,7 +64,7 @@ function ladder_movement(tile_arr, ladTileIndex, ladderTopIndex){
 
 function ladder_function(){
     if (climb1.isPlaying == false){
-        climb1.play();
+        climb1.play('','',0.7);
     }
     player.body.gravity.y = 0;
     if (cursors.up.isDown){
