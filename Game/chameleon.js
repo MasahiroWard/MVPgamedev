@@ -113,6 +113,7 @@ function add_chameleon_sound(){
     disappointed = game.add.audio('disappointed');    
     whistle = game.add.audio('whistle');
     bing = game.add.audio('bing');
+    jingle = game.add.audio('jingle');
 }
 
 function chameleon_flash(duration){

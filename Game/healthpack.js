@@ -10,7 +10,7 @@ function placeHealthpack(x, y){
 }
 
 function get_healthpack(player, healthpack){
-    // put in sound!!!
+    jingle.play('','',1.3);
     healthpack.kill();
     if (player.health < 3){
         player.health += 1;
