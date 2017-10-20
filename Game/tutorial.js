@@ -16,7 +16,7 @@ demo.tutorial.prototype = {
         loadImages();
         
         // Change to the correct boss
-        loadCatBoss();
+//        loadCatBoss();
         
         // Make this equal to the size of the tilemap
         game.world.setBounds(0, 0, 1000, 3600);
@@ -78,7 +78,7 @@ demo.tutorial.prototype = {
 //        createChameleon(550, 1950);
         
         // Add boss at x,y
-        place_cat_boss(0,0);
+//        place_cat_boss(0,0);
         
         // place fruit
         make_fruit_groups();
@@ -94,14 +94,18 @@ demo.tutorial.prototype = {
 
         // place enemy
         make_enemy_groups();
-        var snake1 = placeSnake(0, 1950, "purple");
+        var snake1 = placeSnake(0, 1950, ["purple","blue"], health=1);
         snake1.mytween = game.add.tween(snake1).to({x:[200, 0], y:[1950,1950]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
 
-        var bird1 = placeBird(300, 700,"blue");
+        var bird1 = placeBird(300, 700,["blue"]);
         // make enemy move
         bird1.mytween = game.add.tween(bird1).to({x:[100, 300], y:[950, 700]}, 7000, Phaser.Easing.Linear.None, true, 0, -1, false);
 //        // place static enemies
-        placeBird(500,1650,"blue");
+        placeBird(500,1650,["blue"]);
+        
+        bigbird = placeBird(50,50,['purple','green','blue'], health=2);
+        bigbird.scale.setTo(1,1);
+        bigbird.mytween = game.add.tween(bigbird).to({x:[700, 700, 50, 50], y:[150, 50, 150, 50]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
         
         // place moving platforms
         addMovingPlatforms();
@@ -128,7 +132,7 @@ demo.tutorial.prototype = {
     update: function(){
         console.log(player.body.x, player.body.y);
         // These are the heights at which the game automatically pauses and displays a message
-        var stop_heights = [2627, 2626, 2625, 2624, 2623, 2622, 1500, 1499, 1498, 1497, 1496, 2, 1];
+        var stop_heights = [2627, 2626, 2625, 2624, 2623, 2622, 1500, 1499, 1498, 1497, 1496, 1];
 //        var stop_heights = [];
         idx = stop_heights.indexOf(game.camera.y);
 //        console.log(idx, prev_idx);
@@ -139,12 +143,12 @@ demo.tutorial.prototype = {
         // colide with grass and allow player to jump 
         game.physics.arcade.collide(player, layer1);
 
-        if (game.camera.y != 0) {
-            // catboss stays asleep until 3 seconds after camera reaches the top            
-            cat_boss.throw_ball_timer = game.time.time + 3000;
-        }
-        var boss_collision_list = [layer1, layer2]
-        cat_boss_move(boss_collision_list);
+//        if (game.camera.y != 0) {
+//            // catboss stays asleep until 3 seconds after camera reaches the top            
+//            cat_boss.throw_ball_timer = game.time.time + 3000;
+//        }
+//        var boss_collision_list = [layer1, layer2]
+//        cat_boss_move(boss_collision_list);
 
 //        console.log(player.body.x, player.body.y);
         if (!tutorial_paused) {

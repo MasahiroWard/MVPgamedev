@@ -228,8 +228,8 @@ function movement_msgs9() {
         tutorial_txt.anchor.setTo(0.5, 0);
         tutorial_txt.addColor("#FFFFFF", 0);
         tutorial_txt.addColor("#0000FF", 30);
-        tutorial_txt.stroke = '#FFFFFF';
-        tutorial_txt.addStrokeColor('#000000', 30);
+        tutorial_txt.stroke = '#000000';
+        tutorial_txt.addStrokeColor('#0000FF', 30);
         tutorial_txt.strokeThickness = 2;
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) ||game.input.keyboard.isDown(Phaser.Keyboard.A)) {
