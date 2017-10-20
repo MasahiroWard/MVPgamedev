@@ -4,6 +4,7 @@ demo.icestate = function(){};
 demo.icestate.prototype = {
     preload: function(){
         loadImages();
+        loadCatBoss();
 
         
         // make sure to set this to the size of the tile map 
@@ -59,6 +60,8 @@ demo.icestate.prototype = {
         
         
         createChameleon(500,game.world.height - 300);
+        
+        place_cat_boss(0,0);
 
         
         iceMap.setCollision(12, true, icelayer1);
@@ -89,6 +92,8 @@ demo.icestate.prototype = {
         placeFruit(775,875,"purplefruit");
         placeHealthpack(25, 250);
         placeFruit(925, 250, "greenfruit");
+        
+        placeHealthpack(500, 550);
         
         
 //        // place enemies ( note don't put anything with y pos above 5050 )
@@ -133,6 +138,14 @@ demo.icestate.prototype = {
         
         // colide with icelayer and allow player to jump 
         game.physics.arcade.collide(player, icelayer1);
+        
+        if (game.camera.y != 0) {
+            // catboss stays asleep until 3 seconds after camera reaches the top            
+            cat_boss.throw_ball_timer = game.time.time + 3000;
+        }
+        var boss_collision_list = [icelayer1, icelayer2]
+        cat_boss_move(boss_collision_list);
+
 
         player.tint = 0xffffff;
         // check for ballooning 
