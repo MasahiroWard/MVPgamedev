@@ -81,12 +81,15 @@ demo.icestate.prototype = {
         placeFruit(200, 300, "purplefruit");
         placeFruit(500, game.world.height - 1600, "purplefruit");
         placeFruit(825, 5025, "bluefruit");
-        placeFruit(725, 3275, "greenfruit"); // put in moving platform to get to here 
+        placeHealthpack(725,3275);
+//        placeFruit(725, 3275, "greenfruit"); // put in moving platform to get to here 
         placeFruit(400, 3125, "greenfruit");
         placeFruit(450, 2475, "bluefruit");
         placeFruit(675,1925, "purplefruit");
         placeFruit(275,8575,"greenfruit");
         placeFruit(775,875,"purplefruit");
+        placeHealthpack(25, 250);
+        placeFruit(925, 250, "greenfruit");
         
         
 //        // place enemies ( note don't put anything with y pos above 5050 )
