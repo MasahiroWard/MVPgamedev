@@ -66,7 +66,6 @@ function loadImages(){
     game.load.audio('whistle', 'assets/sounds/whistle.mp3');
     game.load.audio('bing', 'assets/sounds/bing.mp3');
     game.load.audio('jingle', 'assets/sounds/jingle.mp3');
-    game.load.audio('bossMusic', 'assets/sounds/bossMusic.mp3');
     
     // health bar assets 
     game.load.image('heart', 'assets/sprites/heart.png');

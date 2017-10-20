@@ -1,7 +1,7 @@
 // Functions for boss generation and movement
 
 // Variable associated with the cat boss
-var cat_boss, yarn_ball;
+var cat_boss, yarn_ball, bossMusic;
 
 // For special enemies such as bosses, only preload them if required
 function loadCatBoss(){
@@ -14,6 +14,7 @@ function loadCatBoss(){
     game.load.spritesheet('yellow_cat', 'assets/spritesheets/yellow_catwalk_spritesheet.png',158,147);
     game.load.spritesheet('orange_cat', 'assets/spritesheets/orange_catwalk_spritesheet.png',157,145);
     game.load.spritesheet('purple_cat', 'assets/spritesheets/purple_catwalk_spritesheet.png',158,146);
+    game.load.audio('bossMusic', 'assets/sounds/bossMusic.mp3');
 }
 
 function place_cat_boss(x, y){
@@ -52,6 +53,9 @@ function place_cat_boss(x, y){
     yarn_ball.body.velocity.setTo(20,20);
 //    yarn_ball.body.maxVelocity = 70;
 //    yarn_ball.body.tilePadding.y = 25
+    
+    // add audio
+    bossMusic = game.add.audio('bossMusic');
 }
 
 function cat_boss_fall_asleep() {
@@ -154,6 +158,13 @@ function cat_boss_move(layer_list){
     for (l in layer_list){
         game.physics.arcade.collide(cat_boss, layer_list[l]);
         game.physics.arcade.collide(yarn_ball, layer_list[l]);
+    }
+    
+    if (cat_boss.action != 'sleeping' && bossMusic.isPlaying == false){
+        game.sound.stopAll();
+        bossMusic.play('','',0.3,true,true);
+        
+        
     }
         
     switch(cat_boss.action) {

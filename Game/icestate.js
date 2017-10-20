@@ -4,6 +4,7 @@ demo.icestate = function(){};
 demo.icestate.prototype = {
     preload: function(){
         loadImages();
+        loadCatBoss();
 
         
         // make sure to set this to the size of the tile map 
@@ -31,7 +32,6 @@ demo.icestate.prototype = {
         
         // play background music
         guitar2 = game.add.audio('guitar2');
-        bossMusic = game.add.audio('bossMusic'); // MUSIC FOR BOSS BATTLE !
         
         guitar2.play('','',0.3,true,true);
         
@@ -60,6 +60,8 @@ demo.icestate.prototype = {
         
         
         createChameleon(500,game.world.height - 300);
+        
+        place_cat_boss(0,0);
 
         
         iceMap.setCollision(12, true, icelayer1);
@@ -81,12 +83,17 @@ demo.icestate.prototype = {
         placeFruit(200, 300, "purplefruit");
         placeFruit(500, game.world.height - 1600, "purplefruit");
         placeFruit(825, 5025, "bluefruit");
-        placeFruit(725, 3275, "greenfruit"); // put in moving platform to get to here 
+        placeHealthpack(725,3275);
+//        placeFruit(725, 3275, "greenfruit"); // put in moving platform to get to here 
         placeFruit(400, 3125, "greenfruit");
         placeFruit(450, 2475, "bluefruit");
         placeFruit(675,1925, "purplefruit");
         placeFruit(275,8575,"greenfruit");
         placeFruit(775,875,"purplefruit");
+        placeHealthpack(25, 250);
+        placeFruit(925, 250, "greenfruit");
+        
+        placeHealthpack(500, 550);
         
         
 //        // place enemies ( note don't put anything with y pos above 5050 )
@@ -131,6 +138,14 @@ demo.icestate.prototype = {
         
         // colide with icelayer and allow player to jump 
         game.physics.arcade.collide(player, icelayer1);
+        
+        if (game.camera.y != 0) {
+            // catboss stays asleep until 3 seconds after camera reaches the top            
+            cat_boss.throw_ball_timer = game.time.time + 3000;
+        }
+        var boss_collision_list = [icelayer1, icelayer2]
+        cat_boss_move(boss_collision_list);
+
 
         player.tint = 0xffffff;
         // check for ballooning 
