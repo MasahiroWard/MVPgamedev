@@ -7,11 +7,11 @@ function make_enemy_groups(){
     snakes_group.enableBody = true;
 }
 
-function placeBird(x, y, clrs, health=0){
-    var bird = birds_group.create(x,y,clrs[health]+"_bird");
+function placeBird(x, y, clrs){
+    var bird = birds_group.create(x,y,clrs[clrs.length-1]+"_bird");
     bird.enemy_type = "_bird";
     bird.scale.setTo(0.3, 0.3);
-    bird.health = health;
+    bird.health = clrs.length-1;
     bird.color_scheme = clrs;
     bird.color = bird.color_scheme[bird.health];
     bird.hit_recently_timer = 0;
@@ -19,11 +19,11 @@ function placeBird(x, y, clrs, health=0){
     return (bird)
 }
 
-function placeSnake(x, y, clrs, health=0){
-    var snake = snakes_group.create(x,y,clrs[health]+"_snake");
+function placeSnake(x, y, clrs){
+    var snake = snakes_group.create(x,y,clrs[clrs.length-1]+"_snake");
     snake.enemy_type = "_snake";
     snake.scale.setTo(0.2, 0.2);
-    snake.health = health;
+    snake.health = clrs.length-1;
     snake.color_scheme = clrs;
     snake.color = snake.color_scheme[snake.health];
     snake.hit_recently_timer = 0;
