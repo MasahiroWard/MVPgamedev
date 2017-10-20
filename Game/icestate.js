@@ -31,7 +31,6 @@ demo.icestate.prototype = {
         
         // play background music
         guitar2 = game.add.audio('guitar2');
-        bossMusic = game.add.audio('bossMusic'); // MUSIC FOR BOSS BATTLE !
         
         guitar2.play('','',0.3,true,true);
         
