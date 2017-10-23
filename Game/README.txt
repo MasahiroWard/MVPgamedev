@@ -3,7 +3,7 @@ MVP game development - Prismatic Chameleon
 
 Start the game. It automatically starts on the tutorial stage. Press i on the keyboard to go to the first real stage, the Ice Stage.  
 
-To play, use the arrow keys to move and collect fruit. Press qwerty to change colors. 
+To play, use the arrow keys to move and collect fruit. Press qweasd to change colors. 
 
 Avoid enemies or kill enemies of the same color and get to the top of the stage. 
 
@@ -17,6 +17,8 @@ Each stage should have boilerplate code that can be copy+pasted (such as player 
 Stages should not have any code in them, they will simply call the relevant functions
 Thus, we can change functions once to change game mechanics
 
+
+Sounds:
 
 This game uses these sounds from freesound:
 jump05 by jeremysykes ( https://freesound.org/people/jeremysykes/sounds/344500/ ),
