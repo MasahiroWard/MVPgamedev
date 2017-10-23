@@ -35,6 +35,9 @@ demo.icestate.prototype = {
         
         guitar2.play('','',0.3,true,true);
         
+        // add background
+        add_game_bg('bg2');
+        
         game.stage.backgroundColor = '#DDDDDD';
 
 //        cursors = game.input.keyboard.createCursorKeys();
