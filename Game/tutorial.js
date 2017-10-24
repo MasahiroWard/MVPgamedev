@@ -25,10 +25,10 @@ demo.tutorial.prototype = {
         // possible refactor
         // load in tile map assets
         // This should be customized for each stage
-        game.load.tilemap('stage', 'assets/tilemaps/TestMapFitted.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('grass_platform', 'assets/tilemaps/grass_platform.png');
-        game.load.image('ladder_sprite', 'assets/tilemaps/new_ladder_sprite.png');
-        game.load.image('ladder_sprite_top', 'assets/tilemaps/new_ladder_sprite.png');
+        game.load.tilemap('stage', 'assets/tilemaps/Tutorial/TestMapFitted.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.image('grass_platform', 'assets/tilemaps/Tutorial/grass_platform.png');
+        game.load.image('ladder_sprite', 'assets/tilemaps/Tutorial/new_ladder_sprite.png');
+        game.load.image('ladder_sprite_top', 'assets/tilemaps/Tutorial/new_ladder_sprite.png');
         ///////////////////////////////////////////////////
         
     },

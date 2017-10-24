@@ -11,13 +11,13 @@ demo.icestate.prototype = {
         game.world.setBounds(0, 0, 1000, 6000);
         
         // load in tile map assets 
-        game.load.tilemap('iceStage', 'assets/tilemaps/IceMap2.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('ice_sprite', 'assets/tilemaps/ice_sprite.png');
-        game.load.image('LargeLadderTop', 'assets/tilemaps/ice_ladder_sprite.png');
-        game.load.image('tempBlueBlock', 'assets/tilemaps/blue_snow.png');
-        game.load.image('tempGreenBlock', 'assets/tilemaps/green_snow.png');
-        game.load.image('tempPurpleBlock', 'assets/tilemaps/purple_snow.png');
-        game.load.image('LargeLadder', 'assets/tilemaps/ice_ladder_sprite.png');
+        game.load.tilemap('iceStage', 'assets/tilemaps/IceStage/IceMap2.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.image('ice_sprite', 'assets/tilemaps/IceStage/ice_sprite.png');
+        game.load.image('LargeLadderTop', 'assets/tilemaps/IceStage/ice_ladder_sprite.png');
+        game.load.image('tempBlueBlock', 'assets/tilemaps/IceStage/blue_snow.png');
+        game.load.image('tempGreenBlock', 'assets/tilemaps/IceStage/green_snow.png');
+        game.load.image('tempPurpleBlock', 'assets/tilemaps/IceStage/purple_snow.png');
+        game.load.image('LargeLadder', 'assets/tilemaps/IceStage/ice_ladder_sprite.png');
     },
     
     
