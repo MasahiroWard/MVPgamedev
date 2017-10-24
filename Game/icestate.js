@@ -159,7 +159,7 @@ demo.icestate.prototype = {
         cat_boss_move(boss_collision_list);
 
 
-        player.tint = 0xffffff;
+//        player.tint = 0xffffff;
         // check for ballooning 
         if (player.ballooning){
             chameleon_float();
