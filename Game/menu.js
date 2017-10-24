@@ -8,27 +8,35 @@ demo.menu.prototype = {
     create: function(){
         game.sound.stopAll();
         game.camera.y = game.world.height;
+        game.stage.backgroundColor = '#DDDDDD';
 
-//        add_game_bg('menu_bg');
-        menu_style = {font:'32px Arial'}
+        createChameleon(500, 300);
         
-        var tutorial_stage_label = game.add.text('Tutorial', 200, 200, menu_style)
-//        tutorial_stage_label.inputEnabled = true;
-//        tutorial_stage_label.events.onInputUp.add(function(){
-//            game.state.start('tutorial');
-//        })
+        var style = {font: "30px Arial", fill: "Black"}
+        var tutorial_menu_option = game.add.text(200, 200, "Tutorial", style);
+        tutorial_menu_option.inputEnabled = true;
+        tutorial_menu_option.events.onInputUp.add(
+            function(){
+                game.state.start('tutorial');
+            }
+        );
         
-//        trial_stage_label = game.add.text('Trial', 200, 400, menu_style)
-//        trial_stage_label.inputEnabled = true;
-//        trial_stage_label.events.onInputUp.add(function(){
-//            game.state.start('trialstate');
-//        })
-//
-//        ice_stage_label = game.add.text('Ice Stage', 200, 600, menu_style)
-//        ice_stage_label.inputEnabled = true;
-//        ice_stage_label.events.onInputUp.add(function(){
-//            game.state.start('icestate');
-//        })
+        var ice_menu_option = game.add.text(200, 250, "Ice Stage", style);
+        ice_menu_option.inputEnabled = true;
+        ice_menu_option.events.onInputUp.add(
+            function(){
+                game.state.start('icestate');
+            }
+        );
+
+        var trial_menu_option = game.add.text(200, 300, "Trial", style);
+        trial_menu_option.inputEnabled = true;
+        trial_menu_option.events.onInputUp.add(
+            function(){
+                game.state.start('trialstate');
+            }
+        );
+
         
     },
     update: function(){

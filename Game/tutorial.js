@@ -30,8 +30,21 @@ demo.tutorial.prototype = {
         game.load.image('ladder_sprite', 'assets/tilemaps/new_ladder_sprite.png');
         game.load.image('ladder_sprite_top', 'assets/tilemaps/new_ladder_sprite.png');
         ///////////////////////////////////////////////////
+        
     },
     create: function(){
+        // Reinitialize vars
+        tutorial_paused = false;
+        tutorial_txt = false;
+        tutorial_sprite = false;
+        prev_player_vel_y = 0;
+        tutorial_OK_txt = false;
+        tutorial_time = 0;
+
+        // Used to prevent pesky bug where camera is in the same location for multiple frames.  Tutorial message should only show once
+        prev_idx = -2;
+        idx = -1;
+        
         // This only needs to happen one time.  Add it to the intial state and forget about it after
         game.physics.startSystem(Phaser.Physics.ARCADE);
         // Allows keyboard inputs
