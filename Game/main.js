@@ -3,8 +3,11 @@ game.state.add('gameover', demo.gameover);
 game.state.add('state0', demo.state0);
 game.state.add('state1', demo.state1);
 game.state.add('state2', demo.state2);
+
 game.state.add('tutorial', demo.tutorial);
 game.state.add('icestate', demo.icestate);
+game.state.add('lavastate', demo.trial);
+
 game.state.add('trialstate', demo.trial);
 game.state.add('menu', demo.menu)
 game.state.start('tutorial');

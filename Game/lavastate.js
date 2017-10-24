@@ -11,13 +11,13 @@ demo.lavastate.prototype = {
         game.world.setBounds(0, 0, 1000, 6000);
         
         // load in tile map assets 
-//        game.load.tilemap('iceStage', 'assets/tilemaps/IceMap2.json', null, Phaser.Tilemap.TILED_JSON);
-//        game.load.image('ice_sprite', 'assets/tilemaps/ice_sprite.png');
-//        game.load.image('LargeLadderTop', 'assets/tilemaps/ice_ladder_sprite.png');
-//        game.load.image('tempBlueBlock', 'assets/tilemaps/blue_snow.png');
-//        game.load.image('tempGreenBlock', 'assets/tilemaps/green_snow.png');
-//        game.load.image('tempPurpleBlock', 'assets/tilemaps/purple_snow.png');
-//        game.load.image('LargeLadder', 'assets/tilemaps/ice_ladder_sprite.png');
+        game.load.tilemap('lavaStage', 'assets/tilemaps/LavaStage/LavaMap.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.image('grass_platform', 'assets/tilemaps/Tutorial/grass_platform.png');
+        game.load.image('new_ladder_sprite_top', 'assets/tilemaps/Tutorial/new_ladder_sprite.png');
+        game.load.image('temp_red_tile', 'assets/tilemaps/LavaStage/temp_red_tile.png');
+        game.load.image('temp_orange_tile', 'assets/tilemaps/LavaStage/temp_orange_tile.png');
+        game.load.image('temp_yellow_tile', 'assets/tilemaps/LavaStage/temp_yellow_tile.png');
+        game.load.image('new_ladder_sprite', 'assets/tilemaps/Tutorial/new_ladder_sprite.png');
     },
     
     
