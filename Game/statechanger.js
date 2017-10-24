@@ -15,11 +15,13 @@ function keyPress(char) {
     } 
     if (char == "p"){
         // Switch pausing
-        game.paused = !game.paused;
-        if (pause_darkener.alpha == 0){
-            pause_darkener.alpha = 0.5;
-        } else {
+//        game.paused = !game.paused;
+        if (game.paused){
+            game.paused = false;
             pause_darkener.alpha = 0;
+        } else {
+            game.paused = true;
+            pause_darkener.alpha = 0.5;
         }
         
     }
@@ -30,8 +32,9 @@ function keyPress(char) {
         game.state.start('icestate');
     } else if (char == "u"){
         game.state.start('tutorial');
-    }
-    else if (char == "t"){
+    } else if (char == "t"){
         game.state.start('trialstate');
+    } else if (char == "m"){
+        game.state.start("menu")
     }
 }

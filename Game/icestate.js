@@ -73,7 +73,6 @@ demo.icestate.prototype = {
 
         
         //prep for placing fruit and enemies and health packs 
-        createInventory(0,0);
         make_fruit_groups();
         make_enemy_groups();
         make_healthpack_groups(); 
@@ -131,10 +130,15 @@ demo.icestate.prototype = {
 //        
 //        make_balloon_group();
 //        placeBalloon(200, 2300);
-        
+
+        createInventory(0,525);
+
         
         // place health bar
         place_hearts(450, 0);
+        
+        // Allow player to darken screen when paused
+        add_pause_darkener();
 
     },
     update: function(){ 

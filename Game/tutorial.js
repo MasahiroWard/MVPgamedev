@@ -123,14 +123,15 @@ demo.tutorial.prototype = {
                 
         // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 525);
-        add_pause_darkener();
         
         // place health hearts *****
         place_hearts(450, 0);
         
+        add_pause_darkener();
+        
     },
     update: function(){
-        console.log(player.body.x, player.body.y);
+//        console.log(player.body.x, player.body.y);
         // These are the heights at which the game automatically pauses and displays a message
         var stop_heights = [2627, 2626, 2625, 2624, 2623, 2622, 1500, 1499, 1498, 1497, 1496, 1];
 //        var stop_heights = [];
