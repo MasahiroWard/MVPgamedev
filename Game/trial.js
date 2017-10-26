@@ -1,4 +1,4 @@
-
+var trialMap;
 
 demo.trial = function(){};
 demo.trial.prototype = {
@@ -12,11 +12,11 @@ demo.trial.prototype = {
         // load in tile map assets 
         game.load.tilemap('trial', 'assets/tilemaps/TrialMap.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('ice_sprite', 'assets/tilemaps/IceStage/ice_sprite.png');
-        game.load.image('LargeLadderTop', 'assets/tilemaps/IceStage/ice_ladder_sprite.png');
-        game.load.image('tempBlueBlock', 'assets/tilemaps/IceStage/blue_snow.png');
-        game.load.image('tempGreenBlock', 'assets/tilemaps/IceStage/green_snow.png');
-        game.load.image('tempPurpleBlock', 'assets/tilemaps/IceStage/purple_snow.png');
-        game.load.image('LargeLadder', 'assets/tilemaps/IceStage/ice_ladder_sprite.png');
+        game.load.image('new_ladder_sprite', 'assets/tilemaps/IceStage/ice_ladder_sprite.png');
+        game.load.image('blue_snow', 'assets/tilemaps/IceStage/blue_snow.png');
+//        game.load.image('green_snow', 'assets/tilemaps/IceStage/green_snow.png');
+        game.load.image('purple_snow', 'assets/tilemaps/IceStage/purple_snow.png');
+        game.load.image('new_ladder_sprite_top', 'assets/tilemaps/IceStage/ice_ladder_sprite.png');
         
         loadCatBoss();
     },
@@ -43,11 +43,11 @@ demo.trial.prototype = {
         // add in the tile map * make into function - creates dictionary and cycles through dictionary 
         trialMap = game.add.tilemap('trial');
         trialMap.addTilesetImage('ice_sprite');
-        iceMap.addTilesetImage('LargeLadder');
-        iceMap.addTilesetImage('LargeLadderTop');
-        iceMap.addTilesetImage('tempBlueBlock');
-        iceMap.addTilesetImage('tempPurpleBlock');
-        iceMap.addTilesetImage('tempGreenBlock');
+        trialMap.addTilesetImage('new_ladder_sprite');
+        trialMap.addTilesetImage('new_ladder_sprite_top');
+        trialMap.addTilesetImage('blue_snow');
+        trialMap.addTilesetImage('purple_snow');
+//        iceMap.addTilesetImage('green_snow');
         triallayer1 = trialMap.createLayer('Platforms');
         triallayer2 = trialMap.createLayer('Ladders');  
         triallayer1.resizeWorld();
@@ -55,8 +55,8 @@ demo.trial.prototype = {
         game.physics.arcade.enable(triallayer1);
         game.physics.arcade.enable(triallayer2);
 
-        trialMap.setCollisionBetween(1, 10, true, triallayer1)
-        trialMap.setCollisionBetween(11, 12, true, triallayer2)
+        trialMap.setCollisionBetween(1, 7, true, triallayer1)
+        trialMap.setCollisionBetween(8, 9, true, triallayer2)
   
         createChameleon(500, 600);
         make_fruit_groups();
@@ -92,8 +92,8 @@ demo.trial.prototype = {
             chameleon_float();
         } else {
             chameleonmove();
-            var tile_arr = get_surrounding_tiles(triallayer2, map);
-            ladder_movement(tile_arr, 11, 12);
+            var tile_arr = get_surrounding_tiles(triallayer2, trialMap);
+            ladder_movement(tile_arr, 8, 9);
         }
 
         birds_group.forEach(moveBird, this);
