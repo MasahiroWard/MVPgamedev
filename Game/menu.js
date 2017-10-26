@@ -31,6 +31,15 @@ demo.menu.prototype = {
                 game.state.start('icestate');
             }
         );
+        
+        var lava_menu_option = game.add.text(200, 350, "Lava Stage", style);
+        lava_menu_option.inputEnabled = true;
+        lava_menu_option.events.onInputUp.add(
+            function(){
+                game.state.start('lavastate');
+            }
+        );
+
 
         var trial_menu_option = game.add.text(200, 300, "Trial", style);
         trial_menu_option.inputEnabled = true;
