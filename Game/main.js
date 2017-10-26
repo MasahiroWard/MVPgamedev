@@ -9,5 +9,7 @@ game.state.add('icestate', demo.icestate);
 game.state.add('lavastate', demo.lavastate);
 
 game.state.add('trialstate', demo.trial);
+game.state.add('boilerplate', demo.boilerplate);
+
 game.state.add('menu', demo.menu)
 game.state.start('tutorial');

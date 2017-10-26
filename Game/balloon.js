@@ -9,6 +9,7 @@ function placeBalloon(x, y){
     var balloon = game.add.sprite(x, y, "balloon");
     balloon.scale.setTo(0.13, 0.13);
     balloon_group.add(balloon);
+    return balloon
 }
 
 function get_balloon(player, balloon){

@@ -58,7 +58,7 @@ demo.menu.prototype = {
         placeMP(400, 100, 5, 1, 0, 8, 0, 100);
         
         make_balloon_group();
-        placeBalloon(925, 500);
+        menu_balloon = placeBalloon(925, 500);
         
         createInventory(0,525);
 
@@ -71,6 +71,11 @@ demo.menu.prototype = {
             chameleon_float();
         } else {
             chameleonmove();
+        }
+        
+        console.log(menu_balloon)
+        if (!menu_balloon.alive){
+            menu_balloon.revive();
         }
         
         moving_platform_group.forEach(movingPlatformsUpdate, this);
