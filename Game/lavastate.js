@@ -1,4 +1,4 @@
-var lavaMap, lavalayer1, lavalayer2;
+var lavaMap, lavalayer1, lavalayer2, lava_dictionary;
 
 demo.lavastate = function(){};
 demo.lavastate.prototype = {
@@ -52,7 +52,7 @@ demo.lavastate.prototype = {
         lavaMap.addTilesetImage('new_ladder_sprite');
 
         
-       // SET UP TILE MAP ********* 
+       // SET UP TILE MAP 
         lavalayer1 = lavaMap.createLayer('Platforms');
         lavalayer2 = lavaMap.createLayer('Ladders');
         lavalayer1.resizeWorld();
@@ -70,6 +70,7 @@ demo.lavastate.prototype = {
         lavaMap.setCollision(12, true, icelayer1);
         lavaMap.setCollisionBetween(1, 12, true, lavalayer1);
         lavaMap.setCollisionBetween(13, 14, true, lavalayer2);
+
 
         
 //        //prep for placing fruit and enemies and health packs 
@@ -145,8 +146,10 @@ demo.lavastate.prototype = {
         // move the camera (if it wasnt obvious)
         move_camera(1,1);
         
-//        var tile_arr2 = get_surrounding_tiles(icelayer1, iceMap);
-//        collideIce(tile_arr2);
+//        lava_dictionary = {1:player.color, 2:player.color, 3:player.color, 4:"red", 5:"red", 6:"red", 7:"orange", 8:"orange", 9:"orange", 10:"yellow", 11:"yellow", 12:"yellow", 13:player.color, 14:player.color};
+////        
+//        var tile_arr3 = get_surrounding_tiles(lavalayer1, lavaMap);
+//        collideIce(tile_arr3, lava_dictionary);
 //        
 //        // colide with icelayer and allow player to jump 
         game.physics.arcade.collide(player, lavalayer1);
@@ -168,18 +171,25 @@ demo.lavastate.prototype = {
         }
 //
 //        // Game over if you fall off the screen
-        if (game.camera.y+650 < player.body.y) {
-            console.log("ICE");
-            deadplayer(true);
-        }
+//        if (game.camera.y+650 < player.body.y) {
+//            console.log("ICE");
+//            deadplayer(true);
+//        }
 //        
 //        // move enemies 
 //        birds_group.forEach(moveBird, this);
 //        snakes_group.forEach(moveSnake, this);
 //        moving_platform_group.forEach(movingPlatformsUpdate, this);
 //        
+        lava_dictionary = {1:player.color, 2:player.color, 3:player.color, 4:"red", 5:"red", 6:"red", 7:"orange", 8:"orange", 9:"orange", 10:"yellow", 11:"yellow", 12:"yellow", 13:player.color, 14:player.color};
+//        
+        var tile_arr3 = get_surrounding_tiles(lavalayer1, lavaMap);
+        collideIce(tile_arr3, lava_dictionary);
+        
+        
 //        //checkforladders(iceMap, icelayer2);
         var tile_arr1 = get_surrounding_tiles(lavalayer2, lavaMap);
+        console.log(tile_arr1);
         ladder_movement(tile_arr1, 13, 14);
 //        
 //
