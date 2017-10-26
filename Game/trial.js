@@ -8,14 +8,15 @@ demo.trial.prototype = {
         // make sure to set this to the size of the tile map 
         game.world.setBounds(0, 0, 1000,1000);
         
+        // Vaidehi! Help!
         // load in tile map assets 
         game.load.tilemap('trial', 'assets/tilemaps/TrialMap.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('ice_sprite', 'assets/tilemaps/ice_sprite.png');
-        game.load.image('ladder_sprite', 'assets/tilemaps/ladder_sprite.png');
-        game.load.image('blue_snow', 'assets/tilemaps/blue_snow.png');
-        game.load.image('green_snow', 'assets/tilemaps/green_snow.png');
-        game.load.image('purple_snow', 'assets/tilemaps/purple_snow.png');
-        game.load.image('ladder_sprite_top', 'assets/tilemaps/ladder_sprite.png');
+        game.load.image('ice_sprite', 'assets/tilemaps/IceStage/ice_sprite.png');
+        game.load.image('LargeLadderTop', 'assets/tilemaps/IceStage/ice_ladder_sprite.png');
+        game.load.image('tempBlueBlock', 'assets/tilemaps/IceStage/blue_snow.png');
+        game.load.image('tempGreenBlock', 'assets/tilemaps/IceStage/green_snow.png');
+        game.load.image('tempPurpleBlock', 'assets/tilemaps/IceStage/purple_snow.png');
+        game.load.image('LargeLadder', 'assets/tilemaps/IceStage/ice_ladder_sprite.png');
         
         loadCatBoss();
     },
@@ -38,39 +39,31 @@ demo.trial.prototype = {
 
 //        cursors = game.input.keyboard.createCursorKeys();
 
+        // Vaidehi! Help!
         // add in the tile map * make into function - creates dictionary and cycles through dictionary 
         trialMap = game.add.tilemap('trial');
         trialMap.addTilesetImage('ice_sprite');
-        trialMap.addTilesetImage('ladder_sprite');
-        trialMap.addTilesetImage('ladder_sprite_top');
-        trialMap.addTilesetImage('blue_snow');
-        trialMap.addTilesetImage('purple_snow');
-        trialMap.addTilesetImage('green_snow');
-
-        
-        
+        iceMap.addTilesetImage('LargeLadder');
+        iceMap.addTilesetImage('LargeLadderTop');
+        iceMap.addTilesetImage('tempBlueBlock');
+        iceMap.addTilesetImage('tempPurpleBlock');
+        iceMap.addTilesetImage('tempGreenBlock');
         triallayer1 = trialMap.createLayer('Platforms');
-        triallayer2 = trialMap.createLayer('Ladders');
-        
-
+        triallayer2 = trialMap.createLayer('Ladders');  
         triallayer1.resizeWorld();
         triallayer2.resizeWorld();
-        
-        
         game.physics.arcade.enable(triallayer1);
         game.physics.arcade.enable(triallayer2);
-        
-        
-        createChameleon(500, 600);
 
         trialMap.setCollisionBetween(1, 10, true, triallayer1)
         trialMap.setCollisionBetween(11, 12, true, triallayer2)
-
-
-        
-        //prep for placing fruit and enemies
+  
+        createChameleon(500, 600);
         make_fruit_groups();
         make_enemy_groups();
+        make_balloon_group();
+        addMovingPlatforms();
+        make_healthpack_groups();
         
         // place fruit
         placeFruit(500, 600, "bluefruit");
@@ -80,37 +73,18 @@ demo.trial.prototype = {
         placeFruit(500, 600, "purplefruit");
         placeFruit(500, 600, "orangefruit");        
         
-//        var bird1 = placeBird(275,400,"green");
-//        var bird2 = placeBird(575,200,"blue");
-//        bird2.mytween = game.add.tween(bird2).to({x:[750, 600], y:[200,200]}, 1000, Phaser.Easing.Linear.None, true, 0, -1, false);
-//        placeSnake(125,3475, "purple");
-//        placeSnake(125, 4875, "purple"); // TWEEN THIS ENEMY! 
-////        placeSnake(475, 775, "blue");
-//        placeBird(350,2475,"purple");
-//        placeBird(500, 2475, "green");
-////        placeBird(500,1650,"red");
-////        
-        // place moving platforms
-        addMovingPlatforms();
         placeMP(150, 200, 3, 1, 0, 3, 0, 100);
-          
-//        make_balloon_group();
-//        placeBalloon(200, 2300);
         
         place_cat_boss(600, 200);
         
         // place health bar
         place_hearts(450, 0);
         createInventory(0,525);
+        add_pause_darkener();
+
     },
     update: function(){ 
-        // move the camera (if it wasnt obvious)
         move_camera(1,1);
-        
-//        var tile_arr2 = get_surrounding_tiles(triallayer1, trialMap);
-//        collideTrial(tile_arr2);
-        
-        // colide with icelayer and allow player to jump 
         game.physics.arcade.collide(player, triallayer1);
 
         // check for ballooning 
@@ -118,25 +92,15 @@ demo.trial.prototype = {
             chameleon_float();
         } else {
             chameleonmove();
+            var tile_arr = get_surrounding_tiles(triallayer2, map);
+            ladder_movement(tile_arr, 11, 12);
         }
 
-        // Game over if you fall off the screen
-        if (game.camera.y+650 < player.body.y) {
-            console.log("ICE");
-            deadplayer(true);
-        }
-        
-        // move enemies 
         birds_group.forEach(moveBird, this);
         snakes_group.forEach(moveSnake, this);
         moving_platform_group.forEach(movingPlatformsUpdate, this);
-        
-        //checkforladders(iceMap, icelayer2);
-        var tile_arr1 = get_surrounding_tiles(triallayer2, trialMap);
-        ladder_movement(tile_arr1, 11, 12);
-        
         update_health(player.health);
-        
+    
         var layer_list = [triallayer1, triallayer2]
         if (game.camera.y != 0) {
             // catboss doesn't wake up until camera reaches 0

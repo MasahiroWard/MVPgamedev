@@ -162,20 +162,13 @@ demo.icestate.prototype = {
         var boss_collision_list = [icelayer1, icelayer2]
         cat_boss_move(boss_collision_list);
 
-
-//        player.tint = 0xffffff;
-        // check for ballooning 
+        // check for ballooning
         if (player.ballooning){
             chameleon_float();
         } else {
             chameleonmove();
         }
 
-        // Game over if you fall off the screen
-        if (game.camera.y+650 < player.body.y) {
-            console.log("ICE");
-            deadplayer(true);
-        }
         
         // move enemies 
         birds_group.forEach(moveBird, this);
@@ -186,10 +179,7 @@ demo.icestate.prototype = {
         var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
         ladder_movement(tile_arr1, 10, 11);
         
-
         update_health(player.health);
         
-
-
     }
 };
