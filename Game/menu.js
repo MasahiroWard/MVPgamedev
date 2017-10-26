@@ -48,6 +48,14 @@ demo.menu.prototype = {
                 game.state.start('trialstate');
             }
         );
+        
+        var bp_menu_option = game.add.text(200, 300, "Boilerplate", style);
+        bp_menu_option.inputEnabled = true;
+        bp_menu_option.events.onInputUp.add(
+            function(){
+                game.state.start('boilerplate');
+            }
+        );
 
         make_fruit_groups();
         placeFruit(300, 100, "redfruit");

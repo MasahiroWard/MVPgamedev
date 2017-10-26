@@ -71,12 +71,12 @@ demo.boilerplate.prototype = {
         make_healthpack_groups();
         
         // Examples:
-//        placeFruit(300, 2300, "bluefruit")
-//        var snake1 = placeSnake(0, 1950, ["purple"]);
-//        snake1.mytween = game.add.tween(snake1).to({x:[200, 0], y:[1950,1950]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
-//        placeBalloon(50, 900);
-//        placeMP(150, 2450, 2, 1, 5, 0, 100, 0);
-//        placeHealthpack(500, 550);
+//        placeFruit(700, 2700, "bluefruit")
+//        var snake1 = placeSnake(300, 2000, ["blue"]);
+//        snake1.mytween = game.add.tween(snake1).to({x:[200, 300], y:[2000,2000]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+//        placeBalloon(100, 3100);
+//        placeMP(150, 2700, 3, 1, 2, 2, 100, 100);
+//        placeHealthpack(900, 2600);
         
             
         // These should be the last thing added so that it is on top of all other sprites (never hidden)
