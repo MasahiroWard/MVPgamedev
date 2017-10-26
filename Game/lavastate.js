@@ -1,4 +1,4 @@
-
+var lavaMap, lavalayer1, lavalayer2;
 
 demo.lavastate = function(){};
 demo.lavastate.prototype = {
@@ -43,23 +43,23 @@ demo.lavastate.prototype = {
 //        cursors = game.input.keyboard.createCursorKeys();
 
         // add in the tile map * make into function - creates dictionary and cycles through dictionary 
-//        iceMap = game.add.tilemap('iceStage');
-//        iceMap.addTilesetImage('ice_sprite');
-//        iceMap.addTilesetImage('LargeLadder');
-//        iceMap.addTilesetImage('LargeLadderTop');
-//        iceMap.addTilesetImage('tempBlueBlock');
-//        iceMap.addTilesetImage('tempPurpleBlock');
-//        iceMap.addTilesetImage('tempGreenBlock');
+        lavaMap = game.add.tilemap('lavaStage');
+        lavaMap.addTilesetImage('grass_platform');
+        lavaMap.addTilesetImage('new_ladder_sprite_top');
+        lavaMap.addTilesetImage('temp_red_tile');
+        lavaMap.addTilesetImage('temp_orange_tile');
+        lavaMap.addTilesetImage('temp_yellow_tile');
+        lavaMap.addTilesetImage('new_ladder_sprite');
 
         
        // SET UP TILE MAP ********* 
-//        icelayer1 = iceMap.createLayer('Platforms');
-//        icelayer2 = iceMap.createLayer('Ladders');
-//        icelayer1.resizeWorld();
-//        icelayer2.resizeWorld();
+        lavalayer1 = lavaMap.createLayer('Platforms');
+        lavalayer2 = lavaMap.createLayer('Ladders');
+        lavalayer1.resizeWorld();
+        lavalayer2.resizeWorld();
 //        
-//        game.physics.arcade.enable(icelayer1);
-//        game.physics.arcade.enable(icelayer2);
+        game.physics.arcade.enable(lavalayer1);
+        game.physics.arcade.enable(lavalayer2);
 //        
 //        
 //        createChameleon(500,game.world.height - 300);
