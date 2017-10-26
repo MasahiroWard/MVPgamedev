@@ -150,7 +150,7 @@ demo.icestate.prototype = {
         ice_dictionary = {1:"blue", 2:"blue", 3:"blue", 4:"green", 5:"green", 6:"green", 7:"purple", 8:"purple", 9:"purple", 10:player.color, 11:player.color, 12:player.color}
         
         var tile_arr2 = get_surrounding_tiles(icelayer1, iceMap);
-        collideIce(tile_arr2, ice_dictionary);
+        collideIce(tile_arr2, ice_dictionary, 12);
         
         // colide with icelayer and allow player to jump 
         game.physics.arcade.collide(player, icelayer1);

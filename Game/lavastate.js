@@ -36,7 +36,7 @@ demo.lavastate.prototype = {
         guitar2.play('','',0.3,true,true);
         
         // add background
-//        add_game_bg('bg2');
+        add_game_bg('bg2');
         
         game.stage.backgroundColor = '#DDDDDD';
 
@@ -78,6 +78,16 @@ demo.lavastate.prototype = {
         make_enemy_groups();
         make_healthpack_groups(); 
         make_balloon_group();
+        
+        // place things - in order of appearance on screen 
+        placeFruit(300, 5645, "bluefruit"); // can take this one out maybe, but its funny 
+        placeFruit(200, 5645, "redfruit");
+        placeFruit(750 ,5495, "yellowfruit");
+        placeFruit(850, 5495, "orangefruit");
+        placeFruit(350,5345, "redfruit");
+        placeFruit(100,5195, "orangefruit");
+        
+        
 //        
 //        placeBalloon(500, 3925);
 //        
@@ -157,41 +167,36 @@ demo.lavastate.prototype = {
 //        }
 //        var boss_collision_list = [icelayer1, icelayer2]
 //        cat_boss_move(boss_collision_list);
-//
-//
-////        player.tint = 0xffffff;
+
+
+
 //        // check for ballooning 
         if (player.ballooning){
             chameleon_float();
         } else {
             chameleonmove();
         }
-//
-//        // Game over if you fall off the screen
-//        if (game.camera.y+650 < player.body.y) {
-//            console.log("ICE");
-//            deadplayer(true);
-//        }
-//        
+
+        
 //        // move enemies 
-//        birds_group.forEach(moveBird, this);
-//        snakes_group.forEach(moveSnake, this);
-//        moving_platform_group.forEach(movingPlatformsUpdate, this);
-//        
+        birds_group.forEach(moveBird, this);
+        snakes_group.forEach(moveSnake, this);
+        moving_platform_group.forEach(movingPlatformsUpdate, this);
+        
         lava_dictionary = {1:player.color, 2:player.color, 3:player.color, 4:"red", 5:"red", 6:"red", 7:"orange", 8:"orange", 9:"orange", 10:"yellow", 11:"yellow", 12:"yellow", 13:player.color, 14:player.color};
-//        
+        
         var tile_arr3 = get_surrounding_tiles(lavalayer1, lavaMap);
-        collideIce(tile_arr3, lava_dictionary);
+        collideIce(tile_arr3, lava_dictionary, 1);
         
         
-//        //checkforladders(iceMap, icelayer2);
+        //checkforladders(iceMap, icelayer2);
         var tile_arr4 = get_surrounding_tiles(lavalayer2, lavaMap);
-//        console.log(tile_arr1);
+
         ladder_movement(tile_arr4, 13, 14);
-//        
-//
+        
+
         update_health(player.health);
-//        
+        
 
 
     }
