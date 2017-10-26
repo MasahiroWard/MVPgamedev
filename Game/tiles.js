@@ -93,8 +93,8 @@ function collideIce(arr1, tile_dictionary){
     bottom_right = arr1[3]
     
 // set default values as the non-color ice  
-    var checking1 = 12;
-    var checking2 = 12;
+    var checking1 = 1;
+    var checking2 = 1;
 
 // create a dictionary like this in each stage and feed it to the fn 
 //    var tile_dictionary = {1:"blue", 2:"blue", 3:"blue", 4:"green", 5:"green", 6:"green", 7:"purple", 8:"purple", 9:"purple", 10:player.color, 11:player.color, 12:player.color}

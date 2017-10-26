@@ -146,10 +146,7 @@ demo.lavastate.prototype = {
         // move the camera (if it wasnt obvious)
         move_camera(1,1);
         
-//        lava_dictionary = {1:player.color, 2:player.color, 3:player.color, 4:"red", 5:"red", 6:"red", 7:"orange", 8:"orange", 9:"orange", 10:"yellow", 11:"yellow", 12:"yellow", 13:player.color, 14:player.color};
-////        
-//        var tile_arr3 = get_surrounding_tiles(lavalayer1, lavaMap);
-//        collideIce(tile_arr3, lava_dictionary);
+
 //        
 //        // colide with icelayer and allow player to jump 
         game.physics.arcade.collide(player, lavalayer1);
@@ -188,9 +185,9 @@ demo.lavastate.prototype = {
         
         
 //        //checkforladders(iceMap, icelayer2);
-        var tile_arr1 = get_surrounding_tiles(lavalayer2, lavaMap);
-        console.log(tile_arr1);
-        ladder_movement(tile_arr1, 13, 14);
+        var tile_arr4 = get_surrounding_tiles(lavalayer2, lavaMap);
+//        console.log(tile_arr1);
+        ladder_movement(tile_arr4, 13, 14);
 //        
 //
         update_health(player.health);
