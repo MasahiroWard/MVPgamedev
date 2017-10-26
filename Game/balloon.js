@@ -13,9 +13,11 @@ function placeBalloon(x, y){
 }
 
 function get_balloon(player, balloon){
-    balloon.kill();
-    player.has_balloon = true;
-    player.childBalloon = player.addChild(game.make.sprite(-200, -750, 'balloon'));
+    if (!player.has_balloon && !player.ballooning) {
+        balloon.kill();
+        player.has_balloon = true;
+        player.childBalloon = player.addChild(game.make.sprite(-200, -750, 'balloon'));
+    }
 }
 
 function use_balloon(){

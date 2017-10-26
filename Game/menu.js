@@ -14,6 +14,13 @@ demo.menu.prototype = {
         
     },
     create: function(){
+        // This only needs to happen one time.  Add it to the intial state and forget about it after
+        game.physics.startSystem(Phaser.Physics.ARCADE);
+        // Allows keyboard inputs
+        cursors = game.input.keyboard.createCursorKeys();
+        game.input.keyboard.addCallbacks(this, null, null, keyPress);
+
+        
         // Stop sounds when starting a state
         game.sound.stopAll();
         
@@ -78,11 +85,15 @@ demo.menu.prototype = {
         addMovingPlatforms();
         make_healthpack_groups();
         menu_balloon = placeBalloon(925, 500);
+        menu_balloon.reset_time = game.time.time + 2000;
+        placeBalloon(925, 100);
         
         placeFruit(300, 100, "redfruit");
-        placeFruit(700, 100, "bluefruit");        
-        placeMP(0, 600, 18, 3, 0, 0, 0, 0);
+        placeFruit(700, 100, "bluefruit");
         placeMP(400, 100, 5, 1, 0, 8, 0, 100);
+
+        // Add MP as ground so we don't need a tilemap for menu
+        placeMP(0, 600, 18, 3, 0, 0, 0, 0);
             
         // These should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 525);
@@ -90,9 +101,6 @@ demo.menu.prototype = {
         add_pause_darkener();
     },
     update: function(){
-        // Collide with layers that are necessary
-        game.physics.arcade.collide(player, layer1);
-        
         game.camera.y = 0;
         
         if (player.ballooning) {
@@ -101,9 +109,16 @@ demo.menu.prototype = {
             chameleonmove();
         }
         
+        if (!menu_balloon.alive && game.time.time > menu_balloon.reset_time) {
+            menu_balloon.revive()
+        } else if (menu_balloon.alive) {
+            // Revive menu balloon only if it has been dead for 2 seconds
+            menu_balloon.reset_time = game.time.time + 2000;
+        }
+        
         birds_group.forEach(moveBird, this);
         snakes_group.forEach(moveSnake, this);
         moving_platform_group.forEach(movingPlatformsUpdate, this);
-        update_health(player.health);
+//        update_health(player.health);
     },
 }

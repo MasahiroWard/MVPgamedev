@@ -44,13 +44,7 @@ demo.tutorial.prototype = {
         // Used to prevent pesky bug where camera is in the same location for multiple frames.  Tutorial message should only show once
         prev_idx = -2;
         idx = -1;
-        
-        // This only needs to happen one time.  Add it to the intial state and forget about it after
-        game.physics.startSystem(Phaser.Physics.ARCADE);
-        // Allows keyboard inputs
-        cursors = game.input.keyboard.createCursorKeys();
-        game.input.keyboard.addCallbacks(this, null, null, keyPress);
-        
+                
         // Stop sounds when starting a state
         game.sound.stopAll();
         

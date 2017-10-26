@@ -5,6 +5,7 @@ function placeFruit(x, y, fruitsprite){
     fruit.scale.setTo(0.3, 0.3);
     fruit.color = fruit_colors[fruitsprite];
     map_fruits.add(fruit);
+    return (fruit)
 }
 
 function make_fruit_groups(){
