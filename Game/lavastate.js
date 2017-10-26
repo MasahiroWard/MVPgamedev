@@ -1,4 +1,4 @@
-var lavaMap, lavalayer1, lavalayer2;
+var lavaMap, lavalayer1, lavalayer2, lava_dictionary;
 
 demo.lavastate = function(){};
 demo.lavastate.prototype = {
@@ -52,7 +52,7 @@ demo.lavastate.prototype = {
         lavaMap.addTilesetImage('new_ladder_sprite');
 
         
-       // SET UP TILE MAP ********* 
+       // SET UP TILE MAP 
         lavalayer1 = lavaMap.createLayer('Platforms');
         lavalayer2 = lavaMap.createLayer('Ladders');
         lavalayer1.resizeWorld();
@@ -62,21 +62,22 @@ demo.lavastate.prototype = {
         game.physics.arcade.enable(lavalayer2);
 //        
 //        
-//        createChameleon(500,game.world.height - 300);
+        createChameleon(450,game.world.height - 400);
 //        
 //        place_cat_boss(0,0);
 //
 //        
-//        iceMap.setCollision(12, true, icelayer1);
-//        iceMap.setCollisionBetween(1, 9, true, icelayer1);
-//        iceMap.setCollisionBetween(10, 11, true, icelayer2);
+        lavaMap.setCollision(12, true, icelayer1);
+        lavaMap.setCollisionBetween(1, 12, true, lavalayer1);
+        lavaMap.setCollisionBetween(13, 14, true, lavalayer2);
+
 
         
 //        //prep for placing fruit and enemies and health packs 
-//        make_fruit_groups();
-//        make_enemy_groups();
-//        make_healthpack_groups(); 
-//        make_balloon_group();
+        make_fruit_groups();
+        make_enemy_groups();
+        make_healthpack_groups(); 
+        make_balloon_group();
 //        
 //        placeBalloon(500, 3925);
 //        
@@ -128,28 +129,30 @@ demo.lavastate.prototype = {
 //        placeMP(325, 4025, 2, 1, 6, 0, 100, 0);
 //        placeMP(525, 3325, 3, 1, 4, 0, 150, 0);
 ////        
-////        make_balloon_group();
+        make_balloon_group();
 ////        placeBalloon(200, 2300);
 //
-//        createInventory(0,525);
+        createInventory(0,525);
 //
 //        
 //        // place health bar
-//        place_hearts(450, 0);
+        place_hearts(450, 0);
 //        
 //        // Allow player to darken screen when paused
-//        add_pause_darkener();
+        add_pause_darkener();
 
     },
     update: function(){ 
         // move the camera (if it wasnt obvious)
         move_camera(1,1);
         
-//        var tile_arr2 = get_surrounding_tiles(icelayer1, iceMap);
-//        collideIce(tile_arr2);
+//        lava_dictionary = {1:player.color, 2:player.color, 3:player.color, 4:"red", 5:"red", 6:"red", 7:"orange", 8:"orange", 9:"orange", 10:"yellow", 11:"yellow", 12:"yellow", 13:player.color, 14:player.color};
+////        
+//        var tile_arr3 = get_surrounding_tiles(lavalayer1, lavaMap);
+//        collideIce(tile_arr3, lava_dictionary);
 //        
 //        // colide with icelayer and allow player to jump 
-//        game.physics.arcade.collide(player, icelayer1);
+        game.physics.arcade.collide(player, lavalayer1);
 //        
 //        if (game.camera.y != 0) {
 //            // catboss stays asleep until 3 seconds after camera reaches the top            
@@ -161,11 +164,11 @@ demo.lavastate.prototype = {
 //
 ////        player.tint = 0xffffff;
 //        // check for ballooning 
-//        if (player.ballooning){
-//            chameleon_float();
-//        } else {
-//            chameleonmove();
-//        }
+        if (player.ballooning){
+            chameleon_float();
+        } else {
+            chameleonmove();
+        }
 //
 //        // Game over if you fall off the screen
 //        if (game.camera.y+650 < player.body.y) {
@@ -178,12 +181,19 @@ demo.lavastate.prototype = {
 //        snakes_group.forEach(moveSnake, this);
 //        moving_platform_group.forEach(movingPlatformsUpdate, this);
 //        
+        lava_dictionary = {1:player.color, 2:player.color, 3:player.color, 4:"red", 5:"red", 6:"red", 7:"orange", 8:"orange", 9:"orange", 10:"yellow", 11:"yellow", 12:"yellow", 13:player.color, 14:player.color};
+//        
+        var tile_arr3 = get_surrounding_tiles(lavalayer1, lavaMap);
+        collideIce(tile_arr3, lava_dictionary);
+        
+        
 //        //checkforladders(iceMap, icelayer2);
-//        var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
-//        ladder_movement(tile_arr1, 10, 11);
+        var tile_arr1 = get_surrounding_tiles(lavalayer2, lavaMap);
+        console.log(tile_arr1);
+        ladder_movement(tile_arr1, 13, 14);
 //        
 //
-//        update_health(player.health);
+        update_health(player.health);
 //        
 
 

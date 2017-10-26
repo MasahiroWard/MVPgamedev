@@ -1,5 +1,5 @@
 
-
+var ice_dictionary ;
 demo.icestate = function(){};
 demo.icestate.prototype = {
     preload: function(){
@@ -70,6 +70,7 @@ demo.icestate.prototype = {
         iceMap.setCollision(12, true, icelayer1);
         iceMap.setCollisionBetween(1, 9, true, icelayer1);
         iceMap.setCollisionBetween(10, 11, true, icelayer2);
+        
 
         
         //prep for placing fruit and enemies and health packs 
@@ -142,11 +143,14 @@ demo.icestate.prototype = {
 
     },
     update: function(){ 
-        // move the camera (if it wasnt obvious)
+        // move the camera (if it wasnt obvious)        
         move_camera(1,1);
         
+        // create tile dictionary for tile collisions 
+        ice_dictionary = {1:"blue", 2:"blue", 3:"blue", 4:"green", 5:"green", 6:"green", 7:"purple", 8:"purple", 9:"purple", 10:player.color, 11:player.color, 12:player.color}
+        
         var tile_arr2 = get_surrounding_tiles(icelayer1, iceMap);
-        collideIce(tile_arr2);
+        collideIce(tile_arr2, ice_dictionary);
         
         // colide with icelayer and allow player to jump 
         game.physics.arcade.collide(player, icelayer1);
