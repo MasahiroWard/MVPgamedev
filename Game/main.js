@@ -7,6 +7,8 @@ game.state.add('state2', demo.state2);
 game.state.add('tutorial', demo.tutorial);
 game.state.add('icestate', demo.icestate);
 game.state.add('lavastate', demo.lavastate);
+game.state.add('balloonstate', demo.balloonstate);
+
 
 game.state.add('trialstate', demo.trial);
 game.state.add('boilerplate', demo.boilerplate);

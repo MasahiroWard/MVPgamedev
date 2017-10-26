@@ -77,6 +77,13 @@ demo.menu.prototype = {
             }
         );
         
+        var balloon_menu_option = game.add.text(200, 450, "balloonstate", style);
+        balloon_menu_option.inputEnabled = true;
+        balloon_menu_option.events.onInputUp.add(
+            function(){
+                game.state.start('balloonstate');
+            }
+        );
         
         // make groups
         make_fruit_groups();
