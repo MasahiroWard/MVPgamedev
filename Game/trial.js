@@ -1,6 +1,7 @@
 var trialMap;
 var trial_jump_bird;
 var trial_respawn_fruits = {};
+var bottom_of_maze = 17*50;
 
 demo.trial = function(){};
 demo.trial.prototype = {
@@ -60,7 +61,7 @@ demo.trial.prototype = {
         trialMap.setCollisionBetween(1, 7, true, triallayer1)
         trialMap.setCollisionBetween(8, 9, true, triallayer2)
   
-        createChameleon(500, 600);
+        createChameleon(500, 700);
         make_fruit_groups();
         make_enemy_groups();
         make_balloon_group();
@@ -68,25 +69,60 @@ demo.trial.prototype = {
         make_healthpack_groups();
         
         // place fruit
-        placeFruit(500, 600, "bluefruit");
-        placeFruit(500, 600, "redfruit");
-        placeFruit(500, 600, "greenfruit");
-        placeFruit(500, 600, "yellowfruit");
-        placeFruit(500, 600, "purplefruit");
-        placeFruit(500, 600, "orangefruit");
-        
-        trial_respawn_fruits.red = placeFruit(200, 200, "redfruit");
-        trial_respawn_fruits.red.reset_time = game.time.time + 2000;
-        
-        placeMP(150, 200, 3, 1, 0, 3, 0, 100);
+//        placeFruit(500, 600, "bluefruit");
+//        placeFruit(500, 600, "redfruit");
+//        placeFruit(500, 600, "greenfruit");
+//        placeFruit(500, 600, "yellowfruit");
+//        placeFruit(500, 600, "purplefruit");
+//        placeFruit(500, 600, "orangefruit");
+//        
+//        trial_respawn_fruits.red = placeFruit(200, 200, "redfruit");
+//        trial_respawn_fruits.red.reset_time = game.time.time + 2000;
+//        
+//        placeMP(150, 200, 3, 1, 0, 3, 0, 100);
         
         // Jump scare enemies!
-        trial_jump_bird = placeBird(100, 0, ["red"]);
-        trial_jump_bird.mytween = game.add.tween(trial_jump_bird).to({x: 100, y:400}, 1000, Phaser.Easing.Linear.None, false, 0, 0, false);
-        
+//        trial_jump_bird = placeBird(100, 0, ["red"]);
+//        trial_jump_bird.mytween = game.add.tween(trial_jump_bird).to({x: 100, y:400}, 1000, Phaser.Easing.Linear.None, false, 0, 0, false);
+//        
         
 //        place_cat_boss(600, 200);
-        
+        /////////////////////////////////////
+        // How to maze
+        snake_2_1 = placeSnake(2*50, bottom_of_maze-1*50, ['red']);
+        snake_6_1 = placeSnake(6*50, bottom_of_maze-1*50, ['yellow']);
+        snake_15_1 = placeSnake(15*50, bottom_of_maze-1*50, ['orange']);
+        bird_5_3 = placeBird(5*50, bottom_of_maze-3*50, ['red']);
+        bird_12_3 = placeBird(12*50, bottom_of_maze-3*50, ['yellow']);
+        bird_17_3 = placeBird(17*50, bottom_of_maze-3*50, ['orange']);
+        snake_2_5 = placeSnake(2*50, bottom_of_maze-5*50, ['yellow']);
+        snake_7_5 = placeSnake(7*50, bottom_of_maze-5*50, ['red']);
+        snake_14_5 = placeSnake(14*50, bottom_of_maze-5*50, ['orange']);
+        snake_18_5 = placeSnake(18*50, bottom_of_maze-5*50, ['yellow']);
+        bird_5_7 = placeBird(5*50, bottom_of_maze-7*50, ['red']);
+        bird_12_7 = placeBird(12*50, bottom_of_maze-7*50, ['orange']);
+        snake_2_9 = placeSnake(2*50, bottom_of_maze-9*50, ['yellow']);
+        snake_7_9 = placeSnake(7*50, bottom_of_maze-9*50, ['red']);
+        snake_10_9 = placeSnake(10*50, bottom_of_maze-9*50, ['orange']);
+        snake_14_9 = placeSnake(14*50, bottom_of_maze-9*50, ['yellow']);
+        bird_9_8 = placeBird(9*50, bottom_of_maze-8*50, ['yellow']);
+        snake_0_11 = placeSnake(0*50, bottom_of_maze-11*50, ['red']);
+        bird_5_11 = placeBird(5*50, bottom_of_maze-11*50, ['orange']);
+        bird_12_11 = placeBird(12*50, bottom_of_maze-11*50, ['yellow']);
+        snake_17_11 = placeSnake(17*50, bottom_of_maze-11*50, ['red']);
+        bird_3_13 = placeBird(3*50, bottom_of_maze-13*50, ['orange']);
+        snake_8_13 = placeSnake(8*50, bottom_of_maze-13*50, ['red']);
+        snake_11_13 = placeSnake(11*50, bottom_of_maze-13*50, ['yellow']);
+        bird_14_13 = placeBird(14*50, bottom_of_maze-13*50, ['red']);
+        snake_6_15 = placeSnake(6*50, bottom_of_maze-15*50, ['orange']);
+        snake_12_15 = placeSnake(12*50, bottom_of_maze-15*50, ['red']);
+        snake_2_16 = placeSnake(2*50, bottom_of_maze-16*50, ['orange']);
+        snake_9_16 = placeSnake(9*50, bottom_of_maze-16*50, ['red']);
+        snake_15_16 = placeSnake(15*50, bottom_of_maze-16*50, ['yellow']);
+        bird_3_17 = placeBird(3*50, bottom_of_maze-17*50, ['red']);
+        bird_10_17 = placeBird(10*50, bottom_of_maze-17*50, ['yellow']);
+        bird_17_17 = placeBird(17*50, bottom_of_maze-17*50, ['orange']);
+        ////////////////////////////////////
         // place health bar
         place_hearts(450, 0);
         createInventory(0,525);
@@ -95,9 +131,7 @@ demo.trial.prototype = {
     },
     update: function(){ 
         move_camera(1,1);
-        if (game.camera.y < 200) {
-            trial_jump_bird.mytween.start()
-        }
+
         game.physics.arcade.collide(player, triallayer1);
 
         // check for ballooning 
@@ -114,11 +148,16 @@ demo.trial.prototype = {
         moving_platform_group.forEach(movingPlatformsUpdate, this);
         update_health(player.health);
         
-        if (!trial_respawn_fruits.red.alive && game.time.time > trial_respawn_fruits.red.reset_time) {
-            trial_respawn_fruits.red.revive()
-        } else if (trial_respawn_fruits.red.alive) {
-            trial_respawn_fruits.red.reset_time = game.time.time + 2000;
-        }
+        // respawning fruit
+//        if (!trial_respawn_fruits.red.alive && game.time.time > trial_respawn_fruits.red.reset_time) {
+//            trial_respawn_fruits.red.revive()
+//        } else if (trial_respawn_fruits.red.alive) {
+//            trial_respawn_fruits.red.reset_time = game.time.time + 30000;
+//        }
+        
+//        if (game.camera.y < 200) {
+//            trial_jump_bird.mytween.start()
+//        }
     
 //        var layer_list = [triallayer1, triallayer2]
 //        if (game.camera.y != 0) {
