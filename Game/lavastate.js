@@ -80,13 +80,26 @@ demo.lavastate.prototype = {
         make_balloon_group();
         
         // place things - in order of appearance on screen 
-        placeFruit(300, 5645, "bluefruit"); // can take this one out maybe, but its funny 
+        placeFruit(300, 5645, "bluefruit"); // can change the color on this one maybe, but its funny 
         placeFruit(200, 5645, "redfruit");
         placeFruit(750 ,5495, "yellowfruit");
         placeFruit(850, 5495, "orangefruit");
         placeFruit(350,5345, "redfruit");
         placeFruit(100,5195, "orangefruit");
+        placeFruit(700,5150, "yellowfruit");
+        placeFruit(900, 5150, "redfruit");
+        placeFruit(2*50,102*50,"orangefruit");
+        placeHealthpack(3*50,102*50);
         
+        placeSnake(200, 94*50, ["red"]);
+        
+        placeFruit(18*50, 95*50, "yellowfruit");
+        placeBird(16*50, 93*50, ["orange"]);
+        placeFruit(4*50, 91*50, "redfruit");
+        
+        placeMP(15*50, 84*50, 100, 50, 0, 3, 0, 100); // this one isnt showing up 
+        
+        // place MP - (10, 86), (10,83), (10,79);
         
 //        
 //        placeBalloon(500, 3925);
