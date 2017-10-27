@@ -72,16 +72,18 @@ demo.lavastate.prototype = {
         lavaMap.setCollisionBetween(13, 14, true, lavalayer2);
 
 
+
         
 //        //prep for placing fruit and enemies and health packs 
         make_fruit_groups();
         make_enemy_groups();
         make_healthpack_groups(); 
         make_balloon_group();
+        addMovingPlatforms();
         
         // place things - in order of appearance on screen 
         placeFruit(300, 5645, "bluefruit"); // can change the color on this one maybe, but its funny 
-        placeFruit(200, 5645, "redfruit");
+        placeFruit(150, 5645, "redfruit");
         placeFruit(750 ,5495, "yellowfruit");
         placeFruit(850, 5495, "orangefruit");
         placeFruit(350,5345, "redfruit");
@@ -91,13 +93,18 @@ demo.lavastate.prototype = {
         placeFruit(2*50,102*50,"orangefruit");
         placeHealthpack(3*50,102*50);
         
-        placeSnake(200, 94*50, ["red"]);
+        placeSnake(200 - 25, 94*50, ["red"]);
         
-        placeFruit(18*50, 95*50, "yellowfruit");
-        placeBird(16*50, 93*50, ["orange"]);
+        placeFruit(18*50, 95*50 - 10, "yellowfruit");
+        placeBird(16*50 - 25, 93*50 - 25, ["orange"]);
         placeFruit(4*50, 91*50, "redfruit");
         
-        placeMP(15*50, 84*50, 100, 50, 0, 3, 0, 100); // this one isnt showing up 
+        placeMP(14*50, 82*50, 2, 1, 0, 3, 0, 100); 
+        placeMP(7*50, 86*50, 1, 1, 4, 0, 150, 0 );
+        placeMP(9*50, 83*50, 1, 1, 4, 0, 150, 0 );
+        placeMP(7*50, 79*50, 1, 1, 4, 0, 150, 0 );
+        
+        placeBalloon(1*50,82*50)
         
         // place MP - (10, 86), (10,83), (10,79);
         
