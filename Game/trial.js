@@ -1,4 +1,6 @@
 var trialMap;
+var trial_jump_bird;
+var trial_respawn_fruits = {};
 
 demo.trial = function(){};
 demo.trial.prototype = {
@@ -18,7 +20,7 @@ demo.trial.prototype = {
         game.load.image('purple_snow', 'assets/tilemaps/IceStage/purple_snow.png');
         game.load.image('new_ladder_sprite_top', 'assets/tilemaps/IceStage/ice_ladder_sprite.png');
         
-        loadCatBoss();
+//        loadCatBoss();
     },
     
     
@@ -71,11 +73,19 @@ demo.trial.prototype = {
         placeFruit(500, 600, "greenfruit");
         placeFruit(500, 600, "yellowfruit");
         placeFruit(500, 600, "purplefruit");
-        placeFruit(500, 600, "orangefruit");        
+        placeFruit(500, 600, "orangefruit");
+        
+        trial_respawn_fruits.red = placeFruit(200, 200, "redfruit");
+        trial_respawn_fruits.red.reset_time = game.time.time + 2000;
         
         placeMP(150, 200, 3, 1, 0, 3, 0, 100);
         
-        place_cat_boss(600, 200);
+        // Jump scare enemies!
+        trial_jump_bird = placeBird(100, 0, ["red"]);
+        trial_jump_bird.mytween = game.add.tween(trial_jump_bird).to({x: 100, y:400}, 1000, Phaser.Easing.Linear.None, false, 0, 0, false);
+        
+        
+//        place_cat_boss(600, 200);
         
         // place health bar
         place_hearts(450, 0);
@@ -85,6 +95,9 @@ demo.trial.prototype = {
     },
     update: function(){ 
         move_camera(1,1);
+        if (game.camera.y < 200) {
+            trial_jump_bird.mytween.start()
+        }
         game.physics.arcade.collide(player, triallayer1);
 
         // check for ballooning 
@@ -100,13 +113,19 @@ demo.trial.prototype = {
         snakes_group.forEach(moveSnake, this);
         moving_platform_group.forEach(movingPlatformsUpdate, this);
         update_health(player.health);
-    
-        var layer_list = [triallayer1, triallayer2]
-        if (game.camera.y != 0) {
-            // catboss doesn't wake up until camera reaches 0
-            cat_boss.throw_ball_timer = game.time.time + 1000;
+        
+        if (!trial_respawn_fruits.red.alive && game.time.time > trial_respawn_fruits.red.reset_time) {
+            trial_respawn_fruits.red.revive()
+        } else if (trial_respawn_fruits.red.alive) {
+            trial_respawn_fruits.red.reset_time = game.time.time + 2000;
         }
-        cat_boss_move(layer_list)
+    
+//        var layer_list = [triallayer1, triallayer2]
+//        if (game.camera.y != 0) {
+//            // catboss doesn't wake up until camera reaches 0
+//            cat_boss.throw_ball_timer = game.time.time + 1000;
+//        }
+//        cat_boss_move(layer_list)
 
 
     },
