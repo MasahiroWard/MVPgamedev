@@ -107,3 +107,38 @@ demo.boilerplate.prototype = {
         update_health(player.health);
     },
 }
+
+// tween examples
+
+// snake 1 moves from (200, 2000) to (300, 2000) and back, looping infinitely
+//        var snake1 = placeSnake(300, 2000, ["blue"]);
+//        snake1.mytween = game.add.tween(snake1).to({x:[200, 300], y:[2000,2000]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+
+// snake 2 moves from (200, 300) to (500, 600)
+//        var snake2 = placeSnake(300, 2000, ["blue"]);
+//        snake2.mytween = game.add.tween(snake2).from({x:200, y:300}, 4000, Phaser.Easing.Linear.None, true);
+
+// Tween waits before starting
+//        var snake1 = placeSnake(300, 2000, ["blue"]);
+//        snake1.mytween = game.add.tween(snake1).to({x:[200, 300], y:[2000,2000]}, 4000, Phaser.Easing.Linear.None, true, 2000, -1, false);
+
+// Relative values for moving tween
+//        var snake1 = placeSnake(300, 2000, ["blue"]);
+//        snake1.mytween = game.add.tween(snake1).to({x:'+200'}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+
+// You can add a tween to camera
+//var rumbleOffset = 10;
+//var properties = {x: game.camera.x - rumbleOffset};
+//// we make it a really fast movement
+//var duration = 100;
+//// because it will repeat
+//var repeat = 4;
+//// we use bounce in-out to soften it a little bit
+//var ease = Phaser.Easing.Bounce.InOut;
+//var autoStart = false;
+//// a little delay because we will run it indefinitely
+//var delay = 1000;
+//// we want to go back to the original position
+//var yoyo = true;
+
+// var quake = game.add.tween(game.camera).to(properties, duration, ease, autoStart, delay, 4, yoyo);
