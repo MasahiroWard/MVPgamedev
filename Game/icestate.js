@@ -3,7 +3,7 @@ var ice_dictionary ;
 demo.icestate = function(){};
 demo.icestate.prototype = {
     preload: function(){
-        loadImages();
+//        loadImages();
         loadCatBoss();
 
         
