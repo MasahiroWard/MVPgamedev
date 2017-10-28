@@ -13,7 +13,7 @@ demo.tutorial = function(){};
 demo.tutorial.prototype = {
     preload: function(){
         // Always include this line
-        loadImages();
+//        loadImages();
         
         // Change to the correct boss
 //        loadCatBoss();

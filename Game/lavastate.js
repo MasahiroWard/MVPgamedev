@@ -3,7 +3,7 @@ var lavaMap, lavalayer1, lavalayer2, lava_dictionary;
 demo.lavastate = function(){};
 demo.lavastate.prototype = {
     preload: function(){
-        loadImages();
+//        loadImages();
 //        loadCatBoss();
 
         
