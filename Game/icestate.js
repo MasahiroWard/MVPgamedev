@@ -33,7 +33,7 @@ demo.icestate.prototype = {
         // play background music
         clearday = game.add.audio('clearday');
         
-        clearday.play('','',0.1,true,true);
+        clearday.play('','',0.2,true,true);
         
         // add background
         add_game_bg('bg2');

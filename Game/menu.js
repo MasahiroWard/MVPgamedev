@@ -24,6 +24,10 @@ demo.menu.prototype = {
         // Stop sounds when starting a state
         game.sound.stopAll();
         
+        cute = game.add.audio('cute');
+        cute.play('','',0.3,true,true);
+        
+        
         // start game at bottom of screen
         game.camera.y = game.world.height;
         
