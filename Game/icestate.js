@@ -12,12 +12,12 @@ demo.icestate.prototype = {
         
         // load in tile map assets 
         game.load.tilemap('iceStage', 'assets/tilemaps/IceStage/IceMap.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('ice_sprite', 'assets/tilemaps/IceStage/ice_sprite.png');
-        game.load.image('LargeLadderTop', 'assets/tilemaps/IceStage/fixed_ice_ladder.png');
+//        game.load.image('ice_sprite', 'assets/tilemaps/IceStage/ice_sprite.png');
+        game.load.image('fixed_ice_ladder_top', 'assets/tilemaps/IceStage/fixed_ice_ladder.png');
         game.load.image('tempBlueBlock', 'assets/tilemaps/IceStage/blue_snow.png');
         game.load.image('tempGreenBlock', 'assets/tilemaps/IceStage/green_snow.png');
         game.load.image('tempPurpleBlock', 'assets/tilemaps/IceStage/purple_snow.png');
-        game.load.image('LargeLadder', 'assets/tilemaps/IceStage/fixed_ice_ladder.png');
+        game.load.image('fixed_ice_ladder', 'assets/tilemaps/IceStage/fixed_ice_ladder.png');
         game.load.image('snow_platform', 'assets/tilemaps/IceStage/snow_platform.png');
     },
     
@@ -45,9 +45,9 @@ demo.icestate.prototype = {
 
         // add in the tile map * make into function - creates dictionary and cycles through dictionary 
         iceMap = game.add.tilemap('iceStage');
-        iceMap.addTilesetImage('ice_sprite');
-        iceMap.addTilesetImage('LargeLadder');
-        iceMap.addTilesetImage('LargeLadderTop');
+//        iceMap.addTilesetImage('ice_sprite');
+        iceMap.addTilesetImage('fixed_ice_ladder');
+        iceMap.addTilesetImage('fixed_ice_ladder_top');
         iceMap.addTilesetImage('tempBlueBlock');
         iceMap.addTilesetImage('tempPurpleBlock');
         iceMap.addTilesetImage('tempGreenBlock');
@@ -119,7 +119,7 @@ demo.icestate.prototype = {
         
         // tween snake 
         var snake1 = placeSnake(325, 4875, ["purple"]); // TWEEN THIS ENEMY! 
-        snake1.mytween = game.add.tween(snake1).to({x:[125, 325], y:[4875,4875]}, 1250, Phaser.Easing.Linear.None, true, 0, -1, false);
+        snake1.mytween = game.add.tween(snake1).to({x:[125, 325], y:[4875,4875]}, 1500, Phaser.Easing.Linear.None, true, 0, -1, false);
         
 //        placeSnake(475, 775, "blue");
         placeBird(350,2475,["purple"]);
