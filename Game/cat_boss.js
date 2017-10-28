@@ -33,7 +33,6 @@ function place_cat_boss(x, y){
     cat_boss.color_scheme = ['green', 'purple', 'blue']
     cat_boss.color = cat_boss.color_scheme[cat_boss.health];
             
-    cat_boss.hit_recently_timer = game.time.time + 2000;
     cat_boss.throw_ball_timer = game.time.time + 10000;
     cat_boss.change_direction_timer = 0;
     cat_boss.hit_recently_timer = 0;
@@ -145,7 +144,7 @@ function cat_boss_move(layer_list){
     
 //    console.log(cat_boss.action);
 //    console.log(game.time.time);
-    game.physics.arcade.collide(player, cat_boss, touch_boss, null, this);
+    game.physics.arcade.collide(player, cat_boss, touch_cat_boss, null, this);
     
     game.physics.arcade.collide(player, yarn_ball, hit_enemy);
     
@@ -190,7 +189,7 @@ function cat_boss_move(layer_list){
     }
 }
 
-function touch_boss(){
+function touch_cat_boss(){
     if (cat_boss.hit_recently_timer < game.time.time){
         // 2 second delay for catboss to be hit again
         cat_boss.hit_recently_timer = game.time.time + 2000;
