@@ -31,9 +31,9 @@ demo.lavastate.prototype = {
         game.camera.y = game.world.height;
         
         // play background music - ADD IN NEW MUSIC ******************
-        guitar2 = game.add.audio('guitar2');
+        happyrock = game.add.audio('happyrock');
         
-        guitar2.play('','',0.3,true,true);
+        happyrock.play('','',0.1,true,true);
         
         // add background
         add_game_bg('bg2');

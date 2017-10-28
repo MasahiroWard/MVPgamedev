@@ -11,7 +11,6 @@ demo.trial.prototype = {
         // make sure to set this to the size of the tile map 
         game.world.setBounds(0, 0, 1000,1000);
         
-        // Vaidehi! Help!
         // load in tile map assets 
         game.load.tilemap('trial', 'assets/tilemaps/TrialMap.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('ice_sprite', 'assets/tilemaps/IceStage/ice_sprite.png');

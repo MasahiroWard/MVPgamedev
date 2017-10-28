@@ -63,10 +63,13 @@ function loadImages(){
     game.load.audio('chirp', 'assets/sounds/chirp.mp3');
     game.load.audio('balloonNoise', 'assets/sounds/balloon.mp3');
     game.load.audio('disappointed', 'assets/sounds/disappointed.mp3');
-    game.load.audio('guitar2', 'assets/sounds/almost_reggae.mp3');
+    game.load.audio('guitar2', 'assets/sounds/ElectricGuitarInstrumental.mp3');
     game.load.audio('whistle', 'assets/sounds/whistle.mp3');
     game.load.audio('bing', 'assets/sounds/bing.mp3');
     game.load.audio('jingle', 'assets/sounds/jingle.mp3');
+    game.load.audio('happyrock', 'assets/sounds/happyrock.mp3');
+    game.load.audio('clearday', 'assets/sounds/clearday.mp3');
+    game.load.audio('reggae', 'assets/sounds/almost_reggae.mp3');
     
     // health bar assets 
     game.load.image('heart', 'assets/sprites/heart.png');
