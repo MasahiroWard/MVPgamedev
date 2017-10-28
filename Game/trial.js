@@ -21,6 +21,7 @@ demo.trial.prototype = {
         game.load.image('new_ladder_sprite_top', 'assets/tilemaps/IceStage/ice_ladder_sprite.png');
         
 //        loadCatBoss();
+        loadBearBoss();
     },
     
     
@@ -68,12 +69,14 @@ demo.trial.prototype = {
         make_healthpack_groups();
         
         // place fruit
-//        placeFruit(500, 600, "bluefruit");
-//        placeFruit(500, 600, "redfruit");
-//        placeFruit(500, 600, "greenfruit");
-//        placeFruit(500, 600, "yellowfruit");
-//        placeFruit(500, 600, "purplefruit");
-//        placeFruit(500, 600, "orangefruit");
+        placeFruit(500, 600, "bluefruit");
+        placeFruit(500, 600, "redfruit");
+        placeFruit(500, 600, "greenfruit");
+        placeFruit(500, 600, "yellowfruit");
+        placeFruit(500, 600, "purplefruit");
+        placeFruit(500, 600, "orangefruit");
+        
+        place_bear_boss(500, 0);
 //        
 //        trial_respawn_fruits.red = placeFruit(200, 200, "redfruit");
 //        trial_respawn_fruits.red.reset_time = game.time.time + 2000;
@@ -88,6 +91,7 @@ demo.trial.prototype = {
 //        place_cat_boss(600, 200);
         /////////////////////////////////////
         // How to maze
+        /*
         snake_2_1 = placeSnake(2*50, bottom_of_maze-1*50, ['red']);
         snake_6_1 = placeSnake(6*50, bottom_of_maze-1*50, ['yellow']);
         snake_15_1 = placeSnake(15*50, bottom_of_maze-1*50, ['orange']);
@@ -121,6 +125,7 @@ demo.trial.prototype = {
         bird_3_17 = placeBird(3*50, bottom_of_maze-17*50, ['red']);
         bird_10_17 = placeBird(10*50, bottom_of_maze-17*50, ['yellow']);
         bird_17_17 = placeBird(17*50, bottom_of_maze-17*50, ['orange']);
+        */
         ////////////////////////////////////
         // place health bar
         place_hearts(450, 0);
@@ -165,9 +170,17 @@ demo.trial.prototype = {
 //        }
 //        cat_boss_move(layer_list)
 
+        var layer_list = [triallayer1, triallayer2]
+        bear_boss_move(layer_list)
+
 
     },
-//    render: function() {
-//        game.debug.body(cat_boss)
-//    }
+    render: function() {
+        game.debug.body(bear_boss);
+        fish_projectile_group.forEachAlive(rendergroup, this);
+    }
 };
+
+function rendergroup(member) {
+    game.debug.body(member);
+}
