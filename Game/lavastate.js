@@ -118,12 +118,63 @@ demo.lavastate.prototype = {
         placeMP(4*50, 65*50, 2, 1, 0, 3, 0, 150); 
         placeMP(9*50, 65*50, 2, 1, 0, 4, 0, 150 );
         placeMP(13*50, 65*50, 2, 1, 0, 4, 0, 200);
-//        placeMP(10*50, 70*50, 2, 1, 0, 3, 0, 75 );
-
+        
+        // random fruit stuff in super moving platform place y: [64, 75]
+        placeFruit(5*50, 72*50, "redfruit");
+        placeFruit(8*50, 71*50, "yellowfruit");
+        placeFruit(15*50, 73*50, "redfruit");
+        placeFruit(3*50, 67*50, "orangefruit");
+        placeFruit(8*50, 64*50, "orangefruit");
+        placeFruit(13*50, 63*50, "yellowfruit");
+        
+        placeHealthpack(16*50, 61*50);
+        
+        // random inbetween place 
+        placeMP(5*50, 53*50, 3, 1, 6, 0, 150, 0);
+        placeFruit(8*50, 52*50, "redfruit");
+        placeFruit(9*50, 52*50, "orangefruit");
+        placeFruit(10*50, 52*50, "yellowfruit");
 
         
         
         // the enemy maze ! -
+        var bottom_of_maze = 30*50-10;
+        
+        placeHealthpack(9*50, 29*50);
+        
+        snake_2_1 = placeSnake(2*50, bottom_of_maze-1*50, ['red']);
+        snake_6_1 = placeSnake(6*50, bottom_of_maze-1*50, ['yellow']);
+        snake_15_1 = placeSnake(15*50, bottom_of_maze-1*50, ['orange']);
+        bird_5_3 = placeBird(5*50, bottom_of_maze-3*50, ['red']);
+        bird_12_3 = placeBird(12*50, bottom_of_maze-3*50, ['yellow']);
+        bird_17_3 = placeBird(17*50, bottom_of_maze-3*50, ['orange']);
+        snake_2_5 = placeSnake(2*50, bottom_of_maze-5*50, ['yellow']);
+        snake_7_5 = placeSnake(7*50, bottom_of_maze-5*50, ['red']);
+        snake_14_5 = placeSnake(14*50, bottom_of_maze-5*50, ['orange']);
+        snake_18_5 = placeSnake(18*50, bottom_of_maze-5*50, ['yellow']);
+        bird_5_7 = placeBird(5*50, bottom_of_maze-7*50, ['red']);
+        bird_12_7 = placeBird(12*50, bottom_of_maze-7*50, ['orange']);
+        snake_2_9 = placeSnake(2*50, bottom_of_maze-9*50, ['yellow']);
+        snake_7_9 = placeSnake(7*50, bottom_of_maze-9*50, ['red']);
+        snake_10_9 = placeSnake(10*50, bottom_of_maze-9*50, ['orange']);
+        snake_14_9 = placeSnake(14*50, bottom_of_maze-9*50, ['yellow']);
+        bird_9_8 = placeBird(9*50, bottom_of_maze-8*50, ['yellow']);
+        snake_0_11 = placeSnake(0*50, bottom_of_maze-11*50, ['red']);
+        bird_5_11 = placeBird(5*50, bottom_of_maze-11*50, ['orange']);
+        bird_12_11 = placeBird(12*50, bottom_of_maze-11*50, ['yellow']);
+        snake_17_11 = placeSnake(17*50, bottom_of_maze-11*50, ['red']);
+        bird_3_13 = placeBird(3*50, bottom_of_maze-13*50, ['orange']);
+        snake_8_13 = placeSnake(8*50, bottom_of_maze-13*50, ['red']);
+        snake_11_13 = placeSnake(11*50, bottom_of_maze-13*50, ['yellow']);
+        bird_14_13 = placeBird(14*50, bottom_of_maze-13*50, ['red']);
+        snake_6_15 = placeSnake(6*50, bottom_of_maze-15*50, ['orange']);
+        snake_12_15 = placeSnake(12*50, bottom_of_maze-15*50, ['red']);
+        snake_2_16 = placeSnake(2*50, bottom_of_maze-16*50, ['orange']);
+        snake_9_16 = placeSnake(9*50, bottom_of_maze-16*50, ['red']);
+        snake_15_16 = placeSnake(15*50, bottom_of_maze-16*50, ['yellow']);
+        bird_3_17 = placeBird(3*50, bottom_of_maze-17*50, ['red']);
+        bird_10_17 = placeBird(10*50, bottom_of_maze-17*50, ['yellow']);
+        bird_17_17 = placeBird(17*50, bottom_of_maze-17*50, ['orange']);
         
         
 //        placeBalloon(500, 3925);
