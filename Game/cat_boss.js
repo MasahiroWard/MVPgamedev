@@ -1,5 +1,13 @@
 // Functions for boss generation and movement
 
+/*
+Catboss will remain sleeping until the camera reaches the top of the level
+After this point, catboss moves randomly about the stage.  She will move faster the further she is from the player
+Every 10 seconds, catboss stops and throws the ball at the player
+If damaged, the catboss immediately runs away from the player for 2 seconds
+Once done running, catboss throws the ball at the player
+*/
+
 // Variable associated with the cat boss
 var cat_boss, yarn_ball, bossMusic;
 
@@ -207,16 +215,16 @@ function touch_cat_boss(){
 }
 
 
-// thank you stack overflow
-function randomIntFromInterval(min,max)
-{
-    return Math.floor(Math.random()*(max-min+1)+min);
-}
-
 function cat_boss_flash(duration) {
     if (duration % 200 > 100) {
         cat_boss.alpha = 0.5;
     } else {
         cat_boss.alpha = 1;
     }
+}
+
+// thank you stack overflow
+function randomIntFromInterval(min,max)
+{
+    return Math.floor(Math.random()*(max-min+1)+min);
 }
