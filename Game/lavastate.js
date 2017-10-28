@@ -12,7 +12,7 @@ demo.lavastate.prototype = {
         
         // load in tile map assets 
         game.load.tilemap('lavaStage', 'assets/tilemaps/LavaStage/LavaMap.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('grass_platform', 'assets/tilemaps/Tutorial/grass_platform.png');
+        game.load.image('grass_platform', 'assets/tilemaps/LavaStage/lava_platform.png');
         game.load.image('new_ladder_sprite_top', 'assets/tilemaps/Tutorial/new_ladder_sprite.png');
         game.load.image('temp_red_tile', 'assets/tilemaps/LavaStage/temp_red_tile.png');
         game.load.image('temp_orange_tile', 'assets/tilemaps/LavaStage/temp_orange_tile.png');

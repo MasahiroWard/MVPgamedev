@@ -64,7 +64,7 @@ demo.icestate.prototype = {
         game.physics.arcade.enable(icelayer2);
         
         
-        createChameleon(500,game.world.height - 300);
+//        createChameleon(500,game.world.height - 300);
         
         place_cat_boss(0,0);
 
@@ -119,7 +119,7 @@ demo.icestate.prototype = {
         
         // tween snake 
         var snake1 = placeSnake(325, 4875, ["purple"]); // TWEEN THIS ENEMY! 
-        snake1.mytween = game.add.tween(snake1).to({x:[125, 325], y:[4875,4875]}, 1000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        snake1.mytween = game.add.tween(snake1).to({x:[125, 325], y:[4875,4875]}, 1250, Phaser.Easing.Linear.None, true, 0, -1, false);
         
 //        placeSnake(475, 775, "blue");
         placeBird(350,2475,["purple"]);
@@ -134,6 +134,8 @@ demo.icestate.prototype = {
 //        make_balloon_group();
 //        placeBalloon(200, 2300);
 
+        
+        createChameleon(500,game.world.height - 300);
         createInventory(0,525);
 
         
