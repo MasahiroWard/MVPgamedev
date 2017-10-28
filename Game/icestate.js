@@ -31,9 +31,9 @@ demo.icestate.prototype = {
         game.camera.y = game.world.height;
         
         // play background music
-        guitar2 = game.add.audio('guitar2');
+        clearday = game.add.audio('clearday');
         
-        guitar2.play('','',0.3,true,true);
+        clearday.play('','',0.1,true,true);
         
         // add background
         add_game_bg('bg2');
