@@ -8,4 +8,10 @@ function move_camera(camIncr, camSpeed) {
         camCount = 0;
         game.camera.y -= camSpeed;
     }
+    
+    // remove this if statement to allow player to go above the camera 
+    if (player.body.y < game.camera.y){
+        player.body.y = game.camera.y;
+        player.body.velocity.y = 0;
+    }
 }
