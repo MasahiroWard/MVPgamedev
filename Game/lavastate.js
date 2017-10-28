@@ -104,11 +104,28 @@ demo.lavastate.prototype = {
         placeMP(9*50, 83*50, 1, 1, 4, 0, 150, 0 );
         placeMP(7*50, 79*50, 1, 1, 4, 0, 150, 0 );
         
-        placeBalloon(1*50,82*50)
+        placeBalloon(1*50,82*50);
         
-        // place MP - (10, 86), (10,83), (10,79);
+        //The super moving platform place -
+        placeMP(3*50, 71*50, 2, 1, 0, 3, 0, 100); 
+        placeMP(5*50, 69*50, 2, 1, 0, 3, 0, 150 );
+        placeMP(8*50, 70*50, 2, 1, 0, 4, 0, 125 );
+        placeMP(10*50, 70*50, 2, 1, 0, 3, 0, 75 );
+        placeMP(12*50, 71*50, 2, 1, 0, 3, 0, 100 );
+        placeMP(15*50, 69*50, 2, 1, 0, 3, 0, 125 );
+        placeMP(17*50, 70*50, 2, 1, 0, 4, 0, 80 );
         
-//        
+        placeMP(4*50, 65*50, 2, 1, 0, 3, 0, 150); 
+        placeMP(9*50, 65*50, 2, 1, 0, 4, 0, 150 );
+        placeMP(13*50, 65*50, 2, 1, 0, 4, 0, 200);
+//        placeMP(10*50, 70*50, 2, 1, 0, 3, 0, 75 );
+
+
+        
+        
+        // the enemy maze ! -
+        
+        
 //        placeBalloon(500, 3925);
 //        
 //        // place fruit
@@ -159,7 +176,6 @@ demo.lavastate.prototype = {
 //        placeMP(325, 4025, 2, 1, 6, 0, 100, 0);
 //        placeMP(525, 3325, 3, 1, 4, 0, 150, 0);
 ////        
-        make_balloon_group();
 ////        placeBalloon(200, 2300);
 //
         createInventory(0,525);
