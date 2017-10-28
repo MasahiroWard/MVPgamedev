@@ -6,7 +6,8 @@ var bottom_of_maze = 17*50;
 demo.trial = function(){};
 demo.trial.prototype = {
     preload: function(){
-        loadImages();
+        console.log('preload start')
+        //loadImages();
         
         // make sure to set this to the size of the tile map 
         game.world.setBounds(0, 0, 1000,1000);
@@ -22,11 +23,13 @@ demo.trial.prototype = {
         
 //        loadCatBoss();
         loadBearBoss();
+        console.log('preload end')
     },
     
     
     
     create: function(){
+        console.log('create start')
 //        game.physics.startSystem(Phaser.Physics.ARCADE);
 //        cursors = game.input.keyboard.createCursorKeys();
         
@@ -131,9 +134,11 @@ demo.trial.prototype = {
         place_hearts(450, 0);
         createInventory(0,525);
         add_pause_darkener();
+        console.log('create end')
 
     },
     update: function(){ 
+        console.log('update start')
         move_camera(1,1);
 
         game.physics.arcade.collide(player, triallayer1);
@@ -172,7 +177,7 @@ demo.trial.prototype = {
 
         var layer_list = [triallayer1, triallayer2]
         bear_boss_move(layer_list)
-
+        console.log('update end')
 
     },
     render: function() {
