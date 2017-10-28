@@ -101,6 +101,10 @@ function bear_boss_moving() {
     if (bear_boss.body.y > 150) {
         bear_boss.body.velocity.y = -500;
     }
+    
+    if (bear_boss.hit_recently_timer > game.time.time) {
+        bear_boss_flash(bear_boss.hit_recently_timer - game.time.time);
+    }
 }
 
 
@@ -133,18 +137,9 @@ function resetFish(fish) {
     fish.kill();
 }
 
-function bear_boss_regular_move() {
-//    bear_boss.loadTexture(bear_boss.color+"_bear")
-//    bear_boss.body.setSize(100, 100);
-    bear_boss.action = 'moving';
-}
-
 function bear_boss_damaged() {
-    bear_boss.body.velocity.y = -3*(player.body.y - bear_boss.body.y);
-    bear_boss.body.velocity.x = -3*(player.body.x - bear_boss.body.x);
-
-    if (bear_boss.hit_recently_timer > game.time.time) {
-        bear_boss_flash(bear_boss.hit_recently_timer - game.time.time);
+ else {
+        bear_boss.action = 'moving'
     }
     
 //    fish_throw_release();
@@ -153,10 +148,11 @@ function bear_boss_damaged() {
 
 function touch_bear_boss() {
     if (bear_boss.hit_recently_timer < game.time.time) {
-        bear_boss.hit_recently_timer = game.time.time + 2000;
         if (bear_boss.color == player.color){
             bear_boss.health -= 1;
             bear_boss.color = bear_boss.color_scheme[bear_boss.health];
+            bear_boss.hit_recently_timer = game.time.time + 2000;
+
 //            bear_boss.loadTexture(bear_boss.color+"_bear")
         } else {
             deadplayer();
