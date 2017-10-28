@@ -109,7 +109,6 @@ function cat_boss_regular_move() {
 
 function cat_boss_moving() {
 //   console.log(cat_boss.change_direction_timer, game.time.time);
-    // Twice as likely to move towards player as away
     if (cat_boss.change_direction_timer < game.time.time) {
         cat_boss.body.velocity.y = randomIntFromInterval(-1, 1) * (player.body.y - cat_boss.body.y)/2;
         cat_boss.body.velocity.x = randomIntFromInterval(-1, 1) * (player.body.x - cat_boss.body.x)/2;
