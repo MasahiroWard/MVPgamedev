@@ -33,7 +33,7 @@ demo.lavastate.prototype = {
         // play background music - ADD IN NEW MUSIC ******************
         happyrock = game.add.audio('happyrock');
         
-        happyrock.play('','',0.1,true,true);
+        happyrock.play('','',0.2,true,true);
         
         // add background
         add_game_bg('bg2');

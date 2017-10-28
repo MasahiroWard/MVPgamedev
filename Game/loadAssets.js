@@ -70,7 +70,7 @@ function loadImages(){
     game.load.audio('happyrock', 'assets/sounds/happyrock.mp3');
     game.load.audio('clearday', 'assets/sounds/clearday.mp3');
     game.load.audio('reggae', 'assets/sounds/almost_reggae.mp3');
-    
+    game.load.audio('cute', 'assets/sounds/cute.mp3');
     // health bar assets 
     game.load.image('heart', 'assets/sprites/heart.png');
     
