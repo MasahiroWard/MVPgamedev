@@ -11,13 +11,14 @@ demo.icestate.prototype = {
         game.world.setBounds(0, 0, 1000, 6000);
         
         // load in tile map assets 
-        game.load.tilemap('iceStage', 'assets/tilemaps/IceStage/IceMap2.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.tilemap('iceStage', 'assets/tilemaps/IceStage/IceMap.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('ice_sprite', 'assets/tilemaps/IceStage/ice_sprite.png');
-        game.load.image('LargeLadderTop', 'assets/tilemaps/IceStage/ice_ladder_sprite.png');
+        game.load.image('LargeLadderTop', 'assets/tilemaps/IceStage/fixed_ice_ladder.png');
         game.load.image('tempBlueBlock', 'assets/tilemaps/IceStage/blue_snow.png');
         game.load.image('tempGreenBlock', 'assets/tilemaps/IceStage/green_snow.png');
         game.load.image('tempPurpleBlock', 'assets/tilemaps/IceStage/purple_snow.png');
-        game.load.image('LargeLadder', 'assets/tilemaps/IceStage/ice_ladder_sprite.png');
+        game.load.image('LargeLadder', 'assets/tilemaps/IceStage/fixed_ice_ladder.png');
+        game.load.image('snow_platform', 'assets/tilemaps/IceStage/snow_platform.png');
     },
     
     
@@ -50,6 +51,7 @@ demo.icestate.prototype = {
         iceMap.addTilesetImage('tempBlueBlock');
         iceMap.addTilesetImage('tempPurpleBlock');
         iceMap.addTilesetImage('tempGreenBlock');
+        iceMap.addTilesetImage('snow_platform');
 
         
         
@@ -67,9 +69,9 @@ demo.icestate.prototype = {
         place_cat_boss(0,0);
 
         
-        iceMap.setCollision(12, true, icelayer1);
-        iceMap.setCollisionBetween(1, 9, true, icelayer1);
-        iceMap.setCollisionBetween(10, 11, true, icelayer2);
+//        iceMap.setCollision(12, true, icelayer1);
+        iceMap.setCollisionBetween(1, 12, true, icelayer1);
+        iceMap.setCollisionBetween(13, 14, true, icelayer2);
         
 
         
