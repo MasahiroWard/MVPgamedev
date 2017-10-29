@@ -181,7 +181,7 @@ demo.icestate.prototype = {
         
         //checkforladders(iceMap, icelayer2);
         var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
-        ladder_movement(tile_arr1, 10, 11);
+        ladder_movement(tile_arr1, 13, 14);
         
         update_health(player.health);
         

@@ -1,18 +1,35 @@
 // Boiler plate code for adding stage
 
 // Declare state vars only used in this state
-var state_var_1;
-var state_var_2;
+var unicornMap, unicornlayer1, unicornlayer2;
+//var state_var_2;
 
 // Change boilerplate to whatever name
 demo.balloonstate = function(){};
 demo.balloonstate.prototype = {
     preload: function(){
         // Always include this line
-        loadImages();
+//        loadImages();
+        // load in tile map assets 
+        game.load.tilemap('unicornMap', 'assets/tilemaps/UnicornStage/unicornMap.json', null, Phaser.Tilemap.TILED_JSON);
+        // colored tiles
+        game.load.image('blue_snow', 'assets/tilemaps/IceStage/blue_snow.png');
+        game.load.image('temp_red_tile', 'assets/tilemaps/LavaStage/temp_red_tile.png');
+        game.load.image('temp_orange_tile', 'assets/tilemaps/LavaStage/temp_orange_tile.png');
+        game.load.image('temp_yellow_tile', 'assets/tilemaps/LavaStage/temp_yellow_tile.png');
+        game.load.image('green_snow', 'assets/tilemaps/IceStage/green_snow.png');
+        game.load.image('purple_snow', 'assets/tilemaps/IceStage/purple_snow.png');
         
+        // neutral platforms
+        game.load.image('grass_platform', 'assets/tilemaps/Tutorial/grass_platform.png');
+        game.load.image('lava_platform', 'assets/tilemaps/LavaStage/lava_platform.png');
+        game.load.image('snow_platform', 'assets/tilemaps/IceStage/snow_platform.png');
+        
+        // ladders 
+        game.load.image('ladder_sprite_top', 'assets/tilemaps/Tutorial/new_ladder_sprite.png');  
+        game.load.image('new_ladder_sprite', 'assets/tilemaps/Tutorial/new_ladder_sprite.png');
         // Make this equal to the size of the tilemap
-        var tilemap_height = 3600;
+        var tilemap_height = 6000;
         game.world.setBounds(0, 0, 1000, tilemap_height);
     },
     create: function(){
@@ -29,23 +46,31 @@ demo.balloonstate.prototype = {
         ////////////////////////////////////////////
         // Add in tilemap
         // Vaidehi, please generalize this as needed
-//        map = game.add.tilemap('stage');
-//        map.addTilesetImage('grass_platform');
-//        map.addTilesetImage('ladder_sprite');
-//        map.addTilesetImage('ladder_sprite_top');
-//
-//        layer1 = map.createLayer('Platforms');
-//        layer2 = map.createLayer('Ladders');
-//        layer1.resizeWorld();
-//        layer2.resizeWorld();
+        unicornMap = game.add.tilemap('unicornMap');
+        unicornMap.addTilesetImage('grass_platform');
+        unicornMap.addTilesetImage('blue_snow');
+        unicornMap.addTilesetImage('ladder_sprite_top');
+        unicornMap.addTilesetImage('green_snow');
+        unicornMap.addTilesetImage('lava_platform');
+        unicornMap.addTilesetImage('new_ladder_sprite');
+        unicornMap.addTilesetImage('purple_snow');
+        unicornMap.addTilesetImage('snow_platform');
+        unicornMap.addTilesetImage('temp_orange_tile');
+        unicornMap.addTilesetImage('temp_yellow_tile');
+        unicornMap.addTilesetImage('temp_red_tile');
+
+        unicornlayer1 = unicornMap.createLayer('Platforms');
+        unicornlayer2 = unicornMap.createLayer('Ladders');
+        unicornlayer1.resizeWorld();
+        unicornlayer2.resizeWorld();
 //        
 //        // Make sure to enable arcade for all layers so boss doesn't go wherever it wants
-//        game.physics.arcade.enable(layer1);
-//        game.physics.arcade.enable(layer2);
+        game.physics.arcade.enable(unicornlayer1);
+        game.physics.arcade.enable(unicornlayer2);
 //        
 //        // set collisions for the tilemaps
-//        map.setCollisionBetween(1, 3, true, layer1);
-//        map.setCollisionBetween(4, 5, true, layer2);
+        unicornMap.setCollisionBetween(1, 27, true, unicornlayer1);
+        unicornMap.setCollisionBetween(28, 29, true, unicornlayer2);
         
         // load in sound
         guitar1 = game.add.audio('guitar');        
@@ -119,8 +144,8 @@ demo.balloonstate.prototype = {
             // ladder movement if not floating
             // here, layer 2 is your ladder layer
             // 4 & 5 are indices of ladder tiles
-//            var tile_arr = get_surrounding_tiles(layer2, map);
-//            ladder_movement(tile_arr, 4, 5);
+            var tile_arr = get_surrounding_tiles(unicornlayer2, unicornMap);
+            ladder_movement(tile_arr, 28, 29);
         }
         
         birds_group.forEach(moveBird, this);
