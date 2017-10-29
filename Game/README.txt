@@ -1,13 +1,15 @@
 MVP game development - Prismatic Chameleon 
 
 
-Start the game. It automatically starts on the tutorial stage. Press i on the keyboard to go to the first real stage, the Ice Stage.  
+Start the game. Select a stage (click to select). Press m on the keyboard to return to the menu at any time.  
 
 To play, use the arrow keys to move and collect fruit. Press qweasd to change colors. 
 
 Avoid enemies or kill enemies of the same color and get to the top of the stage. 
 
-When stepping on colored ice, make sure you are the same color as the ice, otherwise you take damage. 
+When stepping on colored tiles, make sure you are the same color as the tiles, otherwise you take damage. 
+
+Please note that trial is a development stage and not meant for real gameplay. Balloon stage is an experimental stage that is not currently completed. 
 
 
 Coding setup:
@@ -42,3 +44,8 @@ Dig the Uke by Kara Square (c) copyright 2016 Licensed under a Creative Commons 
 Almost Reggae by unreal_dm (c) copyright 2014 
 
 Supernatural(Instrumental) by Alex (c) copyright 2016 Licensed under a Creative Commons Attribution Noncommercial  (3.0) license. http://dig.ccmixter.org/files/AlexBeroza/54902 Ft: Snowflake
+
+
+
+Happy rock & clearday & cute by 
+https://www.bensound.com
