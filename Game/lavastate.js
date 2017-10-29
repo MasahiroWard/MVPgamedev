@@ -18,6 +18,8 @@ demo.lavastate.prototype = {
         game.load.image('temp_orange_tile', 'assets/tilemaps/LavaStage/temp_orange_tile.png');
         game.load.image('temp_yellow_tile', 'assets/tilemaps/LavaStage/temp_yellow_tile.png');
         game.load.image('new_ladder_sprite', 'assets/tilemaps/Tutorial/new_ladder_sprite.png');
+        
+        loadBearBoss();
     },
     
     
@@ -245,6 +247,13 @@ demo.lavastate.prototype = {
 ////        
 ////        placeBalloon(200, 2300);
 //
+
+        place_bear_boss(500, 0);
+        placeMP(8*50, 450, 5, 1, 0, 1, 0, 100);
+        bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
+        bearfruit.reset_time = game.time.time + 2000;
+
+        
         createInventory(0,525);
 //
 //        
@@ -300,6 +309,14 @@ demo.lavastate.prototype = {
 
         update_health(player.health);
         
+        var layer_list = [lavalayer1, lavalayer2]
+        bear_boss_move(layer_list)
+//        console.log('update end')
+        if (!bearfruit.alive && game.time.time > bearfruit.reset_time) {
+            bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
+        } else if (bearfruit.alive) {
+            bearfruit.reset_time = game.time.time + 3000;
+        }
 
 
     }
