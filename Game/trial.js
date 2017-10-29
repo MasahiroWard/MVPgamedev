@@ -6,14 +6,14 @@ var bottom_of_maze = 17*50;
 demo.trial = function(){};
 demo.trial.prototype = {
     preload: function(){
-        console.log('preload start')
+//        console.log('preload start')
         //loadImages();
         
         // make sure to set this to the size of the tile map 
         game.world.setBounds(0, 0, 1000,1000);
         
         // load in tile map assets 
-        game.load.tilemap('trial', 'assets/tilemaps/TrialMap.json', null, Phaser.Tilemap.TILED_JSON);
+        game.load.tilemap('trial', 'assets/tilemaps/TrialMap2.json', null, Phaser.Tilemap.TILED_JSON);
         game.load.image('ice_sprite', 'assets/tilemaps/IceStage/ice_sprite.png');
         game.load.image('new_ladder_sprite', 'assets/tilemaps/IceStage/ice_ladder_sprite.png');
         game.load.image('blue_snow', 'assets/tilemaps/IceStage/blue_snow.png');
@@ -23,13 +23,13 @@ demo.trial.prototype = {
         
 //        loadCatBoss();
         loadBearBoss();
-        console.log('preload end')
+//        console.log('preload end')
     },
     
     
     
     create: function(){
-        console.log('create start')
+//        console.log('create start')
 //        game.physics.startSystem(Phaser.Physics.ARCADE);
 //        cursors = game.input.keyboard.createCursorKeys();
         
@@ -72,15 +72,19 @@ demo.trial.prototype = {
         make_healthpack_groups();
         
         // place fruit
-        placeFruit(500, 600, "bluefruit");
-        placeFruit(500, 600, "redfruit");
-        placeFruit(500, 600, "greenfruit");
-        placeFruit(500, 600, "yellowfruit");
-        placeFruit(500, 600, "purplefruit");
-        placeFruit(500, 600, "orangefruit");
+//        placeFruit(500, 600, "bluefruit");
+//        placeFruit(500, 600, "redfruit");
+//        placeFruit(500, 600, "greenfruit");
+//        placeFruit(500, 600, "yellowfruit");
+//        placeFruit(500, 600, "purplefruit");
+//        placeFruit(500, 600, "orangefruit");
         
         place_bear_boss(500, 0);
-//        
+        placeMP(3*50, 450, 3, 1, 0, 1, 0, 100);
+        placeMP(15*50, 450, 3, 1, 0, 1, 0, 100);
+        bearfruit = placeFruit(400, 350, bear_boss.color+"fruit");
+        bearfruit.reset_time = game.time.time + 2000;
+        
 //        trial_respawn_fruits.red = placeFruit(200, 200, "redfruit");
 //        trial_respawn_fruits.red.reset_time = game.time.time + 2000;
 //        
@@ -134,11 +138,12 @@ demo.trial.prototype = {
         place_hearts(450, 0);
         createInventory(0,525);
         add_pause_darkener();
-        console.log('create end')
+//        console.log('create end')
 
     },
     update: function(){ 
-        console.log('update start')
+//        console.log('update start')
+        console.log(player.body.x, player.body.y);
         move_camera(1,1);
 
         game.physics.arcade.collide(player, triallayer1);
@@ -177,13 +182,18 @@ demo.trial.prototype = {
 
         var layer_list = [triallayer1, triallayer2]
         bear_boss_move(layer_list)
-        console.log('update end')
+//        console.log('update end')
+        if (!bearfruit.alive && game.time.time > bearfruit.reset_time) {
+            bearfruit = placeFruit(400, 350, bear_boss.color+"fruit");
+        } else if (bearfruit.alive) {
+            bearfruit.reset_time = game.time.time + 3000;
+        }
 
     },
-    render: function() {
-        game.debug.body(bear_boss);
-        fish_projectile_group.forEachAlive(rendergroup, this);
-    }
+//    render: function() {
+//        game.debug.body(bear_boss);
+//        fish_projectile_group.forEachAlive(rendergroup, this);
+//    }
 };
 
 function rendergroup(member) {
