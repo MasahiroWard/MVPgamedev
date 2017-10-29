@@ -80,9 +80,8 @@ demo.trial.prototype = {
 //        placeFruit(500, 600, "orangefruit");
         
         place_bear_boss(500, 0);
-        placeMP(3*50, 450, 3, 1, 0, 1, 0, 100);
-        placeMP(15*50, 450, 3, 1, 0, 1, 0, 100);
-        bearfruit = placeFruit(400, 350, bear_boss.color+"fruit");
+        placeMP(8*50, 450, 5, 1, 0, 1, 0, 100);
+        bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
         bearfruit.reset_time = game.time.time + 2000;
         
 //        trial_respawn_fruits.red = placeFruit(200, 200, "redfruit");
@@ -143,7 +142,7 @@ demo.trial.prototype = {
     },
     update: function(){ 
 //        console.log('update start')
-        console.log(player.body.x, player.body.y);
+//        console.log(player.body.x, player.body.y);
         move_camera(1,1);
 
         game.physics.arcade.collide(player, triallayer1);
@@ -184,7 +183,7 @@ demo.trial.prototype = {
         bear_boss_move(layer_list)
 //        console.log('update end')
         if (!bearfruit.alive && game.time.time > bearfruit.reset_time) {
-            bearfruit = placeFruit(400, 350, bear_boss.color+"fruit");
+            bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
         } else if (bearfruit.alive) {
             bearfruit.reset_time = game.time.time + 3000;
         }
