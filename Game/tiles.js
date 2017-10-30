@@ -23,8 +23,8 @@ function get_surrounding_tiles(check_layer, map){
     
     var top_y = check_layer.getTileY(player.body.top);
     var bottom_y = check_layer.getTileY(player.body.bottom);
-    var right_x = check_layer.getTileX(player.body.right);
-    var left_x = check_layer.getTileX(player.body.left);
+    var right_x = check_layer.getTileX(player.body.right - 5);
+    var left_x = check_layer.getTileX(player.body.left + 5);
     
     return ([map.getTile(left_x, top_y, check_layer), map.getTile(right_x, top_y, check_layer), map.getTile(left_x, bottom_y, check_layer), map.getTile(right_x, bottom_y, check_layer)])
 }
@@ -54,7 +54,7 @@ function ladder_movement(tile_arr, ladTileIndex, ladderTopIndex){
         if (checking.index == ladderTopIndex){
             ladder_function();
             if (cursors.up.isDown) {
-                player.body.velocity.y = -350;
+                player.body.velocity.y = -chameleon_jump_velocity;
             }
         } else if (checking.index == ladTileIndex) {
                    ladder_function()

@@ -1,7 +1,15 @@
 // Function for chameleon generation and movement
 
-// Put this in create
+// Chameleon jump must allow 3 tiles horizontal
+// 3 tiles vertical
+// Chameleon speed = 150 --> must remain in air 1 second
+// Max height = 160 --> allow chameleon to jump all the way
+var max_height = 160;
+var half_flight_time = 3/4;
+var chameleon_jump_velocity = 2 * max_height / (half_flight_time);
+var chameleon_gravity = 2 * max_height/(half_flight_time**2);
 
+// Put this in create
 function createChameleon(xcoor, ycoor){
     add_chameleon_sound();
     player = game.add.sprite(xcoor, ycoor,'green_chameleon');
@@ -29,7 +37,7 @@ function chameleonmove(){
     game.physics.arcade.overlap(player, balloon_group, get_balloon, null, this);
     game.physics.arcade.overlap(player, healthpack_group, get_healthpack, null, this); //ADD THIS IN WHEN HEALTHPACKS STUFF IS FINISHED!!!!S
 
-    player.body.gravity.y = 400;
+    player.body.gravity.y = chameleon_gravity;
     player.body.velocity.x = 0;
     player.animations.play('walk');
     
@@ -48,10 +56,10 @@ function chameleonmove(){
     
     // jump if player is blocked on the bottom
     if (cursors.up.isDown && player.body.blocked.down){
-        player.body.velocity.y = -375;
+        player.body.velocity.y = -chameleon_jump_velocity;
         jump1.play('','', 0.2);
     } else if (cursors.down.isDown) {
-        player.body.velocity.y = 200;
+        player.body.velocity.y = chameleon_jump_velocity;
     }
 
     // Game over if you fall off the screen

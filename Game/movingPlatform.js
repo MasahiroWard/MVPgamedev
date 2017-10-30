@@ -60,7 +60,7 @@ function player_on_platform(player, mp) {
 //    console.log(mp.body.velocity.x)
     // Allow player jump if touching and on top of moving platform
     if (cursors.up.isDown && player.body.bottom<=mp.body.y) {
-        player.body.velocity.y = -375;
+        player.body.velocity.y = -chameleon_jump_velocity;
         jump1.play();
     }
 }

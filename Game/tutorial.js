@@ -95,9 +95,9 @@ demo.tutorial.prototype = {
         placeFruit(200, 300, "bluefruit");
         placeFruit(150, 350, "greenfruit");
         placeFruit(500, 250, "bluefruit");
-        placeFruit(750, 150, "greenfruit");
-        placeFruit(950, 150, "purplefruit");
-        placeFruit(60, 200, "purplefruit");
+        placeFruit(750, 200, "greenfruit");
+        placeFruit(950, 200, "purplefruit");
+        placeFruit(60, 300, "purplefruit");
 
         // place enemy
         make_enemy_groups();
