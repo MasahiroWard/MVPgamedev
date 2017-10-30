@@ -13,9 +13,11 @@ Upon recieving damage, bearboss will run away and throw three fish at once
 */
 
 var bear_boss, fish_projectile_group, bear_boss_music, bearfruit;
+var fish_indicator;
+var fish;
 
 function loadBearBoss(){
-    game.load.image('projectile_fish', 'assets/sprites/projectile_fish.png');
+    game.load.image('projectile_fish', 'assets/sprites/fish_sprite.png');
     
     game.load.spritesheet('throw_bear', 'assets/spritesheets/throw_cat_spritesheet.png',146,192);
     game.load.spritesheet('blue_bear', 'assets/spritesheets/blue_catwalk_spritesheet.png',158,146);
@@ -42,7 +44,7 @@ function place_bear_boss(x, y) {
     bear_boss.color = bear_boss.color_scheme[bear_boss.health]
     
     bear_boss.hit_recently_timer = 0;
-    bear_boss.throw_fish_timer = game.time.time + 5000;
+    bear_boss.throw_fish_timer = game.time.time + 0;
     bear_boss.action = "moving";
     
     // initialize with some random number of fish to throw
@@ -62,9 +64,17 @@ function place_bear_boss(x, y) {
     }
     bossMusic = game.add.audio('bossMusic');
     bossMusic.play('', '', 0.3, true, true);
+    
+    fish_indicator = game.add.sprite(0, 0, 'projectile_fish');
+    game.physics.arcade.enable(fish_indicator);
+    fish_indicator.scale.setTo(0.2, 0.2);
 }
 
 function bear_boss_move(layer_list) {
+    fish_indicator.body.y = game.camera.y
+    if (player.body.y < 700) {
+        fish_indicator.kill();
+    }
 //    console.log(bear_boss.action)
     bear_boss.animations.play("move");
     if (bear_boss.body.x < player.body.x) {
@@ -85,6 +95,21 @@ function bear_boss_move(layer_list) {
             bear_boss_moving()
             if (bear_boss.throw_fish_timer < game.time.time) {
                 fish_throw();
+            };
+            
+            // Check for the lowest fish and move indicator to x position of that fish
+            if (player.body.y > 700) {
+                last_fish = fish_projectile_group.children[4]
+                for (var i = 0; i < 5; i++) {
+                    // Get the lowest fish whose position is higher than player
+                    f = fish_projectile_group.children[i];
+                    if (f.body.y > last_fish.body.y && f.body.y < player.body.y) {
+                        last_fish = f;
+                    }
+                }
+                fish_indicator.body.velocity.x = -fish_indicator.body.x + last_fish.body.x
+            } else if (game.camera.y == 350) {
+                fish_indicator.kill();
             }
             break
         case "throwing":
@@ -146,7 +171,11 @@ function fish_throw_release() {
         game.physics.arcade.moveToObject(fish, player, 400);
     }
     bear_boss.loadTexture(bear_boss.color+"_bear");
-    bear_boss.throw_fish_timer = game.time.time + 1000 * (bear_boss.health+1);
+    if (player.body.y < 700) {
+        bear_boss.throw_fish_timer = game.time.time + 1000 * (bear_boss.health+1);
+    } else {
+        bear_boss.throw_fish_timer = game.time.time + player.body.y
+    }
     bear_boss.action = 'moving';
 }
 

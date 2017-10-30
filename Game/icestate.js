@@ -86,7 +86,7 @@ demo.icestate.prototype = {
         // place fruit
         placeHealthpack (700, 5400);
         placeFruit(700, game.world.height - 300, "bluefruit");
-        placeFruit(650, game.world.height -450,"greenfruit");
+        placeFruit(650, game.world.height -350,"greenfruit");
         placeFruit(750, game.world.height - 1600, "bluefruit");
         placeFruit(150, 1000, "greenfruit");
         placeFruit(200, 300, "purplefruit");
