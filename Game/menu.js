@@ -14,6 +14,7 @@ demo.menu.prototype = {
         
     },
     create: function(){
+        restart_state = "menu";
         // This only needs to happen one time.  Add it to the intial state and forget about it after
         game.physics.startSystem(Phaser.Physics.ARCADE);
         // Allows keyboard inputs
@@ -44,6 +45,7 @@ demo.menu.prototype = {
         tutorial_menu_option.inputEnabled = true;
         tutorial_menu_option.events.onInputUp.add(
             function(){
+                restart_state = 'tutorial'
                 game.state.start('tutorial');
             }
         );
@@ -52,6 +54,7 @@ demo.menu.prototype = {
         ice_menu_option.inputEnabled = true;
         ice_menu_option.events.onInputUp.add(
             function(){
+                restart_state = 'icestate'
                 game.state.start('icestate');
             }
         );
@@ -60,6 +63,7 @@ demo.menu.prototype = {
         lava_menu_option.inputEnabled = true;
         lava_menu_option.events.onInputUp.add(
             function(){
+                restart_state = 'lavastate'
                 game.state.start('lavastate');
             }
         );
@@ -69,6 +73,7 @@ demo.menu.prototype = {
         trial_menu_option.inputEnabled = true;
         trial_menu_option.events.onInputUp.add(
             function(){
+                restart_state = 'trialstate'
                 game.state.start('trialstate');
             }
         );
@@ -77,6 +82,7 @@ demo.menu.prototype = {
         bp_menu_option.inputEnabled = true;
         bp_menu_option.events.onInputUp.add(
             function(){
+                restart_state = 'boilerplate'
                 game.state.start('boilerplate');
             }
         );
@@ -85,6 +91,7 @@ demo.menu.prototype = {
         balloon_menu_option.inputEnabled = true;
         balloon_menu_option.events.onInputUp.add(
             function(){
+                restart_state = 'balloonstate'
                 game.state.start('balloonstate');
             }
         );
