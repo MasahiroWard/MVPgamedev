@@ -133,7 +133,7 @@ demo.balloonstate.prototype = {
     },
     update: function(){
         // Collide with layers that are necessary
-//        game.physics.arcade.collide(player, layer1);
+        game.physics.arcade.collide(player, unicornlayer1);
         
         // camera pauses - cat boss at 82 tiles, bear boss at the top (no need to pause)
         
@@ -146,9 +146,15 @@ demo.balloonstate.prototype = {
             // ladder movement if not floating
             // here, layer 2 is your ladder layer
             // 4 & 5 are indices of ladder tiles
-            var tile_arr = get_surrounding_tiles(unicornlayer2, unicornMap);
-            ladder_movement(tile_arr, 28, 29);
+            var tile_arr0 = get_surrounding_tiles(unicornlayer2, unicornMap);
+            ladder_movement(tile_arr0, 28, 29);
         }
+        
+        unicorn_dictionary = {1:player.color, 2:player.color, 3:player.color, 4:player.color, 5:player.color, 6:player.color, 7:player.color, 8:player.color, 9:player.color, 10:"blue", 11:"blue", 12:"blue", 13:"purple", 14:"purple", 15:"purple", 16:"green", 17:"green", 18:"green", 19:"orange", 20:"orange", 21:"orange", 22:"red", 23:"red", 24:"red", 25:"yellow", 26:"yellow", 27:"yellow"};
+        
+        var tile_arr9 = get_surrounding_tiles(unicornlayer1, unicornMap);
+        collideIce(tile_arr9, unicorn_dictionary, 1);
+        
         
         birds_group.forEach(moveBird, this);
         snakes_group.forEach(moveSnake, this);

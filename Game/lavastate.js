@@ -261,7 +261,7 @@ demo.lavastate.prototype = {
 //
 
         place_bear_boss(500, 0);
-        placeMP(8*50, 450, 5, 1, 0, 1, 0, 100);
+        placeMP(8*50, 450, 4, 1, 0, 1, 0, 100);
         bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
         bearfruit.reset_time = game.time.time + 2000;
 
@@ -324,7 +324,7 @@ demo.lavastate.prototype = {
         var layer_list = [lavalayer1, lavalayer2]
         bear_boss_move(layer_list)
 //        console.log('update end')
-        if (!bearfruit.alive && game.time.time > bearfruit.reset_time && bear_boss.alive) {
+        if (!bearfruit.alive && game.time.time > bearfruit.reset_time && bear_boss.health >= 0) {
             bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
         } else if (bearfruit.alive) {
             bearfruit.reset_time = game.time.time + 3000;
