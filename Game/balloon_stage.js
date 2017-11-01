@@ -89,19 +89,19 @@ demo.balloonstate.prototype = {
         make_healthpack_groups();
         
         placeBalloon(400,game.world.height - 200);
-        placeBalloon(300,3000);
-        placeBalloon(300,2500);
-        placeBalloon(300,2000);
-        placeBalloon(300,1500);
-        placeBalloon(300,1000);
-        placeBalloon(300,500);
+        placeBalloon(300,3000+3000);
+        placeBalloon(300,2500+3000);
+        placeBalloon(300,2000+3000);
+        placeBalloon(300,1500+3000);
+        placeBalloon(300,1000+3000);
+        placeBalloon(300,500+3000);
         
-        placeFruit(200, 3000, "redfruit");
-        placeFruit(200, 2500, "bluefruit");
-        placeFruit(200, 2000, "yellowfruit");
-        placeFruit(200, 1500, "greenfruit");
-        placeFruit(200, 1000, "purplefruit");
-        placeFruit(200, 500, "orangefruit");
+        placeFruit(200, 3000+3000, "redfruit");
+        placeFruit(200, 2500+3000, "bluefruit");
+        placeFruit(200, 2000+3000, "yellowfruit");
+        placeFruit(200, 1500+3000, "greenfruit");
+        placeFruit(200, 1000+3000, "purplefruit");
+        placeFruit(200, 500+3000, "orangefruit");
         
         var redbird = placeBird(0, 2750, ["red"]);
         redbird.mytween = game.add.tween(redbird).to({x:[500, 0], y:[2750,2750]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
@@ -134,6 +134,8 @@ demo.balloonstate.prototype = {
     update: function(){
         // Collide with layers that are necessary
 //        game.physics.arcade.collide(player, layer1);
+        
+        // camera pauses - cat boss at 82 tiles, bear boss at the top (no need to pause)
         
         move_camera(0,2);
         if (player.ballooning) {
