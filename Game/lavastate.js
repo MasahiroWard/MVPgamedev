@@ -194,10 +194,11 @@ demo.lavastate.prototype = {
         bird_11_13 = placeBird(11*50, bottom_of_maze-13*50, ['yellow']);
         bird_15_13 = placeBird(15*50, bottom_of_maze-13*50, ['red']);
         snake_5_15 = placeSnake(6*50, bottom_of_maze-15*50, ['orange']);
-        snake_13_15 = placeSnake(12*50, bottom_of_maze-15*50, ['red']);
-        snake_2_16 = placeSnake(2*50, bottom_of_maze-16*50, ['orange']);
-        snake_9_16 = placeSnake(9*50, bottom_of_maze-16*50, ['red']);
-        snake_15_16 = placeSnake(15*50, bottom_of_maze-16*50, ['yellow']);
+        snake_13_15 = placeSnake(13*50, bottom_of_maze-15*50, ['red']);
+//        snake_2_16 = placeSnake(2*50, bottom_of_maze-16*50, ['orange']);
+        
+//        snake_9_16 = placeSnake(9*50, bottom_of_maze-16*50, ['red']);
+//        snake_15_16 = placeSnake(15*50, bottom_of_maze-16*50, ['yellow']);
         
         bird_0_17 = placeBird(0*50, bottom_of_maze-17*50, ['red']);
         bird_9_17 = placeBird(9*50, bottom_of_maze-17*50, ['yellow']);
@@ -323,7 +324,7 @@ demo.lavastate.prototype = {
         var layer_list = [lavalayer1, lavalayer2]
         bear_boss_move(layer_list)
 //        console.log('update end')
-        if (!bearfruit.alive && game.time.time > bearfruit.reset_time) {
+        if (!bearfruit.alive && game.time.time > bearfruit.reset_time && bear_boss.alive) {
             bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
         } else if (bearfruit.alive) {
             bearfruit.reset_time = game.time.time + 3000;
