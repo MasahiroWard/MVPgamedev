@@ -71,12 +71,10 @@ function ladder_function(){
     else {
         climb1.stop();
     }
-//    if (climb1.isPlaying == false){
-//        climb1.play('','',0.7);
-//    }
     player.body.gravity.y = 0;
     if (cursors.up.isDown){
         player.body.velocity.y = -100;
+        jump1.stop();
     }
     else if (cursors.down.isDown){
         // Changing this velocity doesnt seem to do anything... 
