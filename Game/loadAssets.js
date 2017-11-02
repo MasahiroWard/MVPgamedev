@@ -76,6 +76,6 @@ function loadImages(){
     game.load.image('heart', 'assets/sprites/heart.png');
     
     // healthpack 
-    game.load.image('healthpack', 'assets/sprites/temp_health.png');
+    game.load.image('healthpack', 'assets/sprites/health_item.png');
 }
 

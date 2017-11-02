@@ -5,7 +5,7 @@ function make_healthpack_groups() {
 
 function placeHealthpack(x, y){
     var healthpack = game.add.sprite(x, y, "healthpack");
-    healthpack.scale.setTo(0.13, 0.13); // CHANGE THIS WHEN HAVE ACTUAL SPRITE 
+    healthpack.scale.setTo(0.2, 0.2); // CHANGE THIS WHEN HAVE ACTUAL SPRITE 
     healthpack_group.add(healthpack);
 }
 
