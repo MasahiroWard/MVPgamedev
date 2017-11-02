@@ -169,6 +169,7 @@ demo.tutorial.prototype = {
                 player.body.velocity.y = 50;
                 // If player is frozen, move camera up faster
                 move_camera(0,2);
+                
             } else if (player.ballooning){
                 chameleon_float();
             } else {
