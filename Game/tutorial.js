@@ -80,7 +80,7 @@ demo.tutorial.prototype = {
         // load in sound
         guitar1 = game.add.audio('guitar');        
         // loops guitar music 
-        guitar1.play('','',0.5,true,true);
+        guitar1.play('','',0.7,true,true);
         /////////////////////////////////////////////
 
         // Add chameleon at x,y
