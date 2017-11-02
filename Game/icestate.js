@@ -188,6 +188,8 @@ demo.icestate.prototype = {
             chameleon_float();
         } else {
             chameleonmove();
+            var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
+            ladder_movement(tile_arr1, 13, 14);
         }
 
         
@@ -197,8 +199,8 @@ demo.icestate.prototype = {
         moving_platform_group.forEach(movingPlatformsUpdate, this);
         
         //checkforladders(iceMap, icelayer2);
-        var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
-        ladder_movement(tile_arr1, 13, 14);
+//        var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
+//        ladder_movement(tile_arr1, 13, 14);
         
         update_health(player.health);
         

@@ -305,6 +305,12 @@ demo.lavastate.prototype = {
             chameleon_float();
         } else {
             chameleonmove();
+            //checkforladders(iceMap, icelayer2);
+            var tile_arr4 = get_surrounding_tiles(lavalayer2, lavaMap);
+
+            ladder_movement(tile_arr4, 13, 14);
+        
+
         }
 
         
@@ -318,12 +324,12 @@ demo.lavastate.prototype = {
         var tile_arr3 = get_surrounding_tiles(lavalayer1, lavaMap);
         collideIce(tile_arr3, lava_dictionary, 1);
         
-        
-        //checkforladders(iceMap, icelayer2);
-        var tile_arr4 = get_surrounding_tiles(lavalayer2, lavaMap);
-
-        ladder_movement(tile_arr4, 13, 14);
-        
+//        
+//        //checkforladders(iceMap, icelayer2);
+//        var tile_arr4 = get_surrounding_tiles(lavalayer2, lavaMap);
+//
+//        ladder_movement(tile_arr4, 13, 14);
+//        
 
         update_health(player.health);
         

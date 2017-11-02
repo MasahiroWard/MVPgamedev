@@ -29,6 +29,7 @@ demo.tutorial.prototype = {
         game.load.image('grass_platform', 'assets/tilemaps/Tutorial/grass_platform.png');
         game.load.image('ladder_sprite', 'assets/tilemaps/Tutorial/new_ladder_sprite.png');
         game.load.image('ladder_sprite_top', 'assets/tilemaps/Tutorial/new_ladder_sprite.png');
+        game.load.image('blue_snow', 'assets/tilemaps/IceStage/blue_snow.png');
         ///////////////////////////////////////////////////
         
     },
@@ -62,6 +63,7 @@ demo.tutorial.prototype = {
         map.addTilesetImage('grass_platform');
         map.addTilesetImage('ladder_sprite');
         map.addTilesetImage('ladder_sprite_top');
+        map.addTilesetImage('blue_snow');
 
         layer1 = map.createLayer('Platforms');
         layer2 = map.createLayer('Ladders');
@@ -73,6 +75,7 @@ demo.tutorial.prototype = {
         // set collisions for the tilemaps
         map.setCollisionBetween(1, 3, true, layer1);
         map.setCollisionBetween(4, 5, true, layer2);
+        map.setCollisionBetween(6, 8, true, layer1);
         
         // load in sound
         guitar1 = game.add.audio('guitar');        
@@ -169,6 +172,7 @@ demo.tutorial.prototype = {
                 player.body.velocity.y = 50;
                 // If player is frozen, move camera up faster
                 move_camera(0,2);
+                
             } else if (player.ballooning){
                 chameleon_float();
             } else {
@@ -178,13 +182,20 @@ demo.tutorial.prototype = {
                 ladder_movement(tile_arr, 4, 5);
             }
             
+            tutorial_dictionary = {1:player.color, 2:player.color, 3:player.color, 4:player.color, 5:player.color, 6:"blue", 7:"blue", 8:"blue"};
+            
+            var tile_arr7 = get_surrounding_tiles(layer1, map);
+            collideIce(tile_arr7, tutorial_dictionary, 1);
+            
+            
+            
             birds_group.forEach(moveBird, this);
             snakes_group.forEach(moveSnake, this);
             moving_platform_group.forEach(movingPlatformsUpdate, this);
 
         }
         
-        // PLAYER HEALTH UPDATE - MAYBE PUT IT SOMEWHERE ELSE !!!!!!!!!!!!!!!!!!!!!!!!!
+        // player health update 
         update_health(player.health);
     }
 };
