@@ -19,4 +19,5 @@ function getfruits(player, fruit){
     fruit.kill();
     stomach_fruits[fruit_color] += 1;
     stomach_tracker[fruit_color].text = (stomach_fruits[fruit_color] + " (" + clr_keys[fruit_color] + ")");
+    fruit.reset_time = game.time.time + 2000;
 }
