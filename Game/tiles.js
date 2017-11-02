@@ -63,9 +63,17 @@ function ladder_movement(tile_arr, ladTileIndex, ladderTopIndex){
 }
 
 function ladder_function(){
-    if (climb1.isPlaying == false){
-        climb1.play('','',0.7);
+    if (cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown){
+        if (climb1.isPlaying == false){
+            climb1.play('','',0.7);
+        }
     }
+    else {
+        climb1.stop();
+    }
+//    if (climb1.isPlaying == false){
+//        climb1.play('','',0.7);
+//    }
     player.body.gravity.y = 0;
     if (cursors.up.isDown){
         player.body.velocity.y = -100;
