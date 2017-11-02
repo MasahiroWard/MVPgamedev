@@ -94,36 +94,18 @@ demo.balloonstate.prototype = {
         addMovingPlatforms();
         make_healthpack_groups();
         
+        // Player starts with the balloon
         placeBalloon(500,game.world.height - 400);
-        placeBalloon(randomIntFromInterval(0, 1000), 3000+3000);
-        placeBalloon(randomIntFromInterval(0, 1000), 2500+3000);
-        placeBalloon(randomIntFromInterval(0, 1000), 2000+3000);
-        placeBalloon(randomIntFromInterval(0, 1000), 1500+3000);
-        placeBalloon(randomIntFromInterval(0, 1000), 1000+3000);
-        placeBalloon(randomIntFromInterval(0, 1000), 0500+3000);
-        placeBalloon(randomIntFromInterval(0, 1000), 0000+3000);
-        placeBalloon(randomIntFromInterval(0, 1000), -500+3000);
-        placeBalloon(randomIntFromInterval(0, 1000),-1000+3000);
-        placeBalloon(randomIntFromInterval(0, 1000),-1500+3000);
-        placeBalloon(randomIntFromInterval(0, 1000),-2000+3000);
-        placeBalloon(randomIntFromInterval(0, 1000),-2500+3000);
-        
-        // Twice as many balloons!
-        placeBalloon(3000,game.world.height - 200);
-        placeBalloon(randomIntFromInterval(0, 1000), 2750+3000);
-        placeBalloon(randomIntFromInterval(0, 1000), 2250+3000);
-        placeBalloon(randomIntFromInterval(0, 1000), 1750+3000);
-        placeBalloon(randomIntFromInterval(0, 1000), 1250+3000);
-        placeBalloon(randomIntFromInterval(0, 1000), 0750+3000);
-        placeBalloon(randomIntFromInterval(0, 1000), 0250+3000);
-        placeBalloon(randomIntFromInterval(0, 1000),-0250+3000);
-        placeBalloon(randomIntFromInterval(0, 1000),-05750+3000);
-        placeBalloon(randomIntFromInterval(0, 1000),-1250+3000);
-        placeBalloon(randomIntFromInterval(0, 1000),-1750+3000);
-        placeBalloon(randomIntFromInterval(0, 1000),-2250+3000);
-        placeBalloon(randomIntFromInterval(0, 1000),-2750+3000);
+        var balloon_x = 500;
+        for (i=0; i<48; i++) {
+            console.log(balloon_x);
+            balloon_x = balloon_x + randomIntFromInterval(-350, 350);
+            // Seal in game world bounds
+            balloon_x = Math.min(balloon_x, 1000);
+            balloon_x = Math.max(balloon_x, 0);
+            placeBalloon(balloon_x, 6000-i*250);
+        }
 
-//        
 //        placeFruit(200, 2250+3000, "redfruit");
 //        placeFruit(200, 2500+3000, "bluefruit");
 //        placeFruit(200, 2000+3000, "yellowfruit");
@@ -132,6 +114,7 @@ demo.balloonstate.prototype = {
 //        placeFruit(200, 500+3000, "orangefruit");
         
         // WHY ARE THESE THINGS ACTING AS QUANTUM FRUIT?
+        // Nevermind, wavefunction is collapsed now.
         balloon_respawn_fruits.redcat = placeFruit(8*50, 80*50, "redfruit")
         balloon_respawn_fruits.purplecat = placeFruit(13*50, 80*50, "purplefruit")
         balloon_respawn_fruits.orangecat = placeFruit(0*50, 77*50, "orangefruit")
