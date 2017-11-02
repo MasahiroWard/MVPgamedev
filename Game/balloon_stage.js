@@ -130,6 +130,8 @@ demo.balloonstate.prototype = {
 //        placeFruit(200, 1500+3000, "greenfruit");
 //        placeFruit(200, 1000+3000, "purplefruit");
 //        placeFruit(200, 500+3000, "orangefruit");
+        
+        // WHY ARE THESE THINGS ACTING AS QUANTUM FRUIT?
         balloon_respawn_fruits.redcat = placeFruit(8*50, 80*50, "redfruit")
         balloon_respawn_fruits.purplecat = placeFruit(13*50, 80*50, "purplefruit")
         balloon_respawn_fruits.orangecat = placeFruit(0*50, 77*50, "orangefruit")
