@@ -184,7 +184,7 @@ demo.tutorial.prototype = {
 
         }
         
-        // PLAYER HEALTH UPDATE - MAYBE PUT IT SOMEWHERE ELSE !!!!!!!!!!!!!!!!!!!!!!!!!
+        // player health update 
         update_health(player.health);
     }
 };
