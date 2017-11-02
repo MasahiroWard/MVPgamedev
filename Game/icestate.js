@@ -66,7 +66,7 @@ demo.icestate.prototype = {
         
 //        createChameleon(500,game.world.height - 300);
         
-        place_cat_boss(0,0);
+        place_cat_boss(500,50, ['green', 'purple','blue']);
 
         
 //        iceMap.setCollision(12, true, icelayer1);
@@ -125,8 +125,8 @@ demo.icestate.prototype = {
         placeBird(350+25,2475+25,["purple"]);
         placeBird(500+75, 2475+25, ["green"]);
 //        placeBird(500,1650,["red"]);
-        var laddersnake1 = placeSnake(400, 3300, ['green']);
-        laddersnake1.mytween = game.add.tween(laddersnake1).to({x:[400, 400], y:[3000, 3300]}, 500, Phaser.Easing.Linear.None, true, 0, -1, false);
+        var laddersnake1 = placeSnake(425, 3300, ['green']);
+        laddersnake1.mytween = game.add.tween(laddersnake1).to({x:[425, 425], y:[3000, 3300]}, 1500, Phaser.Easing.Linear.None, true, 0, -1, false);
         
         var laddersnake2 = placeSnake(650, 1520, ['green']);
         laddersnake2.mytween = game.add.tween(laddersnake2).to({x:[250, 650], y:[1150, 1520]}, 1500, Phaser.Easing.Linear.None, true, 0, -1, false);
