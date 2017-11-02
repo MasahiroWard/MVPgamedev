@@ -101,18 +101,18 @@ demo.tutorial.prototype = {
 
         // place enemy
         make_enemy_groups();
-        var snake1 = placeSnake(0, 1950, ["purple"]);
-        snake1.mytween = game.add.tween(snake1).to({x:[200, 0], y:[1950,1950]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        var snake1 = placeSnake(0+25, 1950+50, ["purple"]);
+        snake1.mytween = game.add.tween(snake1).to({x:[200+25, 0+25], y:[1950+50,1950+50]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
 
-        var bird1 = placeBird(300, 700,["blue"]);
+        var bird1 = placeBird(300+25, 700+25,["blue"]);
         // make enemy move
-        bird1.mytween = game.add.tween(bird1).to({x:[100, 300], y:[950, 700]}, 7000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        bird1.mytween = game.add.tween(bird1).to({x:[100+25, 300+25], y:[950+25, 700+25]}, 7000, Phaser.Easing.Linear.None, true, 0, -1, false);
 //        // place static enemies
-        placeBird(500,1650,["blue"]);
+        placeBird(500+25,1650+25,["blue"]);
         
-        bigbird = placeBird(50,50,['purple','green','blue']);
+        bigbird = placeBird(200,200,['purple','green','blue']);
         bigbird.scale.setTo(1,1);
-        bigbird.mytween = game.add.tween(bigbird).to({x:[700, 700, 50, 50], y:[150, 50, 150, 50]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        bigbird.mytween = game.add.tween(bigbird).to({x:[850, 850, 200, 200], y:[300, 200, 300, 200]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
         
         // place moving platforms
         addMovingPlatforms();
