@@ -31,6 +31,11 @@ demo.balloonstate.prototype = {
         // Make this equal to the size of the tilemap
         var tilemap_height = 6000;
         game.world.setBounds(0, 0, 1000, tilemap_height);
+        
+        
+        // catboss and bearboss
+        loadCatBoss();
+        loadBearBoss();
     },
     create: function(){
         // Stop sounds when starting a state
@@ -88,15 +93,37 @@ demo.balloonstate.prototype = {
         addMovingPlatforms();
         make_healthpack_groups();
         
-        placeBalloon(400,game.world.height - 200);
-        placeBalloon(300,3000+3000);
-        placeBalloon(300,2500+3000);
-        placeBalloon(300,2000+3000);
-        placeBalloon(300,1500+3000);
-        placeBalloon(300,1000+3000);
-        placeBalloon(300,500+3000);
+        placeBalloon(3000,game.world.height - 200);
+        placeBalloon(300, 3000+3000);
+        placeBalloon(300, 2500+3000);
+        placeBalloon(300, 2000+3000);
+        placeBalloon(300, 1500+3000);
+        placeBalloon(300, 1000+3000);
+        placeBalloon(300, 0500+3000);
+        placeBalloon(300, 0000+3000);
+        placeBalloon(300, -500+3000);
+        placeBalloon(300,-1000+3000);
+        placeBalloon(300,-1500+3000);
+        placeBalloon(300,-2000+3000);
+        placeBalloon(300,-2500+3000);
         
-        placeFruit(200, 3000+3000, "redfruit");
+        // Twice as many balloons!
+        placeBalloon(3000,game.world.height - 200);
+        placeBalloon(300, 2750+3000);
+        placeBalloon(300, 2250+3000);
+        placeBalloon(300, 1750+3000);
+        placeBalloon(300, 1250+3000);
+        placeBalloon(300, 0750+3000);
+        placeBalloon(300, 0250+3000);
+        placeBalloon(300,-0250+3000);
+        placeBalloon(300,-05750+3000);
+        placeBalloon(300,-1250+3000);
+        placeBalloon(300,-1750+3000);
+        placeBalloon(300,-2250+3000);
+        placeBalloon(300,-2750+3000);
+
+        
+        placeFruit(200, 2250+3000, "redfruit");
         placeFruit(200, 2500+3000, "bluefruit");
         placeFruit(200, 2000+3000, "yellowfruit");
         placeFruit(200, 1500+3000, "greenfruit");
@@ -125,6 +152,16 @@ demo.balloonstate.prototype = {
 //        placeMP(150, 2700, 3, 1, 2, 2, 100, 100);
 //        placeHealthpack(900, 2600);
         
+        
+        // catboss and bearboss
+        place_cat_boss(500,74*50);
+        
+        place_bear_boss(500, 0);
+        placeMP(8*50, 450, 4, 1, 0, 1, 0, 100);
+        bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
+        bearfruit.reset_time = game.time.time + 2000;
+
+        
             
         // These should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 525);
@@ -137,7 +174,11 @@ demo.balloonstate.prototype = {
         
         // camera pauses - cat boss at 82 tiles, bear boss at the top (no need to pause)
         
-        move_camera(0,2);
+        if (game.camera.y<=70*50 && cat_boss.health >= 0) {
+//            move_camera(0,0)
+        } else {
+            move_camera(0,2);
+        }
         if (player.ballooning) {
             chameleon_float();
         } else {
@@ -160,5 +201,24 @@ demo.balloonstate.prototype = {
         snakes_group.forEach(moveSnake, this);
         moving_platform_group.forEach(movingPlatformsUpdate, this);
         update_health(player.health);
+        
+        
+        // Catboss and bearboss
+        if (game.camera.y != 70*50) {
+            // catboss stays asleep until 3 seconds after camera reaches the top            
+            cat_boss.throw_ball_timer = game.time.time + 3000;
+        }
+        var boss_collision_list = [unicornlayer1, unicornlayer2]
+        cat_boss_move(boss_collision_list);
+        
+        bear_boss_move(boss_collision_list)
+//        console.log('update end')
+        if (!bearfruit.alive && game.time.time > bearfruit.reset_time && bear_boss.health >= 0) {
+            bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
+        } else if (bearfruit.alive) {
+            bearfruit.reset_time = game.time.time + 3000;
+        }
+
+
     },
 }

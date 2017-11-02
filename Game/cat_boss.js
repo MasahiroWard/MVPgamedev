@@ -46,7 +46,7 @@ function place_cat_boss(x, y){
     cat_boss.hit_recently_timer = 0;
 
     // Bouncy ball of death
-    yarn_ball = game.add.sprite(0, 0, "cat_yarn");
+    yarn_ball = game.add.sprite(x, y+200, "cat_yarn");
     yarn_ball.scale.setTo(0.6,0.6);
     game.physics.arcade.enable(yarn_ball);
     yarn_ball.color = "black";
@@ -74,12 +74,12 @@ function cat_boss_fall_asleep() {
 
 function cat_boss_sleep() {
     // Move to center top when asleep
-    if (Math.abs(cat_boss.body.x-500) + Math.abs(cat_boss.body.y-50) > 50) {
-        game.physics.arcade.moveToXY(cat_boss, 500, 50);
-    } else {
+//    if (Math.abs(cat_boss.body.x-500) + Math.abs(cat_boss.body.y-50) > 50) {
+//        game.physics.arcade.moveToXY(cat_boss, , );
+//    } else {
         cat_boss.body.velocity.x = 0;
         cat_boss.body.velocity.y = 0;
-    }
+//    }
 }
 
 function cat_touch_yarn() {

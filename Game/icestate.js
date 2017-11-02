@@ -125,7 +125,17 @@ demo.icestate.prototype = {
         placeBird(350+25,2475+25,["purple"]);
         placeBird(500+75, 2475+25, ["green"]);
 //        placeBird(500,1650,["red"]);
-//        
+        var laddersnake1 = placeSnake(400, 3300, ['green']);
+        laddersnake1.mytween = game.add.tween(laddersnake1).to({x:[400, 400], y:[3000, 3300]}, 500, Phaser.Easing.Linear.None, true, 0, -1, false);
+        
+        var laddersnake2 = placeSnake(650, 1520, ['green']);
+        laddersnake2.mytween = game.add.tween(laddersnake2).to({x:[250, 650], y:[1150, 1520]}, 1500, Phaser.Easing.Linear.None, true, 0, -1, false);
+        var laddersnake3 = placeSnake(825, 1250, ['purple']);
+        laddersnake3.mytween = game.add.tween(laddersnake3).to({x:[825, 825], y:[800, 1250]}, 1500, Phaser.Easing.Linear.None, true, 0, -1, false);
+        
+        
+        
+        
 //        // place moving platforms
         addMovingPlatforms();
         placeMP(325, 4025, 2, 1, 6, 0, 100, 0);
@@ -147,6 +157,7 @@ demo.icestate.prototype = {
 
     },
     update: function(){ 
+        console.log(player.body.x, player.body.y);
         // move the camera (if it wasnt obvious)        
         // move the camera (if it wasnt obvious)
         // speed up when player reaches boss
