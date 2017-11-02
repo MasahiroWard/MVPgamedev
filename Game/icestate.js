@@ -148,7 +148,13 @@ demo.icestate.prototype = {
     },
     update: function(){ 
         // move the camera (if it wasnt obvious)        
-        move_camera(1,1);
+        // move the camera (if it wasnt obvious)
+        // speed up when player reaches boss
+        if (player.body.y > 650) {
+            move_camera(1,1);
+        } else if (player.body.y < 650) {
+            move_camera(0, 2);
+        }
         
         // create tile dictionary for tile collisions 
         ice_dictionary = {1:"blue", 2:"blue", 3:"blue", 4:"green", 5:"green", 6:"green", 7:"purple", 8:"purple", 9:"purple", 10:player.color, 11:player.color, 12:player.color}

@@ -8,6 +8,7 @@ demo.gameover.prototype = {
         game.world.setBounds(0, 0, 1000, tilemap_height);        
     },
     create: function(){
+        add_game_bg('bg2');
         game.stage.backgroundColor = "#ffffff";
         game.physics.startSystem(Phaser.Physics.Arcade);
         var style = {boundsAlignH: "center", boundsAlignV: "middle" }

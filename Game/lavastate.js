@@ -98,7 +98,8 @@ demo.lavastate.prototype = {
         placeSnake(200 - 25, 94*50, ["red"]);
         
         placeFruit(18*50, 95*50 - 10, "yellowfruit");
-        placeBird(16*50 - 25, 93*50 - 25, ["orange"]);
+        var testbird = placeBird(16*50 - 25, 93*50 - 25, ["orange"]);
+//        game.add.tween(testbird).to({x:[16*50 - 25, 16*50 - 25], y:[93*50 + 100, 93*50 - 25]}, 1200, Phaser.Easing.Linear.None, true, 0, -1, false)
         placeFruit(4*50, 91*50, "redfruit");
         
         placeMP(14*50, 82*50, 2, 1, 0, 3, 0, 100); 
@@ -278,7 +279,12 @@ demo.lavastate.prototype = {
     },
     update: function(){ 
         // move the camera (if it wasnt obvious)
-        move_camera(1,1);
+        // speed up when player reaches boss
+        if (player.body.y > 650) {
+            move_camera(1,1);
+        } else if (player.body.y < 650) {
+            move_camera(0, 2);
+        }
         
 
 //        
@@ -329,7 +335,13 @@ demo.lavastate.prototype = {
         } else if (bearfruit.alive) {
             bearfruit.reset_time = game.time.time + 3000;
         }
+    },
+//    render: function() {
+//        game.debug.body(bear_boss);
+//        snakes_group.forEachAlive(rendergroup, this);
+//        birds_group.forEachAlive(rendergroup, this);
+//        fish_projectile_group.forEachAlive(rendergroup, this);
+//        game.debug.body(player);
+//    }
 
-
-    }
 };

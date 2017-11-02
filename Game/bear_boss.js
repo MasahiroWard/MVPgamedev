@@ -40,7 +40,7 @@ function place_bear_boss(x, y) {
     bear_boss.body.setSize(200, 150);
     
     bear_boss.health = 4;
-    bear_boss.color_scheme = ['red', 'orange','yellow','red','yellow'];
+    bear_boss.color_scheme = ['green', 'purple','blue','red','yellow', 'orange'];
     bear_boss.color = bear_boss.color_scheme[bear_boss.health]
     
     bear_boss.hit_recently_timer = 0;
@@ -54,8 +54,8 @@ function place_bear_boss(x, y) {
     for (var i = 0; i < 5; i++) {
         var f = fish_projectile_group.create(-50, -50, 'projectile_fish')
         f.scale.setTo(0.2, 0.2);
+        f.body.setSize(75, 50);
         f.name = 'fish' + i;
-        f.body.setSize(50, 50);
         f.exists = false;
         f.visible = false;
         f.color = 'black';

@@ -118,7 +118,7 @@ function movement_msgs1() {
         tutorial_txt.anchor.setTo(0.5, 0);
     }
     if (!tutorial_sprite) {
-        tutorial_sprite = game.add.sprite(200, 2800, "arrowkeys")
+        tutorial_sprite = game.add.sprite(180, 2800, "arrowkeys")
         tutorial_sprite.scale.setTo(0.4, 0.4);
     }
     if (cursors.up.isDown || cursors.down.isDown || cursors.left.isDown || cursors.right.isDown || game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
@@ -149,8 +149,9 @@ function movement_msgs3() {
         tutorial_txt.anchor.setTo(0.5,0);
     }
     if (!tutorial_sprite) {
-        tutorial_sprite = game.add.sprite(200, 2800, "updown_arrowkeys")
-        tutorial_sprite.anchor.setTo(0.5, 0);
+        tutorial_sprite = game.add.sprite(180, 2800, "down_arrowkeys")
+        tutorial_sprite.scale.setTo(0.4, 0.4);
+
     }
 
     if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) || cursors.down.isDown) {
@@ -165,8 +166,9 @@ function movement_msgs4() {
         tutorial_txt.anchor.setTo(0.5,0);
     }
     if (!tutorial_sprite) {
-        tutorial_sprite = game.add.sprite(200, 2800, "updown_arrowkeys")
-        tutorial_sprite.anchor.setTo(0.5, 0);
+        tutorial_sprite = game.add.sprite(180, 2800, "updown_arrowkeys")
+        tutorial_sprite.scale.setTo(0.4,0.4);
+
     }
 
     if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) || cursors.down.isDown || cursors.up.isDown) {

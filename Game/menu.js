@@ -14,6 +14,7 @@ demo.menu.prototype = {
         
     },
     create: function(){
+        add_game_bg('bg1');
         restart_state = "menu";
         // This only needs to happen one time.  Add it to the intial state and forget about it after
         game.physics.startSystem(Phaser.Physics.ARCADE);
