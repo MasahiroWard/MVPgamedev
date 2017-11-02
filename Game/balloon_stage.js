@@ -121,6 +121,7 @@ demo.balloonstate.prototype = {
         balloon_respawn_fruits.bluecat = placeFruit(950, 77*50, "bluefruit")
         balloon_respawn_fruits.yellowcat = placeFruit(150, 74*50, "yellowfruit")
         balloon_respawn_fruits.greencat = placeFruit(800, 74*50, "greenfruit")
+        balloon_respawn_fruits.health1 = placeHealthpack(500, 73*50)
         for (f in balloon_respawn_fruits) {
             balloon_respawn_fruits[f].reset_time = game.time.time + 2000;
         }
