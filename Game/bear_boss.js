@@ -61,6 +61,7 @@ function place_bear_boss(x, y) {
         f.color = 'black';
         f.checkWorldBounds = true;
         f.events.onOutOfBounds.add(resetFish, this);
+        f.hit_recently_timer = 0;
     }
     bossMusic = game.add.audio('bossMusic');
     bossMusic.play('', '', 0.3, true, true);

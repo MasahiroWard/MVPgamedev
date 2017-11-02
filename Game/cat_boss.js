@@ -58,6 +58,7 @@ function place_cat_boss(x, y){
 //    cat_boss.body.tilePadding.y = 25;
     
     yarn_ball.body.velocity.setTo(20,20);
+    yarn_ball.hit_recently_timer = 0;
 //    yarn_ball.body.maxVelocity = 70;
 //    yarn_ball.body.tilePadding.y = 25
     
