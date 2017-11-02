@@ -25,22 +25,22 @@ function loadCatBoss(){
     game.load.audio('bossMusic', 'assets/sounds/bossMusic.mp3');
 }
 
-function place_cat_boss(x, y){
+function place_cat_boss(x, y, clrs){
     cat_boss = game.add.sprite(x,y,"sleep_cat");
     game.physics.arcade.enable(cat_boss);
     cat_boss.body.collideWorldBounds = true;
     cat_boss.animations.add('move', [0, 1, 2, 3], 4, true)
     cat_boss.animations.add('throw', [0, 1, 2, 3], 2, true)
-    cat_boss.health = 2;
 //    cat_boss.scale.setTo(1,1);
     cat_boss.action = 'sleeping';
     cat_boss.anchor.setTo(0.5, 0.5);
 
     // Color of boss at 0, 1, and 2 health
     // boss dies when hit at 0 health
-    cat_boss.color_scheme = ['green', 'purple', 'blue']
+    cat_boss.color_scheme = clrs;
+    cat_boss.health = cat_boss.color_scheme.length-1;
     cat_boss.color = cat_boss.color_scheme[cat_boss.health];
-            
+    
     cat_boss.throw_ball_timer = game.time.time + 10000;
     cat_boss.change_direction_timer = 0;
     cat_boss.hit_recently_timer = 0;
@@ -119,16 +119,26 @@ function cat_boss_regular_move() {
 function cat_boss_moving() {
 //   console.log(cat_boss.change_direction_timer, game.time.time);
     if (cat_boss.change_direction_timer < game.time.time) {
-        cat_boss.body.velocity.y = randomIntFromInterval(-1, 1) * (player.body.y - cat_boss.body.y)/2;
-        cat_boss.body.velocity.x = randomIntFromInterval(-1, 1) * (player.body.x - cat_boss.body.x)/2;
+        cat_boss.body.velocity.x = randomIntFromInterval(-5, 5) * 50;
+        cat_boss.body.velocity.y = randomIntFromInterval(-3, 3) * 50;
         cat_boss.change_direction_timer = game.time.time + 2000;
     }
 }
 
 function cat_boss_damaged() {
-    // If damaged, move up (away from player)
-    cat_boss.body.velocity.y = -3*(player.body.y - cat_boss.body.y);
-    cat_boss.body.velocity.x = -3*(player.body.x - cat_boss.body.x);
+    // If damaged, move away from player
+    if (player.body.y > cat_boss.body.y) {
+        cat_boss.body.velocity.y = -300;
+    } else {
+        cat_boss.body.velocity.y = 300;
+    }
+    if (player.body.x > cat_boss.body.x) {
+        cat_boss.body.velocity.x = -300;
+    } else {
+        cat_boss.body.velocity.x = 300;
+    }
+//    cat_boss.body.velocity.y = -3*(player.body.y - cat_boss.body.y);
+//    cat_boss.body.velocity.x = -3*(player.body.x - cat_boss.body.x);
 
     if (cat_boss.hit_recently_timer > game.time.time) {
         cat_boss_flash(cat_boss.hit_recently_timer - game.time.time);
