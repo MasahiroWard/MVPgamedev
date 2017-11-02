@@ -26,7 +26,7 @@ function loadBearBoss(){
     game.load.spritesheet('yellow_bear', 'assets/spritesheets/yellow_catwalk_spritesheet.png',158,147);
     game.load.spritesheet('orange_bear', 'assets/spritesheets/orange_catwalk_spritesheet.png',157,145);
     game.load.spritesheet('purple_bear', 'assets/spritesheets/purple_catwalk_spritesheet.png',158,146);
-    game.load.audio('bossMusic', 'assets/sounds/bossMusic.mp3');    
+    game.load.audio('friendly', 'assets/sounds/friendly.mp3');    
 }
 
 function place_bear_boss(x, y) {
@@ -64,7 +64,7 @@ function place_bear_boss(x, y) {
         f.hit_recently_timer = 0;
     }
     
-    bossMusic = game.add.audio('bossMusic');
+    bossMusic = game.add.audio('friendly');
 //    bossMusic.play('', '', 0.3, true, true);
     
     fish_indicator = game.add.sprite(0, 0, 'projectile_fish');
@@ -149,8 +149,8 @@ function bear_boss_moving() {
         bear_boss.body.velocity.y = -500;
     }
     
-    if (game.camera.y <= 0 && !bossMusic.isPlaying){
-            bossMusic.play('', '', 0.3, true, true);
+    if (game.camera.y <= 0 && !friendly.isPlaying){
+            friendly.play('', '', 0.3, true, true);
     }
     
 }
