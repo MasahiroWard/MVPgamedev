@@ -15,9 +15,9 @@ demo.balloonstate.prototype = {
         game.load.tilemap('unicornMap', 'assets/tilemaps/UnicornStage/unicornMap.json', null, Phaser.Tilemap.TILED_JSON);
         // colored tiles
         game.load.image('blue_snow', 'assets/tilemaps/IceStage/blue_snow.png');
-        game.load.image('temp_red_tile', 'assets/tilemaps/LavaStage/temp_red_tile.png');
-        game.load.image('temp_orange_tile', 'assets/tilemaps/LavaStage/temp_orange_tile.png');
-        game.load.image('temp_yellow_tile', 'assets/tilemaps/LavaStage/temp_yellow_tile.png');
+        game.load.image('temp_red_tile', 'assets/tilemaps/LavaStage/red_tile.png');
+        game.load.image('temp_orange_tile', 'assets/tilemaps/LavaStage/orange_tile.png');
+        game.load.image('temp_yellow_tile', 'assets/tilemaps/LavaStage/yellow_tile.png');
         game.load.image('green_snow', 'assets/tilemaps/IceStage/green_snow.png');
         game.load.image('purple_snow', 'assets/tilemaps/IceStage/purple_snow.png');
         
@@ -79,9 +79,9 @@ demo.balloonstate.prototype = {
         unicornMap.setCollisionBetween(28, 29, true, unicornlayer2);
         
         // load in sound
-        guitar1 = game.add.audio('guitar');        
+        rainbow = game.add.audio('rainbow');        
         // loops guitar music 
-        guitar1.play('','',0.5,true,true);
+        rainbow.play('','',0.5,true,true);
         ///////////////////////////////////////////////
         
         // Add chameleon at x,y
