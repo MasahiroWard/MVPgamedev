@@ -21,7 +21,7 @@ function get_balloon(player, balloon){
 }
 
 function use_balloon(){
-    balloonNoise.play('','',0.7);
+    balloonNoise.play('','',0.4);
     player.ballooning = true;
     player.has_balloon = false;
     // 2 seconds for balloon activation

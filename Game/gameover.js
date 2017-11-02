@@ -15,6 +15,9 @@ demo.gameover.prototype = {
         var gameovertext = game.add.text(0, 0, "Game Over", style);
         gameovertext.setTextBounds(0, 0, 1000, 700);
         
+        game.sound.stopAll();
+        disappointed.play('','',0.6);
+        
         var style = {font: "30px Arial", fill: "Black"}
         var tutorial_menu_option = game.add.text(200, 200, "Main Menu", style);
         tutorial_menu_option.inputEnabled = true;

@@ -104,8 +104,8 @@ function deadplayer(instakill=false){
             bing.play('','',0.7);
         }
         else{
-            game.sound.stopAll();
-            disappointed.play('','',0.6);
+//            game.sound.stopAll();
+//            disappointed.play('','',0.6);
             console.log('you dead lol');
             game.state.start('gameover');
         }
