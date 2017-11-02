@@ -174,7 +174,9 @@ function cat_boss_move(layer_list){
         
     for (l in layer_list){
         game.physics.arcade.collide(cat_boss, layer_list[l]);
-        game.physics.arcade.collide(yarn_ball, layer_list[l]);
+        if (cat_boss.action != "throwing") {
+            game.physics.arcade.collide(yarn_ball, layer_list[l]);
+        }
     }
     
     if (cat_boss.action != 'sleeping' && bossMusic.isPlaying == false){
