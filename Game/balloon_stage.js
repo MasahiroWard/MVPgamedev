@@ -2,6 +2,7 @@
 
 // Declare state vars only used in this state
 var unicornMap, unicornlayer1, unicornlayer2;
+var balloon_respawn_fruits = {};
 //var state_var_2;
 
 // Change boilerplate to whatever name
@@ -93,42 +94,51 @@ demo.balloonstate.prototype = {
         addMovingPlatforms();
         make_healthpack_groups();
         
-        placeBalloon(3000,game.world.height - 200);
-        placeBalloon(300, 3000+3000);
-        placeBalloon(300, 2500+3000);
-        placeBalloon(300, 2000+3000);
-        placeBalloon(300, 1500+3000);
-        placeBalloon(300, 1000+3000);
-        placeBalloon(300, 0500+3000);
-        placeBalloon(300, 0000+3000);
-        placeBalloon(300, -500+3000);
-        placeBalloon(300,-1000+3000);
-        placeBalloon(300,-1500+3000);
-        placeBalloon(300,-2000+3000);
-        placeBalloon(300,-2500+3000);
+        placeBalloon(500,game.world.height - 400);
+        placeBalloon(randomIntFromInterval(0, 1000), 3000+3000);
+        placeBalloon(randomIntFromInterval(0, 1000), 2500+3000);
+        placeBalloon(randomIntFromInterval(0, 1000), 2000+3000);
+        placeBalloon(randomIntFromInterval(0, 1000), 1500+3000);
+        placeBalloon(randomIntFromInterval(0, 1000), 1000+3000);
+        placeBalloon(randomIntFromInterval(0, 1000), 0500+3000);
+        placeBalloon(randomIntFromInterval(0, 1000), 0000+3000);
+        placeBalloon(randomIntFromInterval(0, 1000), -500+3000);
+        placeBalloon(randomIntFromInterval(0, 1000),-1000+3000);
+        placeBalloon(randomIntFromInterval(0, 1000),-1500+3000);
+        placeBalloon(randomIntFromInterval(0, 1000),-2000+3000);
+        placeBalloon(randomIntFromInterval(0, 1000),-2500+3000);
         
         // Twice as many balloons!
         placeBalloon(3000,game.world.height - 200);
-        placeBalloon(300, 2750+3000);
-        placeBalloon(300, 2250+3000);
-        placeBalloon(300, 1750+3000);
-        placeBalloon(300, 1250+3000);
-        placeBalloon(300, 0750+3000);
-        placeBalloon(300, 0250+3000);
-        placeBalloon(300,-0250+3000);
-        placeBalloon(300,-05750+3000);
-        placeBalloon(300,-1250+3000);
-        placeBalloon(300,-1750+3000);
-        placeBalloon(300,-2250+3000);
-        placeBalloon(300,-2750+3000);
+        placeBalloon(randomIntFromInterval(0, 1000), 2750+3000);
+        placeBalloon(randomIntFromInterval(0, 1000), 2250+3000);
+        placeBalloon(randomIntFromInterval(0, 1000), 1750+3000);
+        placeBalloon(randomIntFromInterval(0, 1000), 1250+3000);
+        placeBalloon(randomIntFromInterval(0, 1000), 0750+3000);
+        placeBalloon(randomIntFromInterval(0, 1000), 0250+3000);
+        placeBalloon(randomIntFromInterval(0, 1000),-0250+3000);
+        placeBalloon(randomIntFromInterval(0, 1000),-05750+3000);
+        placeBalloon(randomIntFromInterval(0, 1000),-1250+3000);
+        placeBalloon(randomIntFromInterval(0, 1000),-1750+3000);
+        placeBalloon(randomIntFromInterval(0, 1000),-2250+3000);
+        placeBalloon(randomIntFromInterval(0, 1000),-2750+3000);
 
-        
-        placeFruit(200, 2250+3000, "redfruit");
-        placeFruit(200, 2500+3000, "bluefruit");
-        placeFruit(200, 2000+3000, "yellowfruit");
-        placeFruit(200, 1500+3000, "greenfruit");
-        placeFruit(200, 1000+3000, "purplefruit");
-        placeFruit(200, 500+3000, "orangefruit");
+//        
+//        placeFruit(200, 2250+3000, "redfruit");
+//        placeFruit(200, 2500+3000, "bluefruit");
+//        placeFruit(200, 2000+3000, "yellowfruit");
+//        placeFruit(200, 1500+3000, "greenfruit");
+//        placeFruit(200, 1000+3000, "purplefruit");
+//        placeFruit(200, 500+3000, "orangefruit");
+        balloon_respawn_fruits.redcat = placeFruit(8*50, 80*50, "redfruit")
+        balloon_respawn_fruits.purplecat = placeFruit(13*50, 80*50, "purplefruit")
+        balloon_respawn_fruits.orangecat = placeFruit(0*50, 77*50, "orangefruit")
+        balloon_respawn_fruits.bluecat = placeFruit(950, 77*50, "bluefruit")
+        balloon_respawn_fruits.yellowcat = placeFruit(150, 74*50, "yellowfruit")
+        balloon_respawn_fruits.greencat = placeFruit(800, 74*50, "greenfruit")
+        for (f in balloon_respawn_fruits) {
+            balloon_respawn_fruits[f].reset_time = game.time.time + 2000;
+        }
         
         var redbird = placeBird(0, 2750, ["red"]);
         redbird.mytween = game.add.tween(redbird).to({x:[500, 0], y:[2750,2750]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
@@ -146,7 +156,7 @@ demo.balloonstate.prototype = {
         placeMP(400, 200, 12, 1, 0, 0, 0, 0)
         // Examples:
 //        placeFruit(700, 2700, "bluefruit")
-//        var snake1 = placeSnake(300, 2000, ["blue"]);
+//        var snake1 = placeSnake(randomIntFromInterval(0, 1000), 2000, ["blue"]);
 //        snake1.mytween = game.add.tween(snake1).to({x:[200, 300], y:[2000,2000]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
 //        placeBalloon(100, 3100);
 //        placeMP(150, 2700, 3, 1, 2, 2, 100, 100);
@@ -154,7 +164,7 @@ demo.balloonstate.prototype = {
         
         
         // catboss and bearboss
-        place_cat_boss(500,74*50);
+        place_cat_boss(500,74*50,['green','yellow','blue','orange','red','purple']);
         
         place_bear_boss(500, 0);
         placeMP(8*50, 450, 4, 1, 0, 1, 0, 100);
@@ -217,6 +227,16 @@ demo.balloonstate.prototype = {
             bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
         } else if (bearfruit.alive) {
             bearfruit.reset_time = game.time.time + 3000;
+        }
+
+//        console.log(balloon_respawn_fruits);
+        for (f in balloon_respawn_fruits) {
+//            console.log(balloon_respawn_fruits[f])
+            if (!balloon_respawn_fruits[f].alive && game.time.time > balloon_respawn_fruits[f].reset_time) {
+                balloon_respawn_fruits[f].revive()
+            } else if (balloon_respawn_fruits[f].alive) {
+                balloon_respawn_fruits[f].reset_time = game.time.time + 2000;
+            }
         }
 
 
