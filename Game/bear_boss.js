@@ -63,8 +63,9 @@ function place_bear_boss(x, y) {
         f.events.onOutOfBounds.add(resetFish, this);
         f.hit_recently_timer = 0;
     }
+    
     bossMusic = game.add.audio('bossMusic');
-    bossMusic.play('', '', 0.3, true, true);
+//    bossMusic.play('', '', 0.3, true, true);
     
     fish_indicator = game.add.sprite(0, 0, 'projectile_fish');
     fish_indicator.alpha = 0.5;
@@ -146,6 +147,10 @@ function bear_boss_moving() {
     // Move back to top of the screen
     if (bear_boss.body.center.y >= 300) {
         bear_boss.body.velocity.y = -500;
+    }
+    
+    if (game.camera.y <= 0 && !bossMusic.isPlaying){
+            bossMusic.play('', '', 0.3, true, true);
     }
     
 }
