@@ -64,7 +64,7 @@ function place_bear_boss(x, y) {
         f.hit_recently_timer = 0;
     }
     
-    bossMusic = game.add.audio('friendly');
+    friendly = game.add.audio('friendly');
 //    bossMusic.play('', '', 0.3, true, true);
     
     fish_indicator = game.add.sprite(0, 0, 'projectile_fish');
@@ -127,6 +127,11 @@ function bear_boss_move(layer_list) {
         game.add.text(bear_boss.x, bear_boss.y, "VICTORY!");
         bear_boss.kill();
     }
+    // start music 
+    if (game.camera.y <= 0 && (friendly.isPlaying == false)){
+            game.sound.stopAll();
+            friendly.play('', '', 0.7, true, true);
+    }
 }
 
 function bear_boss_moving() {
@@ -149,9 +154,10 @@ function bear_boss_moving() {
         bear_boss.body.velocity.y = -500;
     }
     
-    if (game.camera.y <= 0 && !friendly.isPlaying){
-            friendly.play('', '', 0.3, true, true);
-    }
+    // start music 
+//    if (game.camera.y <= 0 && bossMusic.isPlaying = false){
+//            bossMusic.play('', '', 0.3, true, true);
+    
     
 }
 
