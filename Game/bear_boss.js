@@ -67,6 +67,7 @@ function place_bear_boss(x, y) {
     bossMusic.play('', '', 0.3, true, true);
     
     fish_indicator = game.add.sprite(0, 0, 'projectile_fish');
+    fish_indicator.alpha = 0.5;
     game.physics.arcade.enable(fish_indicator);
     fish_indicator.scale.setTo(0.2, 0.2);
 }
