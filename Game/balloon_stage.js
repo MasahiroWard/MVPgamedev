@@ -136,9 +136,13 @@ demo.balloonstate.prototype = {
         greenbird.mytween = game.add.tween(greenbird).to({x:[500, 0], y:[1250,1250]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
         var purplebird = placeBird(0, 750, ["purple"]);
         purplebird.mytween = game.add.tween(purplebird).to({x:[500, 0], y:[750,750]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
-        var orangebird = placeBird(0, 250, ["orange"]);
-        orangebird.mytween = game.add.tween(orangebird).to({x:[500, 0], y:[250,250]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
+        
+        // this bird is in the boss area 
+//        var orangebird = placeBird(0, 250, ["orange"]);
+//        orangebird.mytween = game.add.tween(orangebird).to({x:[500, 0], y:[250,250]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
 
+        
+        // why do we need this platform ? (below)
         placeMP(400, 200, 12, 1, 0, 0, 0, 0)
         // Examples:
 //        placeFruit(700, 2700, "bluefruit")
@@ -153,6 +157,7 @@ demo.balloonstate.prototype = {
         place_cat_boss(500,74*50,['green','yellow','blue','orange','red','purple']);
         
         place_bear_boss(500, 0);
+        // why do we need this platform ? (below)
         placeMP(8*50, 450, 4, 1, 0, 1, 0, 100);
         bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
         bearfruit.reset_time = game.time.time + 2000;

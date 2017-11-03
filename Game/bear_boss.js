@@ -130,7 +130,7 @@ function bear_boss_move(layer_list) {
     // start music 
     if (game.camera.y <= 0 && (friendly.isPlaying == false)){
             game.sound.stopAll();
-            friendly.play('', '', 0.7, true, true);
+            friendly.play('', '', 0.9, true, true);
     }
 }
 
