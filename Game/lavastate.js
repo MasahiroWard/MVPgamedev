@@ -147,7 +147,7 @@ demo.lavastate.prototype = {
         
         placeHealthpack(9*50, 29*50);
         
-        snake_2_1 = placeSnake(2*50, bottom_of_maze-1*50+25, ['red']);
+        snake_2_1 = placeSnake(3*50, bottom_of_maze-1*50+25, ['red']);
         snake_6_1 = placeSnake(6*50, bottom_of_maze-1*50+25, ['yellow']);
         snake_6_1.mytween = game.add.tween(snake_6_1).to({x:[12*50, 6*50], y:[bottom_of_maze-1*50+25,bottom_of_maze-1*50+25]}, 1200, Phaser.Easing.Linear.None, true, 0, -1, false);
         
@@ -155,9 +155,9 @@ demo.lavastate.prototype = {
         snake_15_1 = placeSnake(15*50, bottom_of_maze-1*50+25, ['orange']);
         snake_15_1.mytween = game.add.tween(snake_15_1).to({x:[17*50, 15*50], y:[bottom_of_maze-1*50+25,bottom_of_maze-1*50+25]}, 1200, Phaser.Easing.Linear.None, true, 0, -1, false);
         
-        bird_5_3 = placeBird(5*50, bottom_of_maze-3*50+25, ['red']);
-        bird_12_3 = placeBird(12*50, bottom_of_maze-3*50+25, ['yellow']);
-        bird_18_3 = placeBird(18*50, bottom_of_maze-3*50+25, ['orange']);
+        bird_5_3 = placeBird(6*50, bottom_of_maze-3*50+25, ['red']);
+        bird_12_3 = placeBird(13*50, bottom_of_maze-3*50+25, ['yellow']);
+        bird_18_3 = placeBird(19*50, bottom_of_maze-3*50+25, ['orange']);
         // tween these snakes 
         snake_2_5 = placeSnake(2*50, bottom_of_maze-5*50+25, ['yellow']);
         snake_8_5 = placeSnake(8*50, bottom_of_maze-5*50+25, ['red']);
@@ -168,8 +168,8 @@ demo.lavastate.prototype = {
         snake_15_5.mytween = game.add.tween(snake_15_5).to({x:[16*50, 15*50], y:[bottom_of_maze-5*50+25,bottom_of_maze-5*50+25]}, 1600, Phaser.Easing.Linear.None, true, 0, -1, false); 
         
 //        snake_18_5 = placeSnake(18*50, bottom_of_maze-5*50, ['yellow']);        
-        bird_5_7 = placeBird(5*50, bottom_of_maze-7*50+25, ['red']);
-        bird_12_7 = placeBird(12*50, bottom_of_maze-7*50+25, ['orange']);
+        bird_5_7 = placeBird(6*50, bottom_of_maze-7*50+25, ['red']);
+        bird_12_7 = placeBird(13*50, bottom_of_maze-7*50+25, ['orange']);
         // tween this one: 
         snake_1_9 = placeSnake(1*50, bottom_of_maze-9*50+25, ['yellow']);
         snake_1_9.mytween = game.add.tween(snake_1_9).to({x:[3*50, 1*50], y:[bottom_of_maze-9*50+25,bottom_of_maze-9*50+25]}, 1500, Phaser.Easing.Linear.None, true, 0, -1, false);         
@@ -183,27 +183,27 @@ demo.lavastate.prototype = {
         bird_7_8 = placeBird(7*50, bottom_of_maze-8*50+25, ['yellow']);
         // maybe tween this 
         
-        snake_0_11 = placeSnake(0*50, bottom_of_maze-11*50+25, ['red']);
-        bird_5_11 = placeBird(5*50, bottom_of_maze-11*50+25, ['orange']);
-        bird_12_11 = placeBird(12*50, bottom_of_maze-11*50+25, ['yellow']);
-        snake_18_11 = placeSnake(18*50, bottom_of_maze-11*50+25, ['red']);
-        bird_2_13 = placeBird(2*50, bottom_of_maze-13*50+25, ['orange']);
+        snake_0_11 = placeSnake(1*50, bottom_of_maze-11*50+25, ['red']);
+        bird_5_11 = placeBird(6*50, bottom_of_maze-11*50+25, ['orange']);
+        bird_12_11 = placeBird(13*50, bottom_of_maze-11*50+25, ['yellow']);
+        snake_18_11 = placeSnake(19*50, bottom_of_maze-11*50+25, ['red']);
+        bird_2_13 = placeBird(3*50, bottom_of_maze-13*50+25, ['orange']);
         // tween this one - jk dont 
-        snake_8_13 = placeSnake(8*50, bottom_of_maze-13*50+25, ['red']);
+        snake_8_13 = placeSnake(9*50, bottom_of_maze-13*50+25, ['red']);
 //        snake_8_13.mytween = game.add.tween(snake_8_13).to({x:[8*50, 11*50], y:[bottom_of_maze-13*50,bottom_of_maze-13*50]}, 1100, Phaser.Easing.Linear.None, true, 0, -1, false); 
         
-        bird_11_13 = placeBird(11*50, bottom_of_maze-13*50+25, ['yellow']);
-        bird_15_13 = placeBird(15*50, bottom_of_maze-13*50+25, ['red']);
+        bird_11_13 = placeBird(12*50, bottom_of_maze-13*50+25, ['yellow']);
+        bird_15_13 = placeBird(16*50, bottom_of_maze-13*50+25, ['red']);
         snake_5_15 = placeSnake(6*50, bottom_of_maze-15*50+25, ['orange']);
-        snake_13_15 = placeSnake(13*50, bottom_of_maze-15*50+25, ['red']);
+        snake_13_15 = placeSnake(14*50, bottom_of_maze-15*50+25, ['red']);
 //        snake_2_16 = placeSnake(2*50, bottom_of_maze-16*50, ['orange']);
         
 //        snake_9_16 = placeSnake(9*50, bottom_of_maze-16*50, ['red']);
 //        snake_15_16 = placeSnake(15*50, bottom_of_maze-16*50, ['yellow']);
         
         bird_0_17 = placeBird(0*50, bottom_of_maze-17*50+25, ['red']);
-        bird_9_17 = placeBird(9*50, bottom_of_maze-17*50+25, ['yellow']);
-        bird_18_17 = placeBird(18*50, bottom_of_maze-17*50+25, ['orange']);
+        bird_9_17 = placeBird(10*50, bottom_of_maze-17*50+25, ['yellow']);
+        bird_18_17 = placeBird(19*50, bottom_of_maze-17*50+25, ['orange']);
         bird_0_17.mytween = game.add.tween(bird_0_17).to({x:[2*50, 0*50], y:[bottom_of_maze-17*50+25,bottom_of_maze-17*50+25]}, 1300, Phaser.Easing.Linear.None, true, 0, -1, false); 
         bird_9_17.mytween = game.add.tween(bird_9_17).to({x:[10*50, 9*50], y:[bottom_of_maze-17*50+25,bottom_of_maze-17*50+25]}, 1200, Phaser.Easing.Linear.None, true, 0, -1, false); 
         bird_18_17.mytween = game.add.tween(bird_18_17).to({x:[19*50, 18*50], y:[bottom_of_maze-17*50+25,bottom_of_maze-17*50+25]}, 1000, Phaser.Easing.Linear.None, true, 0, -1, false); 

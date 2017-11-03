@@ -174,10 +174,15 @@ demo.balloonstate.prototype = {
 //            move_camera(0,0)
         } else {
             move_camera(0,2);
-            if (!rainbow.isPlaying){
-                bossMusic.stop();
-                rainbow.play('','',0.5,true,true);
-            }
+//            if (bossMusic.isPlaying && !rainbow.isPlaying){
+//                bossMusic.stop();
+//                rainbow.play('','',0.5,true,true);
+//                
+//            }
+//            if (rainbow.isPlaying = false){
+//                bossMusic.stop();
+//                rainbow.play('','',0.5,true,true);
+//            }
             
         }
         if (player.ballooning) {
