@@ -130,6 +130,7 @@ demo.tutorial.prototype = {
         placeBalloon(50, 900);
         
         make_healthpack_groups();
+        placeHealthpack(100, 600);
                 
         // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 525);
