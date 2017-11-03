@@ -130,7 +130,7 @@ demo.tutorial.prototype = {
         placeBalloon(50, 900);
         
         make_healthpack_groups();
-        placeHealthpack(100, 600);
+        placeHealthpack(100, 200);
                 
         // Inventory should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 525);
@@ -144,7 +144,7 @@ demo.tutorial.prototype = {
     update: function(){
 //        console.log(player.body.x, player.body.y);
         // These are the heights at which the game automatically pauses and displays a message
-        var stop_heights = [2627, 2626, 2625, 2624, 2623, 2622, 1500, 1499, 1498, 1497, 1496, 1];
+        var stop_heights = [2627, 2626, 2625, 2624, 2623, 2622, 1500, 1499, 1498, 1497, 1496, 3,2,1];
 //        var stop_heights = [];
         idx = stop_heights.indexOf(game.camera.y);
 //        console.log(idx, prev_idx);
@@ -167,7 +167,7 @@ demo.tutorial.prototype = {
             // Pause the camera and the player when pausing the game
             move_camera(1,1);
             
-            if (game.camera.y >=12 && player.body.bottom <= 650 && player.body.right-player.body.width >= 725 && player.body.right <= 925){
+            if (game.camera.y >=20 && player.body.bottom <= 650 && player.body.right-player.body.width >= 725 && player.body.right <= 925){
                 // Force the player onto the platform until the boss is fully revealed if the player is on the highest platform
                 player.body.velocity.x = 0;
                 player.body.velocity.y = 50;

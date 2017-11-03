@@ -66,8 +66,8 @@ function disp_tut_msgs(idx) {
         case 12:
             movement_msgs12()
             break
-        case 'beat_cat_boss':
-            movement_msgs_beatcatboss()
+        case 13:
+            movement_msgs13();
             break
                 }
 }
@@ -259,10 +259,10 @@ function movement_msgs11() {
 
 function movement_msgs12() {
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(200, 300, "Collect health to recover.", {font: "30px Arial", fill: "White", align: "center"});
+        tutorial_txt = game.add.text(0, 100, "Collect health to recover.", {font: "30px Arial", fill: "White", align: "center"});
     }
     if (!tutorial_sprite) {
-        tutorial_sprite = game.add.sprite(500, 600, "downarrow")
+        tutorial_sprite = game.add.sprite(125, 150, "downarrow")
         tutorial_sprite.anchor.setTo(0.5, 0);
         tutorial_sprite.scale.setTo(0.2, 0.25);
     }
@@ -274,10 +274,10 @@ function movement_msgs12() {
 
 function movement_msgs13() {
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(200, 300, "Colored tiles will damage you unless you are the same color as the tile.", {font: "30px Arial", fill: "White", align: "center"});
+        tutorial_txt = game.add.text(200, 250, "Colored tiles will damage you\nunless you are the same color as the tile.", {font: "30px Arial", fill: "White", align: "center"});
     }
     if (!tutorial_sprite) {
-        tutorial_sprite = game.add.sprite(100, 500, "downarrow")
+        tutorial_sprite = game.add.sprite(500, 350, "downarrow")
         tutorial_sprite.anchor.setTo(0.5, 0);
         tutorial_sprite.scale.setTo(0.2, 0.25);
     }
