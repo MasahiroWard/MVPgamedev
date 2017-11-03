@@ -95,6 +95,7 @@ demo.icestate.prototype = {
         placeHealthpack(725,3275);
 //        placeFruit(725, 3275, "greenfruit"); // put in moving platform to get to here 
         placeFruit(400, 3125, "greenfruit");
+        placeFruit(650, 3500, "greenfruit")
         placeFruit(450, 2475, "bluefruit");
         placeFruit(675,1925, "purplefruit");
         placeFruit(275,8575,"greenfruit");

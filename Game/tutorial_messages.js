@@ -259,12 +259,34 @@ function movement_msgs11() {
 
 function movement_msgs12() {
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(200, 300, "Beware of black projectiles.\nThese will damage you no matter what color you are.", {font: "30px Arial", fill: "White", align: "center"});
+        tutorial_txt = game.add.text(200, 300, "Collect health to recover.", {font: "30px Arial", fill: "White", align: "center"});
     }
+    if (!tutorial_sprite) {
+        tutorial_sprite = game.add.sprite(500, 600, "downarrow")
+        tutorial_sprite.anchor.setTo(0.5, 0);
+        tutorial_sprite.scale.setTo(0.2, 0.25);
+    }
+
     if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
         continue_playing();
     }
 }
+
+function movement_msgs13() {
+    if (!tutorial_txt) {
+        tutorial_txt = game.add.text(200, 300, "Colored tiles will damage you unless you are the same color as the tile.", {font: "30px Arial", fill: "White", align: "center"});
+    }
+    if (!tutorial_sprite) {
+        tutorial_sprite = game.add.sprite(100, 500, "downarrow")
+        tutorial_sprite.anchor.setTo(0.5, 0);
+        tutorial_sprite.scale.setTo(0.2, 0.25);
+    }
+
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+        continue_playing();
+    }
+}
+
 
 function movement_msgs_beatcatboss() {
     if (!tutorial_txt) {
