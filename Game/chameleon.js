@@ -25,7 +25,7 @@ function createChameleon(xcoor, ycoor){
     player.ballooning = false;
     
     // put in player health
-    player.health = 100;
+    player.health = 3;
 }
 
 

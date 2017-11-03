@@ -179,7 +179,8 @@ function cat_boss_move(layer_list){
         }
     }
     
-    if (cat_boss.action != 'sleeping' && bossMusic.isPlaying == false){
+    // this is messing up sound in unicorn stage - trying a fix  
+    if (cat_boss.action != 'sleeping' && bossMusic.isPlaying == false && cat_boss.alive){
         game.sound.stopAll();
         bossMusic.play('','',0.3,true,true);
         

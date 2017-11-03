@@ -174,6 +174,11 @@ demo.balloonstate.prototype = {
 //            move_camera(0,0)
         } else {
             move_camera(0,2);
+            if (!rainbow.isPlaying && !friendly.isPlaying){
+                bossMusic.stop();
+                rainbow.play('','',0.5,true,true);
+            }
+
 //            if (bossMusic.isPlaying && !rainbow.isPlaying){
 //                bossMusic.stop();
 //                rainbow.play('','',0.5,true,true);
@@ -185,6 +190,17 @@ demo.balloonstate.prototype = {
 //            }
             
         }
+        
+//        if (!bossMusic.isPlaying && !rainbow.isPlaying){
+//            rainbow.play('','',0.5);
+//        }
+        // this is not being called ? 
+//        if (game.camera.y <= 70*50 - 1 && game.camera.y >= 70*50-10){
+//            bossMusic.stop();
+//            rainbow.play('', '', 0.5, true, true);
+//            console.log('music change');
+//        }
+        
         if (player.ballooning) {
             chameleon_float();
         } else {
