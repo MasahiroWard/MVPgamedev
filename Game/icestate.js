@@ -155,6 +155,7 @@ demo.icestate.prototype = {
         
         // Allow player to darken screen when paused
         add_pause_darkener();
+        game.input.onDown.add(pause_clicking, self);
 
     },
     update: function(){ 

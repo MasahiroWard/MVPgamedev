@@ -83,6 +83,7 @@ demo.boilerplate.prototype = {
         createInventory(0, 525);
         place_hearts(450, 0);
         add_pause_darkener();
+        game.input.onDown.add(pause_clicking, self);
     },
     update: function(){
         // Collide with layers that are necessary

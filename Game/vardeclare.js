@@ -13,7 +13,7 @@ var player;
 var cursors;
 
 // A method to darken the background when paused
-var pause_darkener;
+var pause_darkener, pause_restart, pause_mainmenu;
 
 // Dictionaries to keep track of what is in your stomach
 var stomach, stomach_fruits = {}, stomach_icons = {}, stomach_tracker = {};

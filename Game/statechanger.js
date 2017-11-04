@@ -16,12 +16,10 @@ function keyPress(char) {
     if (char == "p"){
         // Switch pausing
 //        game.paused = !game.paused;
-        if (game.paused){
-            game.paused = false;
-            pause_darkener.alpha = 0;
+        if (!game.paused){
+            pause_game();
         } else {
-            game.paused = true;
-            pause_darkener.alpha = 0.5;
+            unpause_game();
         }
         
     }
@@ -30,5 +28,41 @@ function keyPress(char) {
     // Temporary method to change states
     if (char == "m"){
         game.state.start("menu")
+    }
+}
+
+function pause_game() {
+    pause_darkener.alpha = 0.5;
+    var style = {font: "30px Arial", fill: "White"}
+    pause_mainmenu = game.add.text(200, game.camera.y+200, "Main Menu", style);
+    pause_restart = game.add.text(600, game.camera.y+200, "Restart", style);
+    
+    game.paused = true;
+
+}
+
+function unpause_game() {
+    game.paused = false;
+    pause_darkener.alpha = 0;
+    pause_mainmenu.kill();
+    pause_restart.kill();
+}
+
+
+function pause_clicking(event) {
+    if (game.paused) {
+        // Check if click was on Restart
+//        console.log(event.x, event.y+game.camera.y);
+//        console.log(pause_restart.right, pause_restart.left, pause_restart.top, pause_restart.bottom);
+        if (event.x > pause_restart.left && event.x < pause_restart.right && event.y+game.camera.y > pause_restart.top && event.y+game.camera.y < pause_restart.bottom) {
+            game.paused = false;
+            game.state.start(restart_state);
+            }
+        
+        // Check if click was on Main Menu
+        if (event.x > pause_mainmenu.left && event.x < pause_mainmenu.right && event.y+game.camera.y > pause_mainmenu.top && event.y+game.camera.y < pause_mainmenu.bottom) {
+            game.paused = false;
+            game.state.start('menu');
+            }
     }
 }
