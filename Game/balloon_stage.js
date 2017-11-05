@@ -150,6 +150,18 @@ demo.balloonstate.prototype = {
         
         // place fruits after bearboss 
         placeFruit(11*50, 67*50, 'redfruit');
+        placeFruit(6*50, 59*50, 'redfruit');
+        placeFruit(15*50, 56*50, 'bluefruit');
+        placeFruit(5*50, 52*50, 'yellowfruit');
+        placeFruit(11*50, 43*50, 'yellowfruit');
+        placeFruit(4*50, 39*50, 'greenfruit');
+        placeFruit(16*50, 34*50, 'greenfruit');
+        placeFruit(16*50, 24*50, 'purplefruit');
+        placeFruit(4*50, 17*50, 'purplefruit');
+
+
+        
+        
 
         
         // why do we need this platform ? (below)
