@@ -9,7 +9,7 @@ Avoid enemies or kill enemies of the same color and get to the top of the stage.
 
 When stepping on colored tiles, make sure you are the same color as the tiles, otherwise you take damage. 
 
-Please note that trial is a development stage and not meant for real gameplay. Balloon stage is an experimental stage that is not currently completed. 
+Please note that trial is a development stage and not meant for real gameplay.
 
 
 Coding setup:
@@ -49,3 +49,11 @@ Supernatural(Instrumental) by Alex (c) copyright 2016 Licensed under a Creative 
 
 Happy rock & clearday & cute by 
 https://www.bensound.com
+
+Rainbows Kevin MacLeod (incompetech.com)
+Licensed under Creative Commons: By Attribution 3.0 License
+http://creativecommons.org/licenses/by/3.0/
+
+New Friendly Kevin MacLeod (incompetech.com)
+Licensed under Creative Commons: By Attribution 3.0 License
+http://creativecommons.org/licenses/by/3.0/
