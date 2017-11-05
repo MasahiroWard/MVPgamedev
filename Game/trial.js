@@ -137,6 +137,7 @@ demo.trial.prototype = {
         place_hearts(450, 0);
         createInventory(0,525);
         add_pause_darkener();
+        game.input.onDown.add(pause_clicking, self);
 //        console.log('create end')
 
     },

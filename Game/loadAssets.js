@@ -78,5 +78,15 @@ function loadImages(){
     
     // healthpack 
     game.load.image('healthpack', 'assets/sprites/health_item.png');
+    
+    // Logos and options
+    game.load.image('game_over_txt', 'assets/sprites/game_over.png');
+    game.load.image('ice_state_txt', 'assets/sprites/glacier_stage.png');
+    game.load.image('lava_state_txt', 'assets/sprites/lava_stage.png');
+    game.load.image('main_menu_txt', 'assets/sprites/main_menu.png');
+    game.load.image('try_again_txt', 'assets/sprites/try_again.png');
+    game.load.image('tutorial_state_txt', 'assets/sprites/tutorial.png');
+    game.load.image('unicorn_state_txt', 'assets/sprites/unicorn_stage.png');
+    game.load.image('title_txt', 'assets/sprites/Title.png');
 }
 

@@ -41,8 +41,11 @@ demo.menu.prototype = {
         // Add chameleon at x,y
         createChameleon(500,500);
         
+        var title = game.add.sprite(500, 200, "title_txt");
+        title.anchor.setTo(0.5, 0.5);
+        
         var style = {font: "30px Arial", fill: "Black"}
-        var tutorial_menu_option = game.add.text(200, 200, "Tutorial", style);
+        var tutorial_menu_option = game.add.sprite(200, 200, "tutorial_state_txt");
         tutorial_menu_option.inputEnabled = true;
         tutorial_menu_option.events.onInputUp.add(
             function(){
@@ -51,7 +54,7 @@ demo.menu.prototype = {
             }
         );
         
-        var ice_menu_option = game.add.text(200, 250, "Ice Stage", style);
+        var ice_menu_option = game.add.sprite(200, 250, "ice_state_txt");
         ice_menu_option.inputEnabled = true;
         ice_menu_option.events.onInputUp.add(
             function(){
@@ -60,7 +63,7 @@ demo.menu.prototype = {
             }
         );
         
-        var lava_menu_option = game.add.text(200, 300, "Lava Stage", style);
+        var lava_menu_option = game.add.sprite(200, 300, "lava_state_txt");
         lava_menu_option.inputEnabled = true;
         lava_menu_option.events.onInputUp.add(
             function(){
@@ -70,25 +73,25 @@ demo.menu.prototype = {
         );
 
 
-        var trial_menu_option = game.add.text(200, 350, "Trial", style);
-        trial_menu_option.inputEnabled = true;
-        trial_menu_option.events.onInputUp.add(
-            function(){
-                restart_state = 'trialstate'
-                game.state.start('trialstate');
-            }
-        );
+//        var trial_menu_option = game.add.text(200, 350, "Trial", style);
+//        trial_menu_option.inputEnabled = true;
+//        trial_menu_option.events.onInputUp.add(
+//            function(){
+//                restart_state = 'trialstate'
+//                game.state.start('trialstate');
+//            }
+//        );
+//        
+//        var bp_menu_option = game.add.text(200, 400, "Boilerplate", style);
+//        bp_menu_option.inputEnabled = true;
+//        bp_menu_option.events.onInputUp.add(
+//            function(){
+//                restart_state = 'boilerplate'
+//                game.state.start('boilerplate');
+//            }
+//        );
         
-        var bp_menu_option = game.add.text(200, 400, "Boilerplate", style);
-        bp_menu_option.inputEnabled = true;
-        bp_menu_option.events.onInputUp.add(
-            function(){
-                restart_state = 'boilerplate'
-                game.state.start('boilerplate');
-            }
-        );
-        
-        var balloon_menu_option = game.add.text(200, 450, "balloonstate", style);
+        var balloon_menu_option = game.add.sprite(200, 350, "unicorn_state_txt");
         balloon_menu_option.inputEnabled = true;
         balloon_menu_option.events.onInputUp.add(
             function(){
@@ -105,17 +108,17 @@ demo.menu.prototype = {
         make_healthpack_groups();
         menu_balloon = placeBalloon(925, 500);
         menu_balloon.reset_time = game.time.time + 2000;
-        placeBalloon(925, 100);
+//        placeBalloon(925, 100);
         
-        placeFruit(300, 100, "redfruit");
-        placeFruit(700, 100, "bluefruit");
-        placeMP(400, 100, 5, 1, 0, 8, 0, 100);
+//        placeFruit(300, 100, "redfruit");
+//        placeFruit(700, 100, "bluefruit");
+//        placeMP(400, 100, 5, 1, 0, 8, 0, 100);
 
         // Add MP as ground so we don't need a tilemap for menu
         placeMP(0, 600, 18, 3, 0, 0, 0, 0);
             
         // These should be the last thing added so that it is on top of all other sprites (never hidden)
-        createInventory(0, 525);
+//        createInventory(0, 525);
 //        place_hearts(450, 0);
         add_pause_darkener();
     },

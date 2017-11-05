@@ -139,7 +139,7 @@ demo.tutorial.prototype = {
         place_hearts(450, 0);
         
         add_pause_darkener();
-        
+        game.input.onDown.add(pause_clicking, self);
     },
     update: function(){
 //        console.log(player.body.x, player.body.y);
