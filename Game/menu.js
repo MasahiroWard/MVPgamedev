@@ -41,6 +41,9 @@ demo.menu.prototype = {
         // Add chameleon at x,y
         createChameleon(500,500);
         
+        var title = game.add.sprite(500, 200, "title_txt");
+        title.anchor.setTo(0.5, 0.5);
+        
         var style = {font: "30px Arial", fill: "Black"}
         var tutorial_menu_option = game.add.sprite(200, 200, "tutorial_state_txt");
         tutorial_menu_option.inputEnabled = true;
@@ -105,17 +108,17 @@ demo.menu.prototype = {
         make_healthpack_groups();
         menu_balloon = placeBalloon(925, 500);
         menu_balloon.reset_time = game.time.time + 2000;
-        placeBalloon(925, 100);
+//        placeBalloon(925, 100);
         
-        placeFruit(300, 100, "redfruit");
-        placeFruit(700, 100, "bluefruit");
-        placeMP(400, 100, 5, 1, 0, 8, 0, 100);
+//        placeFruit(300, 100, "redfruit");
+//        placeFruit(700, 100, "bluefruit");
+//        placeMP(400, 100, 5, 1, 0, 8, 0, 100);
 
         // Add MP as ground so we don't need a tilemap for menu
         placeMP(0, 600, 18, 3, 0, 0, 0, 0);
             
         // These should be the last thing added so that it is on top of all other sprites (never hidden)
-        createInventory(0, 525);
+//        createInventory(0, 525);
 //        place_hearts(450, 0);
         add_pause_darkener();
     },
