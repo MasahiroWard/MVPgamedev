@@ -42,7 +42,7 @@ demo.menu.prototype = {
         createChameleon(500,500);
         
         var style = {font: "30px Arial", fill: "Black"}
-        var tutorial_menu_option = game.add.text(200, 200, "Tutorial", style);
+        var tutorial_menu_option = game.add.sprite(200, 200, "tutorial_state_txt");
         tutorial_menu_option.inputEnabled = true;
         tutorial_menu_option.events.onInputUp.add(
             function(){
@@ -51,7 +51,7 @@ demo.menu.prototype = {
             }
         );
         
-        var ice_menu_option = game.add.text(200, 250, "Ice Stage", style);
+        var ice_menu_option = game.add.sprite(200, 250, "ice_state_txt");
         ice_menu_option.inputEnabled = true;
         ice_menu_option.events.onInputUp.add(
             function(){
@@ -60,7 +60,7 @@ demo.menu.prototype = {
             }
         );
         
-        var lava_menu_option = game.add.text(200, 300, "Lava Stage", style);
+        var lava_menu_option = game.add.sprite(200, 300, "lava_state_txt");
         lava_menu_option.inputEnabled = true;
         lava_menu_option.events.onInputUp.add(
             function(){
@@ -70,25 +70,25 @@ demo.menu.prototype = {
         );
 
 
-        var trial_menu_option = game.add.text(200, 350, "Trial", style);
-        trial_menu_option.inputEnabled = true;
-        trial_menu_option.events.onInputUp.add(
-            function(){
-                restart_state = 'trialstate'
-                game.state.start('trialstate');
-            }
-        );
+//        var trial_menu_option = game.add.text(200, 350, "Trial", style);
+//        trial_menu_option.inputEnabled = true;
+//        trial_menu_option.events.onInputUp.add(
+//            function(){
+//                restart_state = 'trialstate'
+//                game.state.start('trialstate');
+//            }
+//        );
+//        
+//        var bp_menu_option = game.add.text(200, 400, "Boilerplate", style);
+//        bp_menu_option.inputEnabled = true;
+//        bp_menu_option.events.onInputUp.add(
+//            function(){
+//                restart_state = 'boilerplate'
+//                game.state.start('boilerplate');
+//            }
+//        );
         
-        var bp_menu_option = game.add.text(200, 400, "Boilerplate", style);
-        bp_menu_option.inputEnabled = true;
-        bp_menu_option.events.onInputUp.add(
-            function(){
-                restart_state = 'boilerplate'
-                game.state.start('boilerplate');
-            }
-        );
-        
-        var balloon_menu_option = game.add.text(200, 450, "balloonstate", style);
+        var balloon_menu_option = game.add.sprite(200, 350, "unicorn_state_txt");
         balloon_menu_option.inputEnabled = true;
         balloon_menu_option.events.onInputUp.add(
             function(){

@@ -34,8 +34,8 @@ function keyPress(char) {
 function pause_game() {
     pause_darkener.alpha = 0.5;
     var style = {font: "30px Arial", fill: "White"}
-    pause_mainmenu = game.add.text(200, game.camera.y+200, "Main Menu", style);
-    pause_restart = game.add.text(600, game.camera.y+200, "Restart", style);
+    pause_mainmenu = game.add.sprite(200, game.camera.y+200, "main_menu_txt");
+    pause_restart = game.add.sprite(600, game.camera.y+200, "try_again_txt");
     
     game.paused = true;
 
