@@ -158,11 +158,6 @@ demo.balloonstate.prototype = {
         placeFruit(16*50, 34*50, 'greenfruit');
         placeFruit(16*50, 24*50, 'purplefruit');
         placeFruit(4*50, 17*50, 'purplefruit');
-
-
-        
-        
-
         
         // why do we need this platform ? (below)
 //        placeMP(400, 200, 12, 1, 0, 0, 0, 0)
@@ -188,7 +183,6 @@ demo.balloonstate.prototype = {
         
         bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
         bearfruit.reset_time = game.time.time + 2000;
-
         
             
         // These should be the last thing added so that it is on top of all other sprites (never hidden)
