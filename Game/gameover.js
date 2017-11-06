@@ -12,14 +12,16 @@ demo.gameover.prototype = {
         game.stage.backgroundColor = "#ffffff";
         game.physics.startSystem(Phaser.Physics.Arcade);
         var style = {boundsAlignH: "center", boundsAlignV: "middle" }
-        var gameovertext = game.add.sprite(500, 300, "game_over_txt");
+        var gameovertext = game.add.sprite(500, 150, "game_over_txt");
         gameovertext.anchor.setTo(0.5, 0.5);
+        gameovertext.scale.setTo(1.2, 1.2);
         
         game.sound.stopAll();
         disappointed.play('','',0.6);
         
         var style = {font: "30px Arial", fill: "Black"}
-        var tutorial_menu_option = game.add.sprite(200, 200, "main_menu_txt");
+        var tutorial_menu_option = game.add.sprite(300, 300, "main_menu_txt");
+        tutorial_menu_option.anchor.setTo(0.5, 0.5);
         tutorial_menu_option.inputEnabled = true;
         tutorial_menu_option.events.onInputUp.add(
             function(){
@@ -28,7 +30,8 @@ demo.gameover.prototype = {
         );
         
         var style = {font: "30px Arial", fill: "Black"}
-        var tutorial_menu_option = game.add.sprite(600, 200, "try_again_txt");
+        var tutorial_menu_option = game.add.sprite(700, 300, "try_again_txt");
+        tutorial_menu_option.anchor.setTo(0.5, 0.5);
         tutorial_menu_option.inputEnabled = true;
         tutorial_menu_option.events.onInputUp.add(
             function(){
