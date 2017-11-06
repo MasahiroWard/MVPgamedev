@@ -26,15 +26,15 @@ function createChameleon(xcoor, ycoor){
     player.ballooning = false;
     
     // put in player health
-    player.health = 3;
+    player.health = 100;
     
-    // use beginner and advanced to change number of lives, commented out for now UNCOMMENT FOR DIFFICULTY LEVEL !!! *************
-//    if (difficulty == "advanced"){
-//        player.health = 3;
-//    }
-//    else if (difficulty == "easy"){
-//        player.health = 5;
-//    }
+    // use beginner and advanced to change number of lives
+    if (difficulty == "advanced"){
+        player.health = 3;
+    }
+    else if (difficulty == "easy"){
+        player.health = 5;
+    }
 }
 
 
@@ -150,38 +150,42 @@ function place_hearts(startx, starty){
     heart1 = game.add.sprite(startx, starty+20, "heart");
     heart2 = game.add.sprite(startx+50, starty+20, "heart");
     heart3 = game.add.sprite(startx+100, starty+20, "heart");
+    heart4 = game.add.sprite(startx+150, starty+20, "heart");
+    heart5 = game.add.sprite(startx+200, starty+20, "heart");
+
 
     heart1.fixedToCamera = true;
     heart2.fixedToCamera = true;
     heart3.fixedToCamera = true;
+    heart4.fixedToCamera = true;
+    heart5.fixedToCamera = true;
     
     heart1.scale.setTo(0.07, 0.07);
     heart2.scale.setTo(0.07, 0.07);
     heart3.scale.setTo(0.07, 0.07);
+    heart4.scale.setTo(0.07, 0.07);
+    heart5.scale.setTo(0.07, 0.07);
     
     heart1.alpha = 0.7;
     heart2.alpha = 0.7;
     heart3.alpha = 0.7;
     
+    
     if (difficulty == "easy"){
-        heart4 = game.add.sprite(startx+150, starty+20, "heart");
-        heart5 = game.add.sprite(startx+200, starty+20, "heart");
-        
-        heart4.fixedToCamera = true;
-        heart5 = fixedToCamera = true;
-        
-        heart4.scale.setTo(0.07,0.07);
-        heart5.scale.setTo(0.07,0.07);
         
         heart4.alpha = 0.7;
         heart5.alpha = 0.7;
+    }
+    else{
+        heart4.alpha = 0;
+        heart5.alpha = 0;
     }
     
 }
 
 // display health (default 3 hearts) 
 function update_health(health){
-//    console.log(health);
+    console.log(health);
     
     // 5 lives portion 
     if (difficulty = "easy"){
@@ -194,7 +198,7 @@ function update_health(health){
         }
         
         else if (health == 3){
-            heart4.alpha == 0;
+            heart4.alpha = 0;
         }
     }
     
@@ -207,7 +211,7 @@ function update_health(health){
         heart3.alpha = 0;
     }
     else if (health == 1){
-        heart1.alpha = 0.7
+        heart1.alpha = 0.7;
         heart2.alpha = 0;
     }
     else if (health == 0){
