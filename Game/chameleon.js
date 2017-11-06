@@ -108,7 +108,7 @@ function deadplayer(instakill=false){
     if (chameleonWasHit < game.time.time || instakill){
         if (player.health > 1){
             player.health -= 1;
-            console.log('lose a life');
+            console.log(player.health);
             chameleonWasHit = game.time.time + 3000;
             bing.play('','',0.7);
         }
