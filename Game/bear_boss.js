@@ -123,10 +123,6 @@ function bear_boss_move(layer_list) {
             break
                             }
     
-    if (bear_boss.health < 0) {
-        game.add.text(bear_boss.x, bear_boss.y, "VICTORY!");
-        bear_boss.kill();
-    }
     // start music 
     if (game.camera.y <= 0 && (friendly.isPlaying == false)){
             game.sound.stopAll();
@@ -201,6 +197,10 @@ function touch_bear_boss() {
     if (bear_boss.hit_recently_timer < game.time.time) {
         if (bear_boss.color == player.color){
             bear_boss.health -= 1;
+            if (bear_boss.health < 0) {
+                game.add.text(bear_boss.x, bear_boss.y, "VICTORY!");
+                bear_boss.kill();
+            }
             bear_boss.color = bear_boss.color_scheme[bear_boss.health];
             bear_boss.loadTexture(bear_boss.color+"_bear");
             bear_boss.hit_recently_timer = game.time.time + 5000;

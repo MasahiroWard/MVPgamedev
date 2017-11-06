@@ -201,13 +201,6 @@ function cat_boss_move(layer_list){
             cat_boss_damaged()
             break
                           }    
-    if (cat_boss.health < 0){
-        // This needs to be something cooler
-        game.add.text(cat_boss.x, cat_boss.y, 'VICTORY!')
-        cat_boss.kill();
-        yarn_ball.kill();
-//        disp_tut_msgs('beat_cat_boss')
-    }
 }
 
 function touch_cat_boss(){
@@ -216,6 +209,14 @@ function touch_cat_boss(){
         cat_boss.hit_recently_timer = game.time.time + 2000;
         if (cat_boss.color == player.color){
             cat_boss.health -= 1;
+            if (cat_boss.health < 0){
+                // This needs to be something cooler
+                game.add.text(cat_boss.x, cat_boss.y, 'VICTORY!')
+                cat_boss.kill();
+                yarn_ball.kill();
+        //        disp_tut_msgs('beat_cat_boss')
+                return
+            }
             cat_boss.color = cat_boss.color_scheme[cat_boss.health];
             
             cat_boss.loadTexture(cat_boss.color+"_cat");
