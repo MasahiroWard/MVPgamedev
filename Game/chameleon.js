@@ -9,6 +9,7 @@ var half_flight_time = 3/4;
 var chameleon_jump_velocity = 2 * max_height / (half_flight_time);
 var chameleon_gravity = 2 * max_height/(half_flight_time**2);
 
+
 // Put this in create
 function createChameleon(xcoor, ycoor){
     add_chameleon_sound();
@@ -26,6 +27,14 @@ function createChameleon(xcoor, ycoor){
     
     // put in player health
     player.health = 3;
+    
+    // use beginner and advanced to change number of lives, commented out for now UNCOMMENT FOR DIFFICULTY LEVEL !!! *************
+//    if (difficulty == "advanced"){
+//        player.health = 3;
+//    }
+//    else if (difficulty == "easy"){
+//        player.health = 5;
+//    }
 }
 
 
@@ -154,11 +163,42 @@ function place_hearts(startx, starty){
     heart2.alpha = 0.7;
     heart3.alpha = 0.7;
     
+    if (difficulty == "easy"){
+        heart4 = game.add.sprite(startx+150, starty+20, "heart");
+        heart5 = game.add.sprite(startx+200, starty+20, "heart");
+        
+        heart4.fixedToCamera = true;
+        heart5 = fixedToCamera = true;
+        
+        heart4.scale.setTo(0.07,0.07);
+        heart5.scale.setTo(0.07,0.07);
+        
+        heart4.alpha = 0.7;
+        heart5.alpha = 0.7;
+    }
+    
 }
 
 // display health (default 3 hearts) 
 function update_health(health){
 //    console.log(health);
+    
+    // 5 lives portion 
+//    if (difficulty = "easy"){
+//        if (health == 5){
+//            heart5.alpha = 0.7;
+//        }
+//        if (health == 4){
+//            heart5.alpha = 0;
+//            heart4.alpha = 0.7;
+//        }
+//        
+//        if (health == 3){
+//            heart4.alpha == 0;
+//        }
+//    }
+    
+    
     if (health == 3){
         heart3.alpha = 0.7;
     }

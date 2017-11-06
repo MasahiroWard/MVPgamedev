@@ -11,12 +11,19 @@ function placeHealthpack(x, y){
 }
 
 function get_healthpack(player, healthpack){
+// change the <3 to <lives and uncomment below for difficulty level 
+//    if (difficulty == "advanced"){
+//        var lives = 3;
+//    }
+//    else if (difficulty == "easy"){
+//        var lives = 5;
+//    }
+    
+    
     if (player.health < 3){
     jingle.play('','',1.3);
     healthpack.kill();
-    if (player.health < 3){
-        player.health += 1;
-    }
+    player.health += 1;
     }
 }
 
