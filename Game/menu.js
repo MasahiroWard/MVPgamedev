@@ -71,6 +71,24 @@ demo.menu.prototype = {
                 game.state.start('lavastate');
             }
         );
+        
+        var easy_option = game.add.sprite(500, 350, "lava_state_txt");
+        easy_option.inputEnabled = true;
+        easy_option.events.onInputUp.add(
+            function(){
+                restart_state = 'lavastate'
+                game.state.start('lavastate');
+            }
+        );
+        
+        var difficult_option = game.add.sprite(500, 400, "lava_state_txt");
+        difficult_option.inputEnabled = true;
+        difficult_option.events.onInputUp.add(
+            function(){
+                restart_state = 'lavastate'
+                game.state.start('lavastate');
+            }
+        );
 
 
 //        var trial_menu_option = game.add.text(200, 350, "Trial", style);
@@ -124,6 +142,7 @@ demo.menu.prototype = {
     },
     update: function(){
         game.camera.y = 0;
+//        console.log(difficulty);
         
         if (player.ballooning) {
             chameleon_float();
