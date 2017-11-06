@@ -26,9 +26,9 @@ function keyPress(char) {
 
     
     // Temporary method to change states
-    if (char == "m"){
-        game.state.start("menu")
-    }
+//    if (char == "m"){
+//        game.state.start("menu")
+//    }
 }
 
 function pause_game() {
