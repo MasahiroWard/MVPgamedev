@@ -159,7 +159,7 @@ demo.icestate.prototype = {
 
     },
     update: function(){ 
-        console.log(player.body.x, player.body.y);
+//        console.log(player.body.x, player.body.y);
         // move the camera (if it wasnt obvious)        
         // move the camera (if it wasnt obvious)
         // speed up when player reaches boss
