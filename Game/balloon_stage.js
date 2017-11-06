@@ -98,7 +98,7 @@ demo.balloonstate.prototype = {
         placeBalloon(500,game.world.height - 400);
         var balloon_x = 500;
         for (i=0; i<48; i++) {
-            console.log(balloon_x);
+//            console.log(balloon_x);
             balloon_x = balloon_x + randomIntFromInterval(-350, 350);
             // Seal in game world bounds
             balloon_x = Math.min(balloon_x, 1000);

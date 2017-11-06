@@ -12,7 +12,7 @@ demo.gameover.prototype = {
         game.stage.backgroundColor = "#ffffff";
         game.physics.startSystem(Phaser.Physics.Arcade);
         var style = {boundsAlignH: "center", boundsAlignV: "middle" }
-        var gameovertext = game.add.sprite(500, 250, "game_over_txt");
+        var gameovertext = game.add.sprite(500, 300, "game_over_txt");
         gameovertext.anchor.setTo(0.5, 0.5);
         
         game.sound.stopAll();
