@@ -101,8 +101,8 @@ demo.balloonstate.prototype = {
 //            console.log(balloon_x);
             balloon_x = balloon_x + randomIntFromInterval(-350, 350);
             // Seal in game world bounds
-            balloon_x = Math.min(balloon_x, 1000);
-            balloon_x = Math.max(balloon_x, 0);
+            balloon_x = Math.min(balloon_x, 950);
+            balloon_x = Math.max(balloon_x, 50);
             placeBalloon(balloon_x, 6000-i*250);
         }
 
