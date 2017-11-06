@@ -26,7 +26,7 @@ function createChameleon(xcoor, ycoor){
     player.ballooning = false;
     
     // put in player health
-    player.health = 3;
+    player.health = 100;
     
     // use beginner and advanced to change number of lives
     if (difficulty == "advanced"){
@@ -211,7 +211,7 @@ function update_health(health){
         heart3.alpha = 0;
     }
     else if (health == 1){
-        heart1.alpha = 0.7
+        heart1.alpha = 0.7;
         heart2.alpha = 0;
     }
     else if (health == 0){

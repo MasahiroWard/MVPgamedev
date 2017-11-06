@@ -73,7 +73,7 @@ demo.menu.prototype = {
         );
         
         // difficulty level options - PUT IN REAL SPRITES HERE!!!! 
-        var easy_option = game.add.sprite(650, 350, "tutorial_state_txt");
+        var easy_option = game.add.sprite(650, 300, "tutorial_state_txt");
         easy_option.inputEnabled = true;
         easy_option.events.onInputUp.add(
             function(){
@@ -141,6 +141,13 @@ demo.menu.prototype = {
     },
     update: function(){
         game.camera.y = 0;
+        
+//        if (difficulty == "easy"){
+//            easy_option.scale.setTo(1.5,1.5);
+//        }
+//        else{
+//            difficult_option.scale.setTo(1.5,1.5);
+//        }
         
         if (player.ballooning) {
             chameleon_float();
