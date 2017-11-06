@@ -184,19 +184,19 @@ function update_health(health){
 //    console.log(health);
     
     // 5 lives portion 
-//    if (difficulty = "easy"){
-//        if (health == 5){
-//            heart5.alpha = 0.7;
-//        }
-//        if (health == 4){
-//            heart5.alpha = 0;
-//            heart4.alpha = 0.7;
-//        }
-//        
-//        if (health == 3){
-//            heart4.alpha == 0;
-//        }
-//    }
+    if (difficulty = "easy"){
+        if (health == 5){
+            heart5.alpha = 0.7;
+        }
+        else if (health == 4){
+            heart5.alpha = 0;
+            heart4.alpha = 0.7;
+        }
+        
+        else if (health == 3){
+            heart4.alpha == 0;
+        }
+    }
     
     
     if (health == 3){
