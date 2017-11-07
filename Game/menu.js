@@ -45,7 +45,7 @@ demo.menu.prototype = {
         title.anchor.setTo(0.5, 0.5);
         
         var style = {font: "30px Arial", fill: "Black"}
-        var tutorial_menu_option = game.add.sprite(200, 250, "tutorial_state_txt");
+        var tutorial_menu_option = game.add.sprite(250, 250, "tutorial_state_txt");
         tutorial_menu_option.inputEnabled = true;
         tutorial_menu_option.events.onInputUp.add(
             function(){
@@ -53,8 +53,19 @@ demo.menu.prototype = {
                 game.state.start('tutorial');
             }
         );
+        tutorial_menu_option.anchor.setTo(0.5,0.5);
+        tutorial_menu_option.events.onInputOver.add(
+            function() {
+                tutorial_menu_option.scale.setTo(1.2, 1.2);
+            }
+        );
+        tutorial_menu_option.events.onInputOut.add(
+            function () {
+                tutorial_menu_option.scale.setTo(1, 1);
+            }
+        );
         
-        var ice_menu_option = game.add.sprite(200, 300, "ice_state_txt");
+        var ice_menu_option = game.add.sprite(250, 350, "ice_state_txt");
         ice_menu_option.inputEnabled = true;
         ice_menu_option.events.onInputUp.add(
             function(){
@@ -62,8 +73,19 @@ demo.menu.prototype = {
                 game.state.start('icestate');
             }
         );
+        ice_menu_option.anchor.setTo(0.5,0.5);
+        ice_menu_option.events.onInputOver.add(
+            function() {
+                ice_menu_option.scale.setTo(1.2, 1.2);
+            }
+        );
+        ice_menu_option.events.onInputOut.add(
+            function () {
+                ice_menu_option.scale.setTo(1, 1);
+            }
+        );
         
-        var lava_menu_option = game.add.sprite(200, 350, "lava_state_txt");
+        var lava_menu_option = game.add.sprite(250, 450, "lava_state_txt");
         lava_menu_option.inputEnabled = true;
         lava_menu_option.events.onInputUp.add(
             function(){
@@ -71,7 +93,38 @@ demo.menu.prototype = {
                 game.state.start('lavastate');
             }
         );
+        lava_menu_option.anchor.setTo(0.5,0.5);
+        lava_menu_option.events.onInputOver.add(
+            function() {
+                lava_menu_option.scale.setTo(1.2, 1.2);
+            }
+        );
+        lava_menu_option.events.onInputOut.add(
+            function () {
+                lava_menu_option.scale.setTo(1, 1);
+            }
+        );
         
+        var balloon_menu_option = game.add.sprite(250, 550, "unicorn_state_txt");
+        balloon_menu_option.inputEnabled = true;
+        balloon_menu_option.events.onInputUp.add(
+            function(){
+                restart_state = 'balloonstate'
+                game.state.start('balloonstate');
+            }
+        );
+        balloon_menu_option.anchor.setTo(0.5,0.5);
+        balloon_menu_option.events.onInputOver.add(
+            function() {
+                balloon_menu_option.scale.setTo(1.2, 1.2);
+            }
+        );
+        balloon_menu_option.events.onInputOut.add(
+            function () {
+                balloon_menu_option.scale.setTo(1, 1);
+            }
+        );
+
         //difficulty level options - PUT IN REAL SPRITES HERE!!!! 
         easy_option = game.add.sprite(650, 300, "tutorial_state_txt");
         easy_option.inputEnabled = true;
@@ -108,14 +161,6 @@ demo.menu.prototype = {
 //            }
 //        );
         
-        var balloon_menu_option = game.add.sprite(200, 400, "unicorn_state_txt");
-        balloon_menu_option.inputEnabled = true;
-        balloon_menu_option.events.onInputUp.add(
-            function(){
-                restart_state = 'balloonstate'
-                game.state.start('balloonstate');
-            }
-        );
         
         // make groups
         make_fruit_groups();

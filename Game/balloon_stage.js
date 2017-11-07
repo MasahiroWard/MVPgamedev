@@ -104,6 +104,17 @@ demo.balloonstate.prototype = {
             balloon_x = Math.min(balloon_x, 950);
             balloon_x = Math.max(balloon_x, 50);
             placeBalloon(balloon_x, 6000-i*250);
+            if (i > 28) {
+                // Place random health packs and fruits after catboss
+                var fruit_x = balloon_x + randomIntFromInterval(-175, 175);
+                var health_x = balloon_x + randomIntFromInterval(-175, 175);
+                var balloon_rand_fruit_clr = color_list[randomIntFromInterval(0, 5)]+"fruit"
+                placeFruit (fruit_x, 6000-i*250 - 125, balloon_rand_fruit_clr);
+                placeHealthpack(fruit_x, 6000-i*250 - 125)
+            }
+        }
+        for (i = 0; i<10; i++) {
+            placeBalloon(i*100+50, 68*50+25);
         }
 
 //        placeFruit(200, 2250+3000, "redfruit");
@@ -189,7 +200,8 @@ demo.balloonstate.prototype = {
         createInventory(0, 525);
         place_hearts(450, 0);
         add_pause_darkener();
-        game.input.onDown.add(pause_clicking, self);
+        game.input.onDown.add(pause_clicking, this);
+//        game.input.addMoveCallback(pause_hover, this);
     },
     update: function(){
         // Collide with layers that are necessary
@@ -277,7 +289,6 @@ demo.balloonstate.prototype = {
                 balloon_respawn_fruits[f].reset_time = game.time.time + 2000;
             }
         }
-
 
     },
 }
