@@ -72,22 +72,22 @@ demo.menu.prototype = {
             }
         );
         
-        // difficulty level options - PUT IN REAL SPRITES HERE!!!! 
-//        easy_option = game.add.sprite(650, 300, "tutorial_state_txt");
-//        easy_option.inputEnabled = true;
-//        easy_option.events.onInputUp.add(
-//            function(){
-//                difficulty = "easy";
-//            }
-//        );
-//        
-//        difficult_option = game.add.sprite(650, 400, "tutorial_state_txt");
-//        difficult_option.inputEnabled = true;
-//        difficult_option.events.onInputUp.add(
-//            function(){
-//                difficulty = "advanced";
-//            }
-//        );
+        //difficulty level options - PUT IN REAL SPRITES HERE!!!! 
+        easy_option = game.add.sprite(650, 300, "tutorial_state_txt");
+        easy_option.inputEnabled = true;
+        easy_option.events.onInputUp.add(
+            function(){
+                difficulty = "easy";
+            }
+        );
+        
+        difficult_option = game.add.sprite(650, 400, "tutorial_state_txt");
+        difficult_option.inputEnabled = true;
+        difficult_option.events.onInputUp.add(
+            function(){
+                difficulty = "advanced";
+            }
+        );
 
 
 //        var trial_menu_option = game.add.text(200, 350, "Trial", style);
@@ -156,21 +156,21 @@ demo.menu.prototype = {
 
         
         
-        easy_option = game.add.sprite(650, 300, "tutorial_state_txt");
-        easy_option.inputEnabled = true;
-        easy_option.events.onInputUp.add(
-            function(){
-                difficulty = "easy";
-            }
-        );
-        
-        difficult_option = game.add.sprite(650, 400, "tutorial_state_txt");
-        difficult_option.inputEnabled = true;
-        difficult_option.events.onInputUp.add(
-            function(){
-                difficulty = "advanced";
-            }
-        );
+//        easy_option = game.add.sprite(650, 300, "tutorial_state_txt");
+//        easy_option.inputEnabled = true;
+//        easy_option.events.onInputUp.add(
+//            function(){
+//                difficulty = "easy";
+//            }
+//        );
+//        
+//        difficult_option = game.add.sprite(650, 400, "tutorial_state_txt");
+//        difficult_option.inputEnabled = true;
+//        difficult_option.events.onInputUp.add(
+//            function(){
+//                difficulty = "advanced";
+//            }
+//        );
         
 //////////////////////////////////////////////////////////////////////////////////////////////
         
