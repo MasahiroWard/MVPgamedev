@@ -200,7 +200,8 @@ demo.balloonstate.prototype = {
         createInventory(0, 525);
         place_hearts(450, 0);
         add_pause_darkener();
-        game.input.onDown.add(pause_clicking, self);
+        game.input.onDown.add(pause_clicking, this);
+//        game.input.addMoveCallback(pause_hover, this);
     },
     update: function(){
         // Collide with layers that are necessary
@@ -288,7 +289,6 @@ demo.balloonstate.prototype = {
                 balloon_respawn_fruits[f].reset_time = game.time.time + 2000;
             }
         }
-
 
     },
 }

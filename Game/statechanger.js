@@ -36,6 +36,7 @@ function pause_game() {
     var style = {font: "30px Arial", fill: "White"}
     pause_mainmenu = game.add.sprite(300, game.camera.y+300, "main_menu_txt");
     pause_mainmenu.anchor.setTo(0.5, 0.5);
+    
     pause_restart = game.add.sprite(700, game.camera.y+300, "try_again_txt");
     pause_restart.anchor.setTo(0.5, 0.5);
     
@@ -50,6 +51,9 @@ function unpause_game() {
     pause_restart.kill();
 }
 
+function pause_hover(pointer, x, y, click) {
+    console.log(x,y);
+}
 
 function pause_clicking(event) {
     if (game.paused) {

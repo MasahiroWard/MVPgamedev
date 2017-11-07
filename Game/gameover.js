@@ -20,22 +20,43 @@ demo.gameover.prototype = {
         disappointed.play('','',0.6);
         
         var style = {font: "30px Arial", fill: "Black"}
-        var tutorial_menu_option = game.add.sprite(300, 300, "main_menu_txt");
-        tutorial_menu_option.anchor.setTo(0.5, 0.5);
-        tutorial_menu_option.inputEnabled = true;
-        tutorial_menu_option.events.onInputUp.add(
+        var main_menu_option = game.add.sprite(300, 300, "main_menu_txt");
+        main_menu_option.anchor.setTo(0.5, 0.5);
+        main_menu_option.inputEnabled = true;
+        main_menu_option.events.onInputUp.add(
             function(){
                 game.state.start('menu');
             }
         );
+        main_menu_option.events.onInputOver.add(
+            function() {
+                main_menu_option.scale.setTo(1.2, 1.2);
+            }
+        );
+        main_menu_option.events.onInputOut.add(
+            function () {
+                main_menu_option.scale.setTo(1, 1);
+            }
+        );
+
         
         var style = {font: "30px Arial", fill: "Black"}
-        var tutorial_menu_option = game.add.sprite(700, 300, "try_again_txt");
-        tutorial_menu_option.anchor.setTo(0.5, 0.5);
-        tutorial_menu_option.inputEnabled = true;
-        tutorial_menu_option.events.onInputUp.add(
+        var retry_pause_option = game.add.sprite(700, 300, "try_again_txt");
+        retry_pause_option.anchor.setTo(0.5, 0.5);
+        retry_pause_option.inputEnabled = true;
+        retry_pause_option.events.onInputUp.add(
             function(){
                 game.state.start(restart_state);
+            }
+        );
+        retry_pause_option.events.onInputOver.add(
+            function() {
+                retry_pause_option.scale.setTo(1.2, 1.2);
+            }
+        );
+        retry_pause_option.events.onInputOut.add(
+            function () {
+                retry_pause_option.scale.setTo(1, 1);
             }
         );
         

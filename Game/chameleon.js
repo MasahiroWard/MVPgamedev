@@ -190,7 +190,7 @@ function place_hearts(startx, starty){
 
 // display health (default 3 hearts) 
 function update_health(health){
-    console.log(health);
+//    console.log(health);
     
     // 5 lives portion 
     if (difficulty = "easy"){
