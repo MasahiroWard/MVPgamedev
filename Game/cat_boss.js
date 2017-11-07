@@ -23,6 +23,7 @@ function loadCatBoss(){
     game.load.spritesheet('orange_cat', 'assets/spritesheets/orange_catwalk_spritesheet.png',157,145);
     game.load.spritesheet('purple_cat', 'assets/spritesheets/purple_catwalk_spritesheet.png',158,146);
     game.load.audio('bossMusic', 'assets/sounds/bossMusic.mp3');
+    game.load.audio('meow', 'assets/sounds/meow.mp3');
 }
 
 function place_cat_boss(x, y, clrs){
@@ -64,6 +65,7 @@ function place_cat_boss(x, y, clrs){
     
     // add audio
     bossMusic = game.add.audio('bossMusic');
+    meow = game.add.audio('meow');
 }
 
 function cat_boss_fall_asleep() {
@@ -108,6 +110,7 @@ function cat_boss_throw() {
         yarn_ball.body.velocity.x = 0;
         yarn_ball.body.velocity.y = 0;
     }
+    meow.play();
 }
 
 function cat_boss_regular_move() {
