@@ -1,10 +1,11 @@
 // Function for inventory management
+var stomach_bg
 
 function createInventory(x, y){
     var inventory_x = x;
     var inventory_y = y;
     
-    var stomach_bg = game.add.sprite(inventory_x, inventory_y, "stomach_background")
+    stomach_bg = game.add.sprite(inventory_x, inventory_y, "stomach_background")
     stomach_bg.height = 125;
     stomach_bg.width = 300;
     stomach_bg.fixedToCamera = true;

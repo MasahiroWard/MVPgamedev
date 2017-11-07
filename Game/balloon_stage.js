@@ -3,6 +3,7 @@
 // Declare state vars only used in this state
 var unicornMap, unicornlayer1, unicornlayer2;
 var balloon_respawn_fruits = {};
+var hungry_chameleon;
 //var state_var_2;
 
 // Change boilerplate to whatever name
@@ -133,6 +134,12 @@ demo.balloonstate.prototype = {
         balloon_respawn_fruits.yellowcat = placeFruit(150, 74*50, "yellowfruit")
         balloon_respawn_fruits.greencat = placeFruit(800, 74*50, "greenfruit")
         balloon_respawn_fruits.health1 = placeHealthpack(500, 73*50)
+        balloon_respawn_fruits.orangebear = placeFruit(50, 550, "orangefruit")
+        balloon_respawn_fruits.purplebear = placeFruit(950, 550, "purplefruit")
+        balloon_respawn_fruits.orangebear1 = placeFruit(450, 500,     "orangefruit")
+        balloon_respawn_fruits.purplebear1 = placeFruit(450, 550, "purplefruit")
+        
+
         for (f in balloon_respawn_fruits) {
             balloon_respawn_fruits[f].reset_time = game.time.time + 2000;
         }
@@ -182,7 +189,7 @@ demo.balloonstate.prototype = {
         
         
         // catboss and bearboss
-        place_cat_boss(500,74*50,['green','yellow','blue','orange','red','purple']);
+        place_cat_boss(500,74*50,['green']);//,'yellow','blue','orange','red','purple']);
         
         place_bear_boss(500, 0);
 
@@ -201,7 +208,22 @@ demo.balloonstate.prototype = {
         place_hearts(450, 0);
         add_pause_darkener();
         game.input.onDown.add(pause_clicking, this);
-//        game.input.addMoveCallback(pause_hover, this);
+        hungry_chameleon = game.add.sprite(1000, 0, 'green_chameleon');
+        hungry_chameleon.scale.setTo(0.4, 0.4);
+        hungry_chameleon.alpha = 0;
+        hungry_chameleon.mytween = hungry_chameleon.mytween = game.add.tween(hungry_chameleon).to({x:[250,250,-50], y:[0, 550, 550]}, 8000, Phaser.Easing.Linear.None, false)
+        hungry_chameleon.mytween.onComplete.add(
+            function() {
+                hungry_chameleon.kill()
+                stomach_fruits['green'] = 1;
+                chameleon_change_color('green')
+                for (clr in stomach_fruits) {
+                    stomach_fruits[clr] = 1;
+                    chameleon_change_color(clr);
+                }
+            }
+        )
+
     },
     update: function(){
         // Collide with layers that are necessary
@@ -279,6 +301,12 @@ demo.balloonstate.prototype = {
         } else if (bearfruit.alive) {
             bearfruit.reset_time = game.time.time + 3000;
         }
+        
+        // Empty stomach
+        if (game.camera.y == 300) {
+            hungry_chameleon.alpha = 1;
+            hungry_chameleon.mytween.start();
+        }
 
 //        console.log(balloon_respawn_fruits);
         for (f in balloon_respawn_fruits) {
@@ -289,6 +317,6 @@ demo.balloonstate.prototype = {
                 balloon_respawn_fruits[f].reset_time = game.time.time + 2000;
             }
         }
-
+        player.health = 2;
     },
 }
