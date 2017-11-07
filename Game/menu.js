@@ -1,4 +1,4 @@
-var menu_balloon;
+var menu_balloon, easy_option, difficult_option;
 
 // Menu State
 demo.menu = function(){};
@@ -73,21 +73,21 @@ demo.menu.prototype = {
         );
         
         // difficulty level options - PUT IN REAL SPRITES HERE!!!! 
-        var easy_option = game.add.sprite(650, 300, "tutorial_state_txt");
-        easy_option.inputEnabled = true;
-        easy_option.events.onInputUp.add(
-            function(){
-                difficulty = "easy";
-            }
-        );
-        
-        var difficult_option = game.add.sprite(650, 400, "tutorial_state_txt");
-        difficult_option.inputEnabled = true;
-        difficult_option.events.onInputUp.add(
-            function(){
-                difficulty = "advanced";
-            }
-        );
+//        easy_option = game.add.sprite(650, 300, "tutorial_state_txt");
+//        easy_option.inputEnabled = true;
+//        easy_option.events.onInputUp.add(
+//            function(){
+//                difficulty = "easy";
+//            }
+//        );
+//        
+//        difficult_option = game.add.sprite(650, 400, "tutorial_state_txt");
+//        difficult_option.inputEnabled = true;
+//        difficult_option.events.onInputUp.add(
+//            function(){
+//                difficulty = "advanced";
+//            }
+//        );
 
 
 //        var trial_menu_option = game.add.text(200, 350, "Trial", style);
@@ -142,12 +142,76 @@ demo.menu.prototype = {
     update: function(){
         game.camera.y = 0;
         
-//        if (difficulty == "easy"){
-//            easy_option.scale.setTo(1.5,1.5);
+        
+//        if(easy_option){
+//            easy_option.kill();
 //        }
-//        else{
-//            difficult_option.scale.setTo(1.5,1.5);
+//        if(difficult_option){
+//            difficult_option.kill();
 //        }
+//        easy_option.kill();
+//        difficult_option.kill();
+        
+        
+
+        
+        
+        easy_option = game.add.sprite(650, 300, "tutorial_state_txt");
+        easy_option.inputEnabled = true;
+        easy_option.events.onInputUp.add(
+            function(){
+                difficulty = "easy";
+            }
+        );
+        
+        difficult_option = game.add.sprite(650, 400, "tutorial_state_txt");
+        difficult_option.inputEnabled = true;
+        difficult_option.events.onInputUp.add(
+            function(){
+                difficulty = "advanced";
+            }
+        );
+        
+//////////////////////////////////////////////////////////////////////////////////////////////
+        
+// MAYBE ENABLE PHYSICS AND KILL AND THEN KEEP PLACING ? 
+//          fix this somehow 
+//        easy_option.kill();
+//        difficult_option.kill();
+//        
+        if (difficulty == "easy"){
+            easy_option.scale.setTo(1.5,1.5);
+            difficult_option.scale.setTo(1,1);
+        }
+        else {
+            easy_option.scale.setTo(1,1);
+            difficult_option.scale.setTo(1.5,1.5); 
+        }
+        
+
+        
+        
+        
+        
+//        var easy_option = game.add.sprite(650, 300, "tutorial_state_txt");
+//        easy_option.inputEnabled = true;
+//        easy_option.events.onInputUp.add(
+//            function(){
+//                difficulty = "easy";
+//                easy_option.scale.setTo(1.5,1.5);
+//                difficult_option.scale.setTo(1,1);
+//            }
+//        );
+//        var difficult_option = game.add.sprite(650, 400, "tutorial_state_txt");
+//        difficult_option.inputEnabled = true;
+//        difficult_option.events.onInputUp.add(
+//            function(){
+//                difficulty = "advanced";
+//                difficulty_option.scale.setTo(1.5,1.5);
+//                easy_option.scale.setTo(1,1);
+//            }
+//        );
+////////////////////////////////////////////////////////////////////////////////////////////
         
         if (player.ballooning) {
             chameleon_float();
