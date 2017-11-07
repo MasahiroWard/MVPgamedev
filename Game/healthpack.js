@@ -1,3 +1,6 @@
+var lives = 3;
+
+
 function make_healthpack_groups() {
     healthpack_group = game.add.group();
     healthpack_group.enableBody = true;
@@ -12,18 +15,22 @@ function placeHealthpack(x, y){
 
 function get_healthpack(player, healthpack){
 // change the <3 to <lives and uncomment below for difficulty level 
+    
+    console.log(difficulty);
     if (difficulty == "advanced"){
-        var lives = 3;
+        lives = 3;
     }
-    else if (difficulty == "easy"){
-        var lives = 5;
+    if (difficulty == "easy"){
+        lives = 5;
     }
     
+//    console.log(lives);
     
     if (player.health < lives){
     jingle.play('','',1.3);
     healthpack.kill();
     player.health += 1;
+    console.log(player.health);
     }
 }
 

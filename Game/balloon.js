@@ -32,6 +32,7 @@ function chameleon_float(){
     // Method added to update function for moving the chameleon
     game.physics.arcade.overlap(player, map_fruits, getfruits, null, this);
     game.physics.arcade.overlap(player, balloon_group, get_balloon, null, this);
+    game.physics.arcade.overlap(player, healthpack_group, get_healthpack, null, this);
     
     player.animations.play('walk');
     player.body.velocity.x = 0;

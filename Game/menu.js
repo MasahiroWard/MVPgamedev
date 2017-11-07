@@ -179,6 +179,8 @@ demo.menu.prototype = {
 //        easy_option.kill();
 //        difficult_option.kill();
 //        
+        
+        console.log(difficulty);
         if (difficulty == "easy"){
             easy_option.scale.setTo(1.5,1.5);
             difficult_option.scale.setTo(1,1);

@@ -156,6 +156,8 @@ demo.icestate.prototype = {
         // Allow player to darken screen when paused
         add_pause_darkener();
         game.input.onDown.add(pause_clicking, self);
+        
+        console.log("create", difficulty);
 
     },
     update: function(){ 
@@ -205,6 +207,7 @@ demo.icestate.prototype = {
 //        ladder_movement(tile_arr1, 13, 14);
         
         update_health(player.health);
+        console.log("ice", difficulty);
         
     }
 };
