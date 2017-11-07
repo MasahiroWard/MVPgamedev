@@ -146,7 +146,7 @@ demo.icestate.prototype = {
 
         
         // place health bar
-        place_hearts(450, 0);
+        place_hearts(750, 0);
         
         // Allow player to darken screen when paused
         add_pause_darkener();
