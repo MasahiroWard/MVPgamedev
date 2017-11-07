@@ -40,6 +40,9 @@ function pause_game() {
     pause_restart = game.add.sprite(700, game.camera.y+300, "try_again_txt");
     pause_restart.anchor.setTo(0.5, 0.5);
     
+    if (bear_boss) {
+        bear_boss.time_to_fish = bear_boss.throw_fish_timer - game.time.time;
+    }
     game.paused = true;
 
 }
@@ -49,6 +52,7 @@ function unpause_game() {
     pause_darkener.alpha = 0;
     pause_mainmenu.kill();
     pause_restart.kill();
+    bear_boss.throw_fish_timer = game.time.time + bear_boss.time_to_fish
 }
 
 function pause_hover(pointer, x, y, click) {
