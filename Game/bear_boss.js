@@ -29,7 +29,7 @@ function loadBearBoss(){
     game.load.audio('friendly', 'assets/sounds/friendly.mp3');    
 }
 
-function place_bear_boss(x, y) {
+function place_bear_boss(x, y, color_scheme) {
     bear_boss = game.add.sprite(x, y, 'yellow_bear');
     game.physics.arcade.enable(bear_boss);
     bear_boss.body.collideWorldBounds = true;
@@ -40,7 +40,7 @@ function place_bear_boss(x, y) {
     bear_boss.body.setSize(200, 150);
     
     bear_boss.health = 4;
-    bear_boss.color_scheme = ['green', 'purple','blue','red','yellow', 'orange'];
+    bear_boss.color_scheme = color_scheme;
     bear_boss.color = bear_boss.color_scheme[bear_boss.health]
     
     bear_boss.hit_recently_timer = 0;

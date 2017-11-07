@@ -174,7 +174,20 @@ demo.menu.prototype = {
 
         // Add MP as ground so we don't need a tilemap for menu
         placeMP(0, 600, 18, 3, 0, 0, 0, 0);
-            
+        
+        placeBird(100, 100, ["red"])
+        placeBird(200, 100, ["blue"])
+        placeBird(300, 100, ["green"])
+        placeBird(400, 100, ["yellow"])
+        placeBird(500, 100, ["orange"])
+        placeBird(600, 100, ["purple"])
+        
+        placeSnake(100, 200, ["red"])
+        placeSnake(200, 200, ["blue"])
+        placeSnake(300, 200, ["green"])
+        placeSnake(400, 200, ["yellow"])
+        placeSnake(500, 200, ["orange"])
+        placeSnake(600, 200, ["purple"])
         // These should be the last thing added so that it is on top of all other sprites (never hidden)
 
         add_pause_darkener();

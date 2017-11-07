@@ -261,7 +261,7 @@ demo.lavastate.prototype = {
 ////        placeBalloon(200, 2300);
 //
 
-        place_bear_boss(500, 0);
+        place_bear_boss(500, 0, ['green', 'purple','blue','red','yellow', 'orange']);
         placeMP(8*50, 450, 4, 1, 0, 1, 0, 100);
         bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
         bearfruit.reset_time = game.time.time + 2000;

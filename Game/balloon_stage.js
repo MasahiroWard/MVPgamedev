@@ -189,9 +189,9 @@ demo.balloonstate.prototype = {
         
         
         // catboss and bearboss
-        place_cat_boss(500,74*50,['green']);//,'yellow','blue','orange','red','purple']);
+        place_cat_boss(500,74*50,['green','yellow','blue','orange','red','purple']);
         
-        place_bear_boss(500, 0);
+        place_bear_boss(500, 0, ['green','blue','red','yellow','purple','orange']);
 
         // bear boss stage moving platforms:
         placeMP(4*50, 9*50, 1, 1, 0, 1, 0, 100);
@@ -318,5 +318,8 @@ demo.balloonstate.prototype = {
             }
         }
         player.health = 2;
+        if (!bear_boss.alive) {
+            game.state.start('victory');
+        }
     },
 }
