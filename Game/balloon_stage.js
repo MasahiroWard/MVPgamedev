@@ -205,7 +205,7 @@ demo.balloonstate.prototype = {
             
         // These should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 525);
-        place_hearts(450, 0);
+        place_hearts(750, 0);
         add_pause_darkener();
         game.input.onDown.add(pause_clicking, this);
         hungry_chameleon = game.add.sprite(1000, 0, 'green_chameleon');

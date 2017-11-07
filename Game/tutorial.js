@@ -85,7 +85,6 @@ demo.tutorial.prototype = {
 
         // Add chameleon at x,y
         createChameleon(500,game.world.height - 400);
-//        createChameleon(550, 1950);
         
         // Add boss at x,y
 //        place_cat_boss(0,0);
@@ -136,7 +135,7 @@ demo.tutorial.prototype = {
         createInventory(0, 525);
         
         // place health hearts *****
-        place_hearts(450, 0);
+        place_hearts(750, 0);
         
         add_pause_darkener();
         game.input.onDown.add(pause_clicking, self);

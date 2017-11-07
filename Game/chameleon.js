@@ -152,11 +152,11 @@ function place_hearts(startx, starty){
     var startx;
     var starty;
     
-    heart1 = game.add.sprite(startx, starty+20, "heart");
-    heart2 = game.add.sprite(startx+50, starty+20, "heart");
-    heart3 = game.add.sprite(startx+100, starty+20, "heart");
-    heart4 = game.add.sprite(startx+150, starty+20, "heart");
-    heart5 = game.add.sprite(startx+200, starty+20, "heart");
+    heart1 = game.add.sprite(startx, starty+15, "heart");
+    heart2 = game.add.sprite(startx+50, starty+15, "heart");
+    heart3 = game.add.sprite(startx+100, starty+15, "heart");
+    heart4 = game.add.sprite(startx+150, starty+15, "heart");
+    heart5 = game.add.sprite(startx+200, starty+15, "heart");
 
 
     heart1.fixedToCamera = true;
