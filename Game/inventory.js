@@ -36,6 +36,9 @@ function createInventory(x, y){
         stomach_tracker[clr] = game.add.text(inventory_x+90*i+30, inventory_y+40, stomach_fruits[clr] + " (" + clr_keys[clr] + ")");
         stomach.add(stomach_tracker[clr])
         
+        stomach_icons[clr].alpha = 0;
+        stomach_tracker[clr].alpha = 0;
+        
         // Create a second row in inventory
         if (i == 2) {
             inventory_x -= 90*3

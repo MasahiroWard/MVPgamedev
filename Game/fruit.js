@@ -20,4 +20,8 @@ function getfruits(player, fruit){
     stomach_fruits[fruit_color] += 1;
     stomach_tracker[fruit_color].text = (stomach_fruits[fruit_color] + " (" + clr_keys[fruit_color] + ")");
     fruit.reset_time = game.time.time + 2000;
+    if (stomach_fruits[fruit_color] == 1) {
+        stomach_icons[fruit_color].alpha = 1;
+        stomach_tracker[fruit_color].alpha = 1;
+    }
 }

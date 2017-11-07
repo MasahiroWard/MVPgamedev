@@ -99,6 +99,11 @@ function chameleon_change_color(clr){
         stomach_tracker[clr].text = (stomach_fruits[clr] + " (" + clr_keys[clr] + ")");
         player.loadTexture(clr+'_chameleon', 0, false);
     }
+    if (stomach_fruits[clr] == 0) {
+        stomach_icons[clr].alpha = 0;
+        stomach_tracker[clr].alpha = 0;
+    }
+
 }
 
 function deadplayer(instakill=false){
