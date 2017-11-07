@@ -88,5 +88,7 @@ function loadImages(){
     game.load.image('tutorial_state_txt', 'assets/sprites/tutorial.png');
     game.load.image('unicorn_state_txt', 'assets/sprites/unicorn_stage.png');
     game.load.image('title_txt', 'assets/sprites/Title.png');
+    game.load.image('easy_txt', 'assets/sprites/easy.png');
+    game.load.image('hard_txt', 'assets/sprites/hard.png');
 }
 
