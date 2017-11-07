@@ -64,12 +64,9 @@ demo.icestate.prototype = {
         game.physics.arcade.enable(icelayer2);
         
         
-//        createChameleon(500,game.world.height - 300);
-        
         place_cat_boss(500,50, ['green', 'purple','blue']);
 
         
-//        iceMap.setCollision(12, true, icelayer1);
         iceMap.setCollisionBetween(1, 12, true, icelayer1);
         iceMap.setCollisionBetween(13, 14, true, icelayer2);
         
@@ -141,9 +138,7 @@ demo.icestate.prototype = {
         addMovingPlatforms();
         placeMP(325, 4025, 2, 1, 6, 0, 100, 0);
         placeMP(525, 3325, 3, 1, 4, 0, 150, 0);
-//        
-//        make_balloon_group();
-//        placeBalloon(200, 2300);
+
 
         
         createChameleon(500,game.world.height - 300);
@@ -163,7 +158,6 @@ demo.icestate.prototype = {
     update: function(){ 
 //        console.log(player.body.x, player.body.y);
         // move the camera (if it wasnt obvious)        
-        // move the camera (if it wasnt obvious)
         // speed up when player reaches boss
         if (player.body.y > 650) {
             move_camera(1,1);
@@ -202,12 +196,9 @@ demo.icestate.prototype = {
         snakes_group.forEach(moveSnake, this);
         moving_platform_group.forEach(movingPlatformsUpdate, this);
         
-        //checkforladders(iceMap, icelayer2);
-//        var tile_arr1 = get_surrounding_tiles(icelayer2, iceMap);
-//        ladder_movement(tile_arr1, 13, 14);
         
         update_health(player.health);
-        console.log("ice", difficulty);
+
         
     }
 };

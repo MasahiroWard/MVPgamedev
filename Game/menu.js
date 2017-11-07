@@ -35,7 +35,7 @@ demo.menu.prototype = {
         
         // Add game background
         // change 'bg1' to whatever is required
-//        add_game_bg('bg1')
+
         game.stage.backgroundColor = '#DDDDDD';
                
         // Add chameleon at x,y
@@ -170,62 +170,19 @@ demo.menu.prototype = {
         make_healthpack_groups();
         menu_balloon = placeBalloon(925, 500);
         menu_balloon.reset_time = game.time.time + 2000;
-//        placeBalloon(925, 100);
-        
-//        placeFruit(300, 100, "redfruit");
-//        placeFruit(700, 100, "bluefruit");
-//        placeMP(400, 100, 5, 1, 0, 8, 0, 100);
+
 
         // Add MP as ground so we don't need a tilemap for menu
         placeMP(0, 600, 18, 3, 0, 0, 0, 0);
             
         // These should be the last thing added so that it is on top of all other sprites (never hidden)
-//        createInventory(0, 525);
-//        place_hearts(450, 0);
+
         add_pause_darkener();
     },
     update: function(){
         game.camera.y = 0;
         
-        
-//        if(easy_option){
-//            easy_option.kill();
-//        }
-//        if(difficult_option){
-//            difficult_option.kill();
-//        }
-//        easy_option.kill();
-//        difficult_option.kill();
-        
-        
 
-        
-        
-//        easy_option = game.add.sprite(650, 300, "tutorial_state_txt");
-//        easy_option.inputEnabled = true;
-//        easy_option.events.onInputUp.add(
-//            function(){
-//                difficulty = "easy";
-//            }
-//        );
-//        
-//        difficult_option = game.add.sprite(650, 400, "tutorial_state_txt");
-//        difficult_option.inputEnabled = true;
-//        difficult_option.events.onInputUp.add(
-//            function(){
-//                difficulty = "advanced";
-//            }
-//        );
-        
-//////////////////////////////////////////////////////////////////////////////////////////////
-        
-// MAYBE ENABLE PHYSICS AND KILL AND THEN KEEP PLACING ? 
-//          fix this somehow 
-//        easy_option.kill();
-//        difficult_option.kill();
-//        
-        
-        console.log(difficulty);
         if (difficulty == "easy"){
             easy_option.scale.setTo(1.5,1.5);
             difficult_option.scale.setTo(1,1);
@@ -235,30 +192,6 @@ demo.menu.prototype = {
             difficult_option.scale.setTo(1.5,1.5); 
         }
         
-
-        
-        
-        
-        
-//        var easy_option = game.add.sprite(650, 300, "tutorial_state_txt");
-//        easy_option.inputEnabled = true;
-//        easy_option.events.onInputUp.add(
-//            function(){
-//                difficulty = "easy";
-//                easy_option.scale.setTo(1.5,1.5);
-//                difficult_option.scale.setTo(1,1);
-//            }
-//        );
-//        var difficult_option = game.add.sprite(650, 400, "tutorial_state_txt");
-//        difficult_option.inputEnabled = true;
-//        difficult_option.events.onInputUp.add(
-//            function(){
-//                difficulty = "advanced";
-//                difficulty_option.scale.setTo(1.5,1.5);
-//                easy_option.scale.setTo(1,1);
-//            }
-//        );
-////////////////////////////////////////////////////////////////////////////////////////////
         
         if (player.ballooning) {
             chameleon_float();
@@ -276,6 +209,5 @@ demo.menu.prototype = {
         birds_group.forEach(moveBird, this);
         snakes_group.forEach(moveSnake, this);
         moving_platform_group.forEach(movingPlatformsUpdate, this);
-//        update_health(player.health);
     },
 }
