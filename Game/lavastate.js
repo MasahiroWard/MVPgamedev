@@ -205,8 +205,8 @@ demo.lavastate.prototype = {
         bird_9_17 = placeBird(10*50, bottom_of_maze-17*50+25, ['yellow']);
         bird_18_17 = placeBird(19*50, bottom_of_maze-17*50+25, ['orange']);
         bird_0_17.mytween = game.add.tween(bird_0_17).to({x:[2*50, 0*50], y:[bottom_of_maze-17*50+25,bottom_of_maze-17*50+25]}, 1300, Phaser.Easing.Linear.None, true, 0, -1, false); 
-        bird_9_17.mytween = game.add.tween(bird_9_17).to({x:[10*50, 9*50], y:[bottom_of_maze-17*50+25,bottom_of_maze-17*50+25]}, 1200, Phaser.Easing.Linear.None, true, 0, -1, false); 
-        bird_18_17.mytween = game.add.tween(bird_18_17).to({x:[19*50, 18*50], y:[bottom_of_maze-17*50+25,bottom_of_maze-17*50+25]}, 1000, Phaser.Easing.Linear.None, true, 0, -1, false); 
+        bird_9_17.mytween = game.add.tween(bird_9_17).to({x:[9*50, 10*50], y:[bottom_of_maze-17*50+25,bottom_of_maze-17*50+25]}, 1200, Phaser.Easing.Linear.None, true, 0, -1, false); 
+        bird_18_17.mytween = game.add.tween(bird_18_17).to({x:[18*50, 19*50], y:[bottom_of_maze-17*50+25,bottom_of_maze-17*50+25]}, 1000, Phaser.Easing.Linear.None, true, 0, -1, false); 
         
 //        placeBalloon(500, 3925);
 //        
@@ -265,6 +265,7 @@ demo.lavastate.prototype = {
         placeMP(8*50, 450, 4, 1, 0, 1, 0, 100);
         bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
         bearfruit.reset_time = game.time.time + 2000;
+        placeHealthpack(11*50,11*50);
 
         
         createInventory(0,525);
@@ -330,7 +331,9 @@ demo.lavastate.prototype = {
 //        var tile_arr4 = get_surrounding_tiles(lavalayer2, lavaMap);
 //
 //        ladder_movement(tile_arr4, 13, 14);
-//        
+        
+    // god mode     
+//        player.health = 2;
 
         update_health(player.health);
         
