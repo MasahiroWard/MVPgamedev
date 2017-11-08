@@ -69,6 +69,9 @@ function disp_tut_msgs(idx) {
         case 13:
             movement_msgs13();
             break
+        case 14:
+            movement_msgs14();
+            break
                 }
 }
 
@@ -201,13 +204,13 @@ function movement_msgs6() {
 function movement_msgs7() {
     // Only make one tutorial text and tutorial sprite
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(625, 1575, "Eat fruit to power \nyour color change.", {font: "30px Arial", fill: "White", align: "center"});
+        tutorial_txt = game.add.text(625, 1800, "Eat fruit to power \nyour color change.", {font: "30px Arial", fill: "White", align: "center"});
         tutorial_txt.anchor.setTo(0.5, 0);
     }
     if (!tutorial_sprite) {
-        tutorial_sprite = game.add.sprite(625, 1650, "downarrow")
+        tutorial_sprite = game.add.sprite(625, 1750, "uparrow")
         tutorial_sprite.anchor.setTo(0.5, 0);
-        tutorial_sprite.scale.setTo(0.2, 0.25);
+        tutorial_sprite.scale.setTo(0.1, 0.1);
     }
 
     if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
@@ -217,7 +220,7 @@ function movement_msgs7() {
 
 function movement_msgs8() {
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(10, 1900, "Your stomach tells you \nhow many times you can \nbecome a certain color", {font: "30px Arial", fill: "White", align: "center"});
+        tutorial_txt = game.add.text(10, 2000, "Your stomach tells you \nhow many times you can \nbecome a certain color", {font: "30px Arial", fill: "White", align: "center"});
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
         continue_playing();
@@ -250,7 +253,7 @@ function movement_msgs10() {
 
 function movement_msgs11() {
     if (!tutorial_txt) {
-        tutorial_txt = game.add.text(200, 300, "Bosses are powerful enemies with lots of health.", {font: "30px Arial", fill: "White", align: "center"});
+        tutorial_txt = game.add.text(200, 1650, "Balloons will save you one time\nwhen you fall off the screen.", {font: "30px Arial", fill: "White", align: "center"});
     }
     if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
         continue_playing();
@@ -258,6 +261,15 @@ function movement_msgs11() {
 }
 
 function movement_msgs12() {
+    if (!tutorial_txt) {
+        tutorial_txt = game.add.text(200, 300, "Bosses are powerful enemies with lots of health.", {font: "30px Arial", fill: "White", align: "center"});
+    }
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+        continue_playing();
+    }
+}
+
+function movement_msgs13() {
     if (!tutorial_txt) {
         tutorial_txt = game.add.text(0, 100, "Collect health to recover.", {font: "30px Arial", fill: "White", align: "center"});
     }
@@ -272,7 +284,7 @@ function movement_msgs12() {
     }
 }
 
-function movement_msgs13() {
+function movement_msgs14() {
     if (!tutorial_txt) {
         tutorial_txt = game.add.text(200, 250, "Colored tiles will damage you\nunless you are the same color as the tile.", {font: "30px Arial", fill: "White", align: "center"});
     }

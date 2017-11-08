@@ -317,7 +317,7 @@ demo.balloonstate.prototype = {
                 balloon_respawn_fruits[f].reset_time = game.time.time + 2000;
             }
         }
-        player.health = 2;
+//        player.health = 2;
         if (!bear_boss.alive) {
             game.state.start('victory');
         }
