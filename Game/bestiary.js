@@ -10,53 +10,19 @@ demo.bestiary.prototype = {
         loadImages();
         
         // Make this equal to the size of the tilemap
-        var tilemap_height = 650;
-        game.world.setBounds(0, 0, 1000, tilemap_height);
+        game.world.setBounds(0, 0, 1000, 700);
         
         // Load any tiles required for tile map
         // This should be customized for each stage
-        game.load.tilemap('stage', 'assets/tilemaps/Tutorial/TestMapFitted.json', null, Phaser.Tilemap.TILED_JSON);
-        game.load.image('grass_platform', 'assets/tilemaps/Tutorial/grass_platform.png');
-        game.load.image('ladder_sprite', 'assets/tilemaps/Tutorial/new_ladder_sprite.png');
-        game.load.image('ladder_sprite_top', 'assets/tilemaps/Tutorial/new_ladder_sprite.png');
     },
     create: function(){
-        // Stop sounds when starting a state
-        game.sound.stopAll();
         
-        // start game at bottom of screen
-        game.camera.y = game.world.height;
         
         // Add game background
         // change 'bg1' to whatever is required
         add_game_bg('bg1')
         
-        ////////////////////////////////////////////
-        // Add in tilemap
-        // Vaidehi, please generalize this as needed
-        map = game.add.tilemap('stage');
-        map.addTilesetImage('grass_platform');
-        map.addTilesetImage('ladder_sprite');
-        map.addTilesetImage('ladder_sprite_top');
 
-        layer1 = map.createLayer('Platforms');
-        layer2 = map.createLayer('Ladders');
-        layer1.resizeWorld();
-        layer2.resizeWorld();
-        
-        // Make sure to enable arcade for all layers so boss doesn't go wherever it wants
-        game.physics.arcade.enable(layer1);
-        game.physics.arcade.enable(layer2);
-        
-        // set collisions for the tilemaps
-        map.setCollisionBetween(1, 3, true, layer1);
-        map.setCollisionBetween(4, 5, true, layer2);
-        
-        // load in sound
-        guitar1 = game.add.audio('guitar');        
-        // loops guitar music 
-        guitar1.play('','',0.5,true,true);
-        ///////////////////////////////////////////////
         
         // Add chameleon at x,y
         createChameleon(500,game.world.height - 400);
@@ -90,10 +56,8 @@ demo.bestiary.prototype = {
         game.input.onDown.add(pause_clicking, self);
     },
     update: function(){
-        // Collide with layers that are necessary
-        game.physics.arcade.collide(player, layer1);
-        
-        move_camera(1,1);
+
+
         if (player.ballooning) {
             chameleon_float();
         } else {

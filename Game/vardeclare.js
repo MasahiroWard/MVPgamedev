@@ -87,4 +87,4 @@ var restart_state;
 
 
 // difficulty level 
-var difficulty = "advanced";
+var difficulty = "easy";

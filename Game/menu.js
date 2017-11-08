@@ -126,7 +126,8 @@ demo.menu.prototype = {
         );
 
         //difficulty level options - PUT IN REAL SPRITES HERE!!!! 
-        easy_option = game.add.sprite(650, 300, "easy_txt");
+        easy_option = game.add.sprite(610, 275, "easy_txt");
+        easy_option.anchor.setTo(0.5,0.5);
         easy_option.inputEnabled = true;
         easy_option.events.onInputUp.add(
             function(){
@@ -134,7 +135,8 @@ demo.menu.prototype = {
             }
         );
         
-        difficult_option = game.add.sprite(650, 400, "hard_txt");
+        difficult_option = game.add.sprite(830, 275, "hard_txt");
+        difficult_option.anchor.setTo(0.5,0.5);
         difficult_option.inputEnabled = true;
         difficult_option.events.onInputUp.add(
             function(){
@@ -142,16 +144,19 @@ demo.menu.prototype = {
             }
         );
 
+        var difficulty_text = game.add.sprite(610, 190, "difficulty_txt");
         
-//        var beastiary_option = game.add.text(200, 350, "Trial", style);
+// broken at the moment ...
+//        var bestiary_option = game.add.sprite(650, 550, "bestiary_txt", style);
 //        trial_menu_option.inputEnabled = true;
 //        trial_menu_option.events.onInputUp.add(
 //            function(){
-//                restart_state = 'trialstate'
-//                game.state.start('trialstate');
+//                restart_state = 'bestiary'
+//                game.state.start('bestiary');
 //            }
 //        );
         
+
         
 
 //        var trial_menu_option = game.add.text(200, 350, "Trial", style);
