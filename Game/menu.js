@@ -142,6 +142,17 @@ demo.menu.prototype = {
             }
         );
 
+        
+//        var beastiary_option = game.add.text(200, 350, "Trial", style);
+//        trial_menu_option.inputEnabled = true;
+//        trial_menu_option.events.onInputUp.add(
+//            function(){
+//                restart_state = 'trialstate'
+//                game.state.start('trialstate');
+//            }
+//        );
+        
+        
 
 //        var trial_menu_option = game.add.text(200, 350, "Trial", style);
 //        trial_menu_option.inputEnabled = true;

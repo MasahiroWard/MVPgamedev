@@ -110,7 +110,7 @@ function cat_boss_throw() {
         yarn_ball.body.velocity.x = 0;
         yarn_ball.body.velocity.y = 0;
     }
-    meow.play();
+    meow.play('','',1.5);
 }
 
 function cat_boss_regular_move() {
