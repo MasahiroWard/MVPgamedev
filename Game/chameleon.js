@@ -113,9 +113,8 @@ function deadplayer(instakill=false){
     if (chameleonWasHit < game.time.time || instakill){
         if (player.health > 1){
             player.health -= 1;
-            console.log(player.health);
             chameleonWasHit = game.time.time + 3000;
-            bing.play('','',0.7);
+            bing.play('','',1);
         }
         else{
 //            game.sound.stopAll();
@@ -140,7 +139,7 @@ function add_chameleon_sound(){
 
 function chameleon_flash(duration){
     if (duration % 200 > 100){
-        player.alpha = 0.5;
+        player.alpha = 0.3;
     }
     else {
         player.alpha = 1;
