@@ -93,7 +93,7 @@ demo.tutorial.prototype = {
         make_fruit_groups();
         placeFruit(300, 2300, "bluefruit")
         placeFruit(600, 1700,"bluefruit");
-        placeFruit(150, 1000, "greenfruit");
+        placeFruit(150, 1400, "greenfruit");
         placeFruit(200, 300, "bluefruit");
         placeFruit(150, 350, "greenfruit");
         placeFruit(500, 250, "bluefruit");
@@ -126,7 +126,7 @@ demo.tutorial.prototype = {
         
         // place balloons
         make_balloon_group();
-        placeBalloon(50, 900);
+        placeBalloon(400, 1600);
         
         make_healthpack_groups();
         placeHealthpack(100, 200);
@@ -143,7 +143,7 @@ demo.tutorial.prototype = {
     update: function(){
 //        console.log(player.body.x, player.body.y);
         // These are the heights at which the game automatically pauses and displays a message
-        var stop_heights = [2627, 2626, 2625, 2624, 2623, 2622, 1500, 1499, 1498, 1497, 1496, 3,2,1];
+        var stop_heights = [2627, 2626, 2625, 2624, 2623, 2622, 1600, 1599, 1598, 1597, 1596, 1595, 3,2,1];
 //        var stop_heights = [];
         idx = stop_heights.indexOf(game.camera.y);
 //        console.log(idx, prev_idx);
