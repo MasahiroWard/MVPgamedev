@@ -345,6 +345,9 @@ demo.lavastate.prototype = {
         } else if (bearfruit.alive) {
             bearfruit.reset_time = game.time.time + 3000;
         }
+        if (!bear_boss.alive) {
+            game.state.start('victory');
+        }
     },
 //    render: function() {
 //        game.debug.body(bear_boss);

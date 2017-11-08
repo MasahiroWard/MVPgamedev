@@ -197,5 +197,8 @@ demo.tutorial.prototype = {
         
         // player health update 
         update_health(player.health);
+        if (!bigbird.alive) {
+            game.state.start('victory');
+        }
     }
 };

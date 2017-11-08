@@ -198,6 +198,9 @@ demo.icestate.prototype = {
         
         
         update_health(player.health);
+        if (!cat_boss.alive) {
+            game.state.start('victory');
+        }
 
         
     }

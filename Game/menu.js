@@ -189,6 +189,8 @@ demo.menu.prototype = {
         // These should be the last thing added so that it is on top of all other sprites (never hidden)
 
         add_pause_darkener();
+        game.input.onDown.add(pause_clicking, self);
+
     },
     update: function(){
         game.camera.y = 0;
