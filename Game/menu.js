@@ -151,7 +151,7 @@ demo.menu.prototype = {
 
         
 
-        var bestiary_option = game.add.sprite(650, 550, "bestiary_txt");
+        var bestiary_option = game.add.sprite(730, 400, "bestiary_txt");
         bestiary_option.inputEnabled = true;
         bestiary_option.events.onInputUp.add(
             function(){
@@ -160,6 +160,17 @@ demo.menu.prototype = {
             }
         );
         
+        bestiary_option.anchor.setTo(0.5,0.5);
+        bestiary_option.events.onInputOver.add(
+            function() {
+                bestiary_option.scale.setTo(1.2, 1.2);
+            }
+        );
+        bestiary_option.events.onInputOut.add(
+            function () {
+                bestiary_option.scale.setTo(1, 1);
+            }
+        );
 //        
 //        var trial_menu_option = game.add.text(200, 350, "Trial", style);
 //        trial_menu_option.inputEnabled = true;
