@@ -138,6 +138,7 @@ demo.balloonstate.prototype = {
         balloon_respawn_fruits.purplebear = placeFruit(950, 550, "purplefruit")
         balloon_respawn_fruits.orangebear1 = placeFruit(450, 500,     "orangefruit")
         balloon_respawn_fruits.purplebear1 = placeFruit(450, 550, "purplefruit")
+        balloon_respawn_fruits.health2 = placeHealthpack(500, 5*50)
         
 
         for (f in balloon_respawn_fruits) {
@@ -240,27 +241,10 @@ demo.balloonstate.prototype = {
                 rainbow.play('','',0.5,true,true);
             }
 
-//            if (bossMusic.isPlaying && !rainbow.isPlaying){
-//                bossMusic.stop();
-//                rainbow.play('','',0.5,true,true);
-//                
-//            }
-//            if (rainbow.isPlaying = false){
-//                bossMusic.stop();
-//                rainbow.play('','',0.5,true,true);
-//            }
             
         }
         
-//        if (!bossMusic.isPlaying && !rainbow.isPlaying){
-//            rainbow.play('','',0.5);
-//        }
-        // this is not being called ? 
-//        if (game.camera.y <= 70*50 - 1 && game.camera.y >= 70*50-10){
-//            bossMusic.stop();
-//            rainbow.play('', '', 0.5, true, true);
-//            console.log('music change');
-//        }
+
         
         if (player.ballooning) {
             chameleon_float();
