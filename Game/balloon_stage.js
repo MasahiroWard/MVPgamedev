@@ -38,6 +38,8 @@ demo.balloonstate.prototype = {
         // catboss and bearboss
         loadCatBoss();
         loadBearBoss();
+        
+
     },
     create: function(){
         // Stop sounds when starting a state
@@ -83,6 +85,9 @@ demo.balloonstate.prototype = {
         rainbow = game.add.audio('rainbow');        
         // loops guitar music 
         rainbow.play('','',0.5,true,true);
+        
+        // giant chameleon sound
+        giant_chameleon_sound = game.add.audio('question');
         ///////////////////////////////////////////////
         
         // Add chameleon at x,y
@@ -290,6 +295,9 @@ demo.balloonstate.prototype = {
         if (game.camera.y == 300) {
             hungry_chameleon.alpha = 1;
             hungry_chameleon.mytween.start();
+            
+        // hungry chameleon sound - figure out when to start this 
+//            hungry_chameleon_sound.play();
         }
 
 //        console.log(balloon_respawn_fruits);

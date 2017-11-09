@@ -73,6 +73,8 @@ function loadImages(){
     game.load.audio('reggae', 'assets/sounds/almost_reggae.mp3');
     game.load.audio('cute', 'assets/sounds/cute.mp3');
     game.load.audio('rainbow', 'assets/sounds/rainbows.mp3');
+    // load in sound for giant chameleon at the end
+    game.load.audio('question', 'assets/sounds/question.mp3');
     // health bar assets 
     game.load.image('heart', 'assets/sprites/heart.png');
     
