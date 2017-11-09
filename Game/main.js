@@ -15,5 +15,6 @@ game.state.add('trialstate', demo.trial);
 game.state.add('boilerplate', demo.boilerplate);
 game.state.add('bestiary', demo.bestiary);
 
+
 game.state.add('menu', demo.menu)
 game.state.start('menu');

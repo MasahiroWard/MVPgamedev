@@ -146,19 +146,21 @@ demo.menu.prototype = {
 
         var difficulty_text = game.add.sprite(610, 190, "difficulty_txt");
         
-// broken at the moment ...
-//        var bestiary_option = game.add.sprite(650, 550, "bestiary_txt", style);
-//        trial_menu_option.inputEnabled = true;
-//        trial_menu_option.events.onInputUp.add(
-//            function(){
-//                restart_state = 'bestiary'
-//                game.state.start('bestiary');
-//            }
-//        );
+// bestiary option 
         
 
         
 
+        var bestiary_option = game.add.sprite(650, 550, "bestiary_txt");
+        bestiary_option.inputEnabled = true;
+        bestiary_option.events.onInputUp.add(
+            function(){
+                restart_state = 'bestiary'
+                game.state.start('bestiary');
+            }
+        );
+        
+//        
 //        var trial_menu_option = game.add.text(200, 350, "Trial", style);
 //        trial_menu_option.inputEnabled = true;
 //        trial_menu_option.events.onInputUp.add(
