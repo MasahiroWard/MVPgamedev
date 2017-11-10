@@ -3,6 +3,7 @@
 // Declare state vars only used in this state
 var unicornMap, unicornlayer1, unicornlayer2;
 var balloon_respawn_fruits = {};
+var balloon_strong_birds = {};
 var hungry_chameleon;
 //var state_var_2;
 
@@ -97,25 +98,34 @@ demo.balloonstate.prototype = {
         
         // Player starts with the balloon
         placeBalloon(500,game.world.height - 400);
+        
+        // random balloon placement! and enemies, fruits, health spawns near these
         var balloon_x = 500;
-        for (i=0; i<48; i++) {
+        for (i=0; i<45; i++) {
 //            console.log(balloon_x);
             balloon_x = balloon_x + randomIntFromInterval(-350, 350);
             // Seal in game world bounds
             balloon_x = Math.min(balloon_x, 950);
             balloon_x = Math.max(balloon_x, 50);
             placeBalloon(balloon_x, 6000-i*250);
-            if (i > 28) {
-                // Place random health packs and fruits after catboss
-                var fruit_x = balloon_x + randomIntFromInterval(-175, 175);
+            if (i > 11) {
+                console.log(i)
+                // Place random health packs, fruits, and enemies after catboss
                 var health_x = balloon_x + randomIntFromInterval(-175, 175);
+                placeHealthpack(health_x, 6000-i*250 - 125)
+                
+                var fruit_x = balloon_x + randomIntFromInterval(-175, 175);
                 var balloon_rand_fruit_clr = color_list[randomIntFromInterval(0, 5)]+"fruit"
                 placeFruit (fruit_x, 6000-i*250 - 125, balloon_rand_fruit_clr);
-                placeHealthpack(fruit_x, 6000-i*250 - 125)
+                
+                var bird_rand_clr = color_list[randomIntFromInterval(0, 5)]
+                var flybird = placeBird(balloon_x-175, 6000-i*250 - 125, [bird_rand_clr]);
+                flybird.mytween = game.add.tween(flybird).to({x:[balloon_x+175, balloon_x-175], y:[6000-i*250 - 125, 6000-i*250 - 125]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
             }
         }
         for (i = 0; i<10; i++) {
             placeBalloon(i*100+50, 68*50+25);
+            placeBalloon(i*100+50, 60*50+25);
         }
 
 //        placeFruit(200, 2250+3000, "redfruit");
@@ -138,44 +148,48 @@ demo.balloonstate.prototype = {
         balloon_respawn_fruits.purplebear = placeFruit(950, 550, "purplefruit")
         balloon_respawn_fruits.orangebear1 = placeFruit(450, 500,     "orangefruit")
         balloon_respawn_fruits.purplebear1 = placeFruit(450, 550, "purplefruit")
-        
+        balloon_respawn_fruits.health2 = placeHealthpack(0, 250);
+        balloon_respawn_fruits.health3 = placeHealthpack(950, 250);
+        balloon_strong_birds.bird1 = placeBird(50, 300, ["purple"])
+        balloon_strong_birds.bird2 = placeBird(925, 300, ["orange"])
+        console.log(["purple"]*5)
 
         for (f in balloon_respawn_fruits) {
             balloon_respawn_fruits[f].reset_time = game.time.time + 2000;
         }
         
-        var redbird = placeBird(0, 2750, ["red"]);
-        redbird.mytween = game.add.tween(redbird).to({x:[500, 0], y:[2750,2750]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
-        var bluebird = placeBird(0, 2250, ["blue"]);
-        bluebird.mytween = game.add.tween(bluebird).to({x:[500, 0], y:[2250,2250]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
-        var yellowbird = placeBird(0, 1750, ["yellow"]);
-        yellowbird.mytween = game.add.tween(yellowbird).to({x:[500, 0], y:[1750,1750]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
-        var greenbird = placeBird(0, 1250, ["green"]);
-        greenbird.mytween = game.add.tween(greenbird).to({x:[500, 0], y:[1250,1250]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
-        var purplebird = placeBird(0, 750, ["purple"]);
-        purplebird.mytween = game.add.tween(purplebird).to({x:[500, 0], y:[750,750]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
+//        var redbird = placeBird(0, 2750, ["red"]);
+//        redbird.mytween = game.add.tween(redbird).to({x:[500, 0], y:[2750,2750]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
+//        var bluebird = placeBird(0, 2250, ["blue"]);
+//        bluebird.mytween = game.add.tween(bluebird).to({x:[500, 0], y:[2250,2250]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
+//        var yellowbird = placeBird(0, 1750, ["yellow"]);
+//        yellowbird.mytween = game.add.tween(yellowbird).to({x:[500, 0], y:[1750,1750]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
+//        var greenbird = placeBird(0, 1250, ["green"]);
+//        greenbird.mytween = game.add.tween(greenbird).to({x:[500, 0], y:[1250,1250]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
+//        var purplebird = placeBird(0, 750, ["purple"]);
+//        purplebird.mytween = game.add.tween(purplebird).to({x:[500, 0], y:[750,750]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
         
         // this bird is in the boss area 
 //        var orangebird = placeBird(0, 250, ["orange"]);
 //        orangebird.mytween = game.add.tween(orangebird).to({x:[500, 0], y:[250,250]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false)
         
         // place a ton of health packs after catboss
-        placeHealthpack(10*50, 67*50);
-        placeHealthpack(7*50, 47*50);
-        placeHealthpack(14*50, 23*50);
-        placeHealthpack(9*50, 11*50);
-        placeHealthpack(10*50, 81*50);
-        
-        // place fruits after bearboss 
-        placeFruit(11*50, 67*50, 'redfruit');
-        placeFruit(6*50, 59*50, 'redfruit');
-        placeFruit(15*50, 56*50, 'bluefruit');
-        placeFruit(5*50, 52*50, 'yellowfruit');
-        placeFruit(11*50, 43*50, 'yellowfruit');
-        placeFruit(4*50, 39*50, 'greenfruit');
-        placeFruit(16*50, 34*50, 'greenfruit');
-        placeFruit(16*50, 24*50, 'purplefruit');
-        placeFruit(4*50, 17*50, 'purplefruit');
+//        placeHealthpack(10*50, 67*50);
+//        placeHealthpack(7*50, 47*50);
+//        placeHealthpack(14*50, 23*50);
+//        placeHealthpack(9*50, 11*50);
+//        placeHealthpack(10*50, 81*50);
+//        
+        // place fruits after catboss 
+//        placeFruit(11*50, 67*50, 'redfruit');
+//        placeFruit(6*50, 59*50, 'redfruit');
+//        placeFruit(15*50, 56*50, 'bluefruit');
+//        placeFruit(5*50, 52*50, 'yellowfruit');
+//        placeFruit(11*50, 43*50, 'yellowfruit');
+//        placeFruit(4*50, 39*50, 'greenfruit');
+//        placeFruit(16*50, 34*50, 'greenfruit');
+//        placeFruit(16*50, 24*50, 'purplefruit');
+//        placeFruit(4*50, 17*50, 'purplefruit');
         
         // why do we need this platform ? (below)
 //        placeMP(400, 200, 12, 1, 0, 0, 0, 0)
@@ -194,9 +208,9 @@ demo.balloonstate.prototype = {
         place_bear_boss(500, 0, ['green','blue','red','yellow','purple','orange']);
 
         // bear boss stage moving platforms:
-        placeMP(4*50, 9*50, 1, 1, 0, 1, 0, 100);
-        placeMP(9*50, 9*50, 1, 1, 0, 1, 0, 100);
-        placeMP(14*50, 9*50, 1, 1, 0, 1, 0, 100);
+        placeMP(4*50, 9*50+25, 1, 1, 0, 0, 0, 0);
+        placeMP(9*50, 9*50+25, 1, 1, 0, 0, 0, 0);
+        placeMP(14*50, 9*50+25, 1, 1, 0, 0, 0, 0);
         
         
         bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
@@ -215,12 +229,16 @@ demo.balloonstate.prototype = {
         hungry_chameleon.mytween.onComplete.add(
             function() {
                 hungry_chameleon.kill()
+                var now_color = player.color
                 stomach_fruits['green'] = 1;
                 chameleon_change_color('green')
+                // Clear fruits from stomach
                 for (clr in stomach_fruits) {
                     stomach_fruits[clr] = 1;
                     chameleon_change_color(clr);
                 }
+                stomach_fruits[now_color] = 1;
+                chameleon_change_color[now_color];
             }
         )
 
@@ -261,7 +279,9 @@ demo.balloonstate.prototype = {
 //            rainbow.play('', '', 0.5, true, true);
 //            console.log('music change');
 //        }
-        
+        for (b in balloon_strong_birds) {
+            balloon_strong_birds[b].health = 1;
+        }
         if (player.ballooning) {
             chameleon_float();
         } else {
@@ -303,7 +323,7 @@ demo.balloonstate.prototype = {
         }
         
         // Empty stomach
-        if (game.camera.y == 300) {
+        if (game.camera.y == 1000) {
             hungry_chameleon.alpha = 1;
             hungry_chameleon.mytween.start();
         }
