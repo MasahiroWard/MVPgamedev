@@ -36,13 +36,13 @@ function keyPress(char) {
 function pause_game() {
     pause_darkener.alpha = 0.5;
     var style = {font: "30px Arial", fill: "White"}
-    pause_mainmenu = game.add.sprite(300, game.camera.y+300, "main_menu_txt");
+    pause_mainmenu = game.add.sprite(300, game.camera.y+200, "main_menu_txt");
     pause_mainmenu.anchor.setTo(0.5, 0.5);
     
-    pause_restart = game.add.sprite(700, game.camera.y+300, "try_again_txt");
+    pause_restart = game.add.sprite(700, game.camera.y+200, "try_again_txt");
     pause_restart.anchor.setTo(0.5, 0.5);
     
-    pause_resume = game.add.sprite(500, game.camera.y + 500, "try_again_txt");
+    pause_resume = game.add.text(500, game.camera.y+400, "Resume", {font: "60px arial", fill:"white"});
     pause_resume.anchor.setTo(0.5, 0.5);
     
     if (bear_boss) {
