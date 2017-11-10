@@ -125,7 +125,7 @@ demo.menu.prototype = {
             }
         );
 
-        easy_option = game.add.sprite(610, 275, "easy_txt");
+        easy_option = game.add.sprite(620, 275, "easy_txt");
         easy_option.anchor.setTo(0.5,0.5);
         easy_option.inputEnabled = true;
         easy_option.events.onInputUp.add(
@@ -134,7 +134,7 @@ demo.menu.prototype = {
             }
         );
         
-        difficult_option = game.add.sprite(830, 275, "hard_txt");
+        difficult_option = game.add.sprite(850, 275, "hard_txt");
         difficult_option.anchor.setTo(0.5,0.5);
         difficult_option.inputEnabled = true;
         difficult_option.events.onInputUp.add(

@@ -21,14 +21,16 @@ function keyPress(char) {
         } else {
             unpause_game();
         }
-        
+    }
+    if (char == "m" && game.paused) {
+        game.paused = false;
+        game.state.start('menu');
+    }
+    if (char == "r" && game.paused) {
+        game.paused = false;
+        game.state.start(restart_state);
     }
 
-    
-    // Temporary method to change states
-//    if (char == "m"){
-//        game.state.start("menu")
-//    }
 }
 
 function pause_game() {
