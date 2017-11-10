@@ -40,6 +40,9 @@ function pause_game() {
     pause_restart = game.add.sprite(700, game.camera.y+300, "try_again_txt");
     pause_restart.anchor.setTo(0.5, 0.5);
     
+    pause_resume = game.add.sprite(500, game.camera.y + 500, "try_again_txt");
+    pause_resume.anchor.setTo(0.5, 0.5);
+    
     if (bear_boss) {
         bear_boss.time_to_fish = bear_boss.throw_fish_timer - game.time.time;
     }
@@ -52,6 +55,7 @@ function unpause_game() {
     pause_darkener.alpha = 0;
     pause_mainmenu.kill();
     pause_restart.kill();
+    pause_resume.kill();
     bear_boss.throw_fish_timer = game.time.time + bear_boss.time_to_fish
 }
 
@@ -74,5 +78,13 @@ function pause_clicking(event) {
             game.paused = false;
             game.state.start('menu');
             }
+        
+        // Check if click was on Resume
+        if (event.x > pause_resume.left && event.x < pause_resume.right && event.y+game.camera.y > pause_resume.top && event.y+game.camera.y < pause_resume.bottom) {
+            game.paused = false;
+            unpause_game();
+            }
+
+        
     }
 }
