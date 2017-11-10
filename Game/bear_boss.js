@@ -39,7 +39,7 @@ function place_bear_boss(x, y, color_scheme) {
     bear_boss.anchor.setTo(0.5, 0.5);
     bear_boss.body.setSize(200, 150);
     
-    bear_boss.health = 4;
+    bear_boss.health = color_scheme.length - 1;
     bear_boss.color_scheme = color_scheme;
     bear_boss.color = bear_boss.color_scheme[bear_boss.health]
     

@@ -31,6 +31,7 @@ demo.lavastate.prototype = {
         // stop all other sounds 
         game.sound.stopAll();
         game.camera.y = game.world.height;
+//        game.camera.y = 0
         
         // play background music
         happyrock = game.add.audio('happyrock');
@@ -65,7 +66,8 @@ demo.lavastate.prototype = {
 //        
 //        
         createChameleon(450,game.world.height - 400);
-//        
+//        createChameleon(500,600);
+        
 //        place_cat_boss(0,0);
 //
 //        
@@ -262,7 +264,7 @@ demo.lavastate.prototype = {
 //
 
         place_bear_boss(500, 0, ['green', 'purple','blue','red','yellow', 'orange']);
-        placeMP(8*50+25, 450, 4, 0, 0, 0, 0, 0);
+        placeMP(8*50+25, 475, 3, 1, 0, 0, 0, 0);
         bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
         bearfruit.reset_time = game.time.time + 2000;
         placeHealthpack(11*50,11*50);

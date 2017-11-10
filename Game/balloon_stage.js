@@ -48,6 +48,7 @@ demo.balloonstate.prototype = {
         
         // start game at bottom of screen
         game.camera.y = game.world.height;
+//        game.camera.y = 0
         
         // Add game background
         // change 'bg1' to whatever is required
@@ -93,6 +94,7 @@ demo.balloonstate.prototype = {
         
         // Add chameleon at x,y
         createChameleon(500,game.world.height - 400);
+//        createChameleon(500, 500);
         
         // make groups
         make_fruit_groups();
@@ -106,13 +108,14 @@ demo.balloonstate.prototype = {
         
         // random balloon placement! and enemies, fruits, health spawns near these
         var balloon_x = 500;
-        for (i=0; i<45; i++) {
+        for (i=0; i<21; i++) {
 //            console.log(balloon_x);
             balloon_x = balloon_x + randomIntFromInterval(-350, 350);
             // Seal in game world bounds
             balloon_x = Math.min(balloon_x, 950);
             balloon_x = Math.max(balloon_x, 50);
             placeBalloon(balloon_x, 6000-i*250);
+            console.log(6000-i*250);
             if (i > 11) {
                 console.log(i)
                 // Place random health packs, fruits, and enemies after catboss
@@ -234,17 +237,12 @@ demo.balloonstate.prototype = {
         hungry_chameleon.mytween = hungry_chameleon.mytween = game.add.tween(hungry_chameleon).to({x:[250,250,-50], y:[0, 550, 550]}, 8000, Phaser.Easing.Linear.None, false)
         hungry_chameleon.mytween.onComplete.add(
             function() {
-                hungry_chameleon.kill()
-                var now_color = player.color
-                stomach_fruits['green'] = 1;
-                chameleon_change_color('green')
-                // Clear fruits from stomach
                 for (clr in stomach_fruits) {
-                    stomach_fruits[clr] = 1;
-                    chameleon_change_color(clr);
+                    stomach_fruits[clr] = 0;
+                    stomach_icons[clr].alpha = 0;
+                    stomach_tracker[clr].alpha = 0;
                 }
-                stomach_fruits[now_color] = 1;
-                chameleon_change_color[now_color];
+                hungry_chameleon.kill()
             }
         )
 
