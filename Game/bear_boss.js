@@ -75,7 +75,7 @@ function place_bear_boss(x, y, color_scheme) {
 
 function bear_boss_move(layer_list) {
     fish_indicator.body.y = game.camera.y
-    if (player.body.y < 700) {
+    if (player.body.y < 650) {
         fish_indicator.kill();
     }
 //    console.log(bear_boss.action)
@@ -180,7 +180,7 @@ function fish_throw_release() {
         game.physics.arcade.moveToObject(fish, player, 400);
     }
     bear_boss.loadTexture(bear_boss.color+"_bear");
-    if (player.body.y < 700) {
+    if (player.body.y < 1000) {
         bear_boss.throw_fish_timer = game.time.time + 1000 * (bear_boss.health+1);
     } else {
         bear_boss.throw_fish_timer = game.time.time + player.body.y
