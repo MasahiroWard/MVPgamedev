@@ -125,7 +125,6 @@ demo.menu.prototype = {
             }
         );
 
-        //difficulty level options - PUT IN REAL SPRITES HERE!!!! 
         easy_option = game.add.sprite(610, 275, "easy_txt");
         easy_option.anchor.setTo(0.5,0.5);
         easy_option.inputEnabled = true;

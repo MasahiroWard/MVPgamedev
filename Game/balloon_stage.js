@@ -39,6 +39,8 @@ demo.balloonstate.prototype = {
         // catboss and bearboss
         loadCatBoss();
         loadBearBoss();
+        
+
     },
     create: function(){
         // Stop sounds when starting a state
@@ -84,6 +86,9 @@ demo.balloonstate.prototype = {
         rainbow = game.add.audio('rainbow');        
         // loops guitar music 
         rainbow.play('','',0.5,true,true);
+        
+        // giant chameleon sound
+        giant_chameleon_sound = game.add.audio('question');
         ///////////////////////////////////////////////
         
         // Add chameleon at x,y
@@ -148,11 +153,12 @@ demo.balloonstate.prototype = {
         balloon_respawn_fruits.purplebear = placeFruit(950, 550, "purplefruit")
         balloon_respawn_fruits.orangebear1 = placeFruit(450, 500,     "orangefruit")
         balloon_respawn_fruits.purplebear1 = placeFruit(450, 550, "purplefruit")
+
         balloon_respawn_fruits.health2 = placeHealthpack(0, 250);
         balloon_respawn_fruits.health3 = placeHealthpack(950, 250);
         balloon_strong_birds.bird1 = placeBird(50, 300, ["purple"])
         balloon_strong_birds.bird2 = placeBird(925, 300, ["orange"])
-        console.log(["purple"]*5)
+//        console.log(["purple"]*5)
 
         for (f in balloon_respawn_fruits) {
             balloon_respawn_fruits[f].reset_time = game.time.time + 2000;
@@ -258,15 +264,6 @@ demo.balloonstate.prototype = {
                 rainbow.play('','',0.5,true,true);
             }
 
-//            if (bossMusic.isPlaying && !rainbow.isPlaying){
-//                bossMusic.stop();
-//                rainbow.play('','',0.5,true,true);
-//                
-//            }
-//            if (rainbow.isPlaying = false){
-//                bossMusic.stop();
-//                rainbow.play('','',0.5,true,true);
-//            }
             
         }
         
@@ -326,6 +323,9 @@ demo.balloonstate.prototype = {
         if (game.camera.y == 1000) {
             hungry_chameleon.alpha = 1;
             hungry_chameleon.mytween.start();
+            
+        // hungry chameleon sound - figure out when to start this 
+//            hungry_chameleon_sound.play();
         }
 
 //        console.log(balloon_respawn_fruits);

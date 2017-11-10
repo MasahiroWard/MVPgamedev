@@ -13,7 +13,10 @@ function createInventory(x, y){
     stomach = game.add.group();
     stomach.fixedToCamera = true;
     
-    var mytxt = game.add.text(inventory_x+20, inventory_y+10, "Stomach");
+//    var mytxt = game.add.text(inventory_x+20, inventory_y+10, "Stomach");
+    var mytxt = game.add.sprite(inventory_x+40, inventory_y+5, 'stomach_txt');
+    mytxt.alpha = 0.9
+    mytxt.scale.setTo(0.7,0.7);
     stomach.add(mytxt);
     
     var i = -1;

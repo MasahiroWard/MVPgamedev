@@ -73,6 +73,8 @@ function loadImages(){
     game.load.audio('reggae', 'assets/sounds/almost_reggae.mp3');
     game.load.audio('cute', 'assets/sounds/cute.mp3');
     game.load.audio('rainbow', 'assets/sounds/rainbows.mp3');
+    // load in sound for giant chameleon at the end
+    game.load.audio('question', 'assets/sounds/question.mp3');
     // health bar assets 
     game.load.image('heart', 'assets/sprites/heart.png');
     
@@ -92,5 +94,7 @@ function loadImages(){
     game.load.image('hard_txt', 'assets/sprites/hard.png');
     game.load.image('bestiary_txt', 'assets/sprites/bestiary.png');
     game.load.image('difficulty_txt', 'assets/sprites/difficulty.png');
+    
+    game.load.image('stomach_txt', 'assets/sprites/stomach.png');
 }
 
