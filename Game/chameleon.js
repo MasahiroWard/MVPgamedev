@@ -8,6 +8,7 @@ var max_height = 160;
 var half_flight_time = 3/4;
 var chameleon_jump_velocity = 2 * max_height / (half_flight_time);
 var chameleon_gravity = 2 * max_height/(half_flight_time**2);
+var single_jump = true;
 
 
 // Put this in create
@@ -64,11 +65,16 @@ function chameleonmove(){
     }
     
     // jump if player is blocked on the bottom
-    if (cursors.up.isDown && player.body.blocked.down){
+    if (cursors.up.isDown && player.body.blocked.down && single_jump){
         player.body.velocity.y = -chameleon_jump_velocity;
         jump1.play('','', 0.2);
+        single_jump = false;
     } else if (cursors.down.isDown) {
         player.body.velocity.y = chameleon_jump_velocity;
+    }
+    
+    if (!cursors.up.isDown){
+        single_jump = true;
     }
 
     // Game over if you fall off the screen

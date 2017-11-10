@@ -89,7 +89,7 @@ demo.balloonstate.prototype = {
         rainbow.play('','',0.5,true,true);
         
         // giant chameleon sound
-        giant_chameleon_sound = game.add.audio('question');
+        hungry_chameleon_sound = game.add.audio('question');
         ///////////////////////////////////////////////
         
         // Add chameleon at x,y
@@ -241,6 +241,9 @@ demo.balloonstate.prototype = {
                     stomach_fruits[clr] = 0;
                     stomach_icons[clr].alpha = 0;
                     stomach_tracker[clr].alpha = 0;
+//                    if (!hungry_chameleon_sound.isPlaying){
+//                        hungry_chameleon_sound.play('','',1);
+//                    }
                 }
                 hungry_chameleon.kill()
             }
@@ -325,6 +328,10 @@ demo.balloonstate.prototype = {
         // hungry chameleon sound - figure out when to start this 
 //            hungry_chameleon_sound.play();
         }
+        
+//        if (!hungry_chameleon.alive && hungry_chameleon_sound.isPlaying){
+//            hungry_chameleon_sound.stop();
+//        }
 
 //        console.log(balloon_respawn_fruits);
         for (f in balloon_respawn_fruits) {
