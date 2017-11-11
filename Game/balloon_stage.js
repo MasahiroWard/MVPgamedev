@@ -115,7 +115,7 @@ demo.balloonstate.prototype = {
             balloon_x = Math.min(balloon_x, 950);
             balloon_x = Math.max(balloon_x, 50);
             placeBalloon(balloon_x, 6000-i*250);
-            console.log(6000-i*250);
+//            console.log(6000-i*250);
             if (i > 11) {
                 console.log(i)
                 // Place random health packs, fruits, and enemies after catboss
@@ -321,17 +321,17 @@ demo.balloonstate.prototype = {
         }
         
         // Empty stomach
-        if (game.camera.y == 1000) {
+        if (game.camera.y == 700) {
             hungry_chameleon.alpha = 1;
             hungry_chameleon.mytween.start();
             
         // hungry chameleon sound - figure out when to start this 
-//            hungry_chameleon_sound.play();
+            hungry_chameleon_sound.play('','',1,true,true);
         }
         
-//        if (!hungry_chameleon.alive && hungry_chameleon_sound.isPlaying){
-//            hungry_chameleon_sound.stop();
-//        }
+        if (!hungry_chameleon.alive && hungry_chameleon_sound.isPlaying){
+            hungry_chameleon_sound.stop();
+        }
 
 //        console.log(balloon_respawn_fruits);
         for (f in balloon_respawn_fruits) {
@@ -342,7 +342,7 @@ demo.balloonstate.prototype = {
                 balloon_respawn_fruits[f].reset_time = game.time.time + 2000;
             }
         }
-//        player.health = 2;
+        player.health = 2;
         if (!bear_boss.alive) {
             game.state.start('victory');
         }
