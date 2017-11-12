@@ -48,6 +48,9 @@ function pause_game() {
     if (bear_boss) {
         bear_boss.time_to_fish = bear_boss.throw_fish_timer - game.time.time;
     }
+    
+    balloon_end_time_left = balloon_end_time - game.time.time;
+    
     game.paused = true;
 
 }
@@ -58,7 +61,8 @@ function unpause_game() {
     pause_mainmenu.kill();
     pause_restart.kill();
     pause_resume.kill();
-    bear_boss.throw_fish_timer = game.time.time + bear_boss.time_to_fish
+    bear_boss.throw_fish_timer = game.time.time + bear_boss.time_to_fish;
+    balloon_end_time = game.time.time + balloon_end_time_left;
 }
 
 function pause_hover(pointer, x, y, click) {

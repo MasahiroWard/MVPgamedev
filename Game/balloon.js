@@ -25,7 +25,7 @@ function use_balloon(){
     player.ballooning = true;
     player.has_balloon = false;
     // 2 seconds for balloon activation
-    balloon_start_time = game.time.time;
+    balloon_end_time = game.time.time + 2000;
 }
 
 function chameleon_float(){
@@ -48,7 +48,7 @@ function chameleon_float(){
     }
     
     // End ballooning after 2 seconds
-    if (game.time.time > balloon_start_time + 2000){
+    if (game.time.time > balloon_end_time){
         player.ballooning = false;
         player.childBalloon.kill()
         var escape_balloon = game.add.sprite(player.body.x, player.body.y-50, "balloon");

@@ -25,7 +25,7 @@ var fruit_colors = {"redfruit": "red", "yellowfruit": "yellow", "orangefruit": "
 
 // Item objects
 // balloon_start_time is used to release balloon after x seconds
-var balloon_group, balloon_start_time = 0;
+var balloon_group, balloon_end_time = 0, balloon_end_time_left = 0;
 
 // Moving platforms group holds all the MovingPlatform objects
 // MovingPlatform class is an extended sprite object
