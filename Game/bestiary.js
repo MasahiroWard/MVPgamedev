@@ -104,7 +104,7 @@ demo.bestiary.prototype = {
         t5.scale.setTo(0.6,0.6)
         t6.scale.setTo(0.6,0.6)
         
-        placeMP(0, 600, 18, 3, 0, 0, 0, 0);
+        placeMP(0, 600, 20, 3, 0, 0, 0, 0);
 
 
             
