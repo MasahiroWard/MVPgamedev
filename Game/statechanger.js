@@ -42,8 +42,9 @@ function pause_game() {
     pause_restart = game.add.sprite(700, game.camera.y+200, "try_again_txt");
     pause_restart.anchor.setTo(0.5, 0.5);
     
-    pause_resume = game.add.text(500, game.camera.y+400, "Resume", {font: "60px arial", fill:"white"});
+    pause_resume = game.add.sprite(500, game.camera.y+400, "resume_txt");
     pause_resume.anchor.setTo(0.5, 0.5);
+    pause_resume.scale.setTo(42/58, 42/58);
     
     if (bear_boss) {
         bear_boss.time_to_fish = bear_boss.throw_fish_timer - game.time.time;

@@ -232,7 +232,7 @@ demo.balloonstate.prototype = {
         add_pause_darkener();
         game.input.onDown.add(pause_clicking, this);
         hungry_chameleon = game.add.sprite(1000, 0, 'grey_chameleon');
-        hungry_chameleon.scale.setTo(0.4, 0.4);
+        hungry_chameleon.scale.setTo(0.5, 0.5);
         hungry_chameleon.alpha = 0;
         hungry_chameleon.mytween = hungry_chameleon.mytween = game.add.tween(hungry_chameleon).to({x:[250,250,-50], y:[0, 550, 550]}, 8000, Phaser.Easing.Linear.None, false)
         hungry_chameleon.mytween.onComplete.add(
