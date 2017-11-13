@@ -108,7 +108,7 @@ demo.balloonstate.prototype = {
         
         // random balloon placement! and enemies, fruits, health spawns near these
         var balloon_x = 500;
-        for (i=0; i<21; i++) {
+        for (i=0; i<22; i++) {
 //            console.log(balloon_x);
             balloon_x = balloon_x + randomIntFromInterval(-350, 350);
             // Seal in game world bounds
@@ -116,7 +116,7 @@ demo.balloonstate.prototype = {
             balloon_x = Math.max(balloon_x, 50);
             placeBalloon(balloon_x, 6000-i*250);
 //            console.log(6000-i*250);
-            if (i > 11) {
+            if (i > 11 && i!=21) {
                 console.log(i)
                 // Place random health packs, fruits, and enemies after catboss
                 var health_x = balloon_x + randomIntFromInterval(-175, 175);
@@ -231,10 +231,10 @@ demo.balloonstate.prototype = {
         place_hearts(750, 0);
         add_pause_darkener();
         game.input.onDown.add(pause_clicking, this);
-        hungry_chameleon = game.add.sprite(1000, 0, 'grey_chameleon');
+        hungry_chameleon = game.add.sprite(1000, 700+550, 'grey_chameleon');
         hungry_chameleon.scale.setTo(0.5, 0.5);
         hungry_chameleon.alpha = 0;
-        hungry_chameleon.mytween = hungry_chameleon.mytween = game.add.tween(hungry_chameleon).to({x:[250,250,-50], y:[0, 550, 550]}, 8000, Phaser.Easing.Linear.None, false)
+        hungry_chameleon.mytween = hungry_chameleon.mytween = game.add.tween(hungry_chameleon).to({x:[-50], y:[550]}, 4500, Phaser.Easing.Linear.None, false)
         hungry_chameleon.mytween.onComplete.add(
             function() {
                 for (clr in stomach_fruits) {
