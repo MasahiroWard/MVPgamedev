@@ -157,10 +157,10 @@ demo.balloonstate.prototype = {
         balloon_respawn_fruits.orangebear1 = placeFruit(450, 500,     "orangefruit")
         balloon_respawn_fruits.purplebear1 = placeFruit(450, 550, "purplefruit")
 
-        balloon_respawn_fruits.health2 = placeHealthpack(0, 250);
-        balloon_respawn_fruits.health3 = placeHealthpack(950, 250);
-        balloon_strong_birds.bird1 = placeBird(50, 300, ["purple"])
-        balloon_strong_birds.bird2 = placeBird(925, 300, ["orange"])
+        balloon_respawn_fruits.health2 = placeHealthpack(200, 275);
+        balloon_respawn_fruits.health3 = placeHealthpack(700, 275);
+        balloon_strong_birds.bird1 = placeBird(220, 350, ["purple"])
+        balloon_strong_birds.bird2 = placeBird(720, 350, ["orange"])
 //        console.log(["purple"]*5)
 
         for (f in balloon_respawn_fruits) {
@@ -217,12 +217,11 @@ demo.balloonstate.prototype = {
         place_bear_boss(500, 0, ['green','blue','red','yellow','purple','orange']);
 
         // bear boss stage moving platforms:
-        placeMP(4*50, 9*50+25, 1, 1, 0, 0, 0, 0);
-        placeMP(9*50, 9*50+25, 1, 1, 0, 0, 0, 0);
-        placeMP(14*50, 9*50+25, 1, 1, 0, 0, 0, 0);
+        placeMP(4*50, 10*50, 1, 0.5, 0, 0, 0, 0);
+        placeMP(9*50, 10*50, 1, 0.5, 0, 0, 0, 0);
+        placeMP(14*50, 10*50, 1, 0.5, 0, 0, 0, 0);
         
-        
-        bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
+        place_bear_fruit();
         bearfruit.reset_time = game.time.time + 2000;
         
             
@@ -251,6 +250,7 @@ demo.balloonstate.prototype = {
 
     },
     update: function(){
+//        console.log(player.body.x);
         // Collide with layers that are necessary
         game.physics.arcade.collide(player, unicornlayer1);
         
@@ -315,7 +315,7 @@ demo.balloonstate.prototype = {
         bear_boss_move(boss_collision_list)
 //        console.log('update end')
         if (!bearfruit.alive && game.time.time > bearfruit.reset_time && bear_boss.health >= 0) {
-            bearfruit = placeFruit(5*50+randomIntFromInterval(0,1)*9*50, 350, bear_boss.color+"fruit");
+            place_bear_fruit()
         } else if (bearfruit.alive) {
             bearfruit.reset_time = game.time.time + 3000;
         }

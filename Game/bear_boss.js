@@ -249,6 +249,7 @@ function bear_boss_damaged(){
     }
     if (bear_boss.body.center.x >= bearfruit.body.center.x && bear_boss.body.center.y >= 300) {
         // kill the fruit when bearboss runs over it
+        bearfruit.reset_time = game.time.time + 3000;
         bearfruit.kill();
     }
     
@@ -274,5 +275,29 @@ function bear_boss_flash(duration) {
         bear_boss.alpha = 0.5;
     } else {
         bear_boss.alpha = 1;
+    }
+}
+
+function place_bear_fruit() {
+    var bearfruit_x = randomIntFromInterval(0, 6);
+    switch (bearfruit_x) {
+        case 0 :
+            bearfruit = placeFruit(100, 325, bear_boss.color+"fruit");
+            break;
+        case 1 :
+            bearfruit = placeFruit(300, 325, bear_boss.color+"fruit");
+            break;
+        case 2:
+            bearfruit = placeFruit(350, 325, bear_boss.color+"fruit");
+            break;
+        case 3:
+            bearfruit = placeFruit(550, 325, bear_boss.color+"fruit");
+            break;
+        case 4:
+            bearfruit = placeFruit(600, 325, bear_boss.color+"fruit");
+            break;
+        case 5:
+            bearfruit = placeFruit(800, 325, bear_boss.color+"fruit");
+            break;    
     }
 }

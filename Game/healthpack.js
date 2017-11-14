@@ -16,7 +16,7 @@ function placeHealthpack(x, y){
 function get_healthpack(player, healthpack){
 // change the <3 to <lives and uncomment below for difficulty level 
     
-    console.log(difficulty);
+//    console.log(difficulty);
     if (difficulty == "advanced"){
         lives = 3;
     }

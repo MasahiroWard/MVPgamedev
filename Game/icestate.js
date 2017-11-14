@@ -152,7 +152,7 @@ demo.icestate.prototype = {
         add_pause_darkener();
         game.input.onDown.add(pause_clicking, self);
         
-        console.log("create", difficulty);
+//        console.log("create", difficulty);
 
     },
     update: function(){ 

@@ -67,7 +67,7 @@ function unpause_game() {
 }
 
 function pause_hover(pointer, x, y, click) {
-    console.log(x,y);
+//    console.log(x,y);
 }
 
 function pause_clicking(event) {
