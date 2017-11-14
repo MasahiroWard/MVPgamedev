@@ -88,7 +88,7 @@ function bear_boss_move(layer_list) {
     }
 //    console.log(bear_boss.action)
     bear_boss.animations.play("move");
-    console.log(bear_boss.animations);
+//    console.log(bear_boss.animations);
     if (bear_boss.body.x < player.body.x) {
         bear_boss.scale.setTo(-1, 1);
     } else {
@@ -107,6 +107,8 @@ function bear_boss_move(layer_list) {
             bear_boss_moving()
             if (bear_boss.throw_fish_timer < game.time.time) {
 //                bear_boss.animations.stop();
+//                console.log('load texture throw')
+                bear_boss.loadTexture(bear_boss.color + '_throw_bear');
                 fish_throw();
             };
             
@@ -173,8 +175,7 @@ function fish_throw() {
 //    bear_boss.animations.play('throw_fish');
     bear_boss.alpha = 1;
     bear_boss.action = 'throwing';
-    bear_boss.loadTexture(bear_boss.color + '_throw_bear');
-    bear_boss.animations.add('move', [0, 1, 2, 3], 4, true);
+//    bear_boss.animations.add('move', [0, 1, 2, 3], 4, true);
 
     bear_boss.body.velocity.x = 0;
     bear_boss.body.velocity.y = -500;
@@ -192,8 +193,9 @@ function fish_throw_release() {
         fish.reset(bear_boss.body.center.x, bear_boss.body.center.y);
         game.physics.arcade.moveToObject(fish, player, 400);
     }
+//    console.log("load texture move")
     bear_boss.loadTexture(bear_boss.color+"_bear");
-    bear_boss.animations.add('move', [0, 1, 2, 3], 4, true);
+//    bear_boss.animations.add('move', [0, 1, 2, 3], 4, true);
 
     if (player.body.y < 1000) {
         bear_boss.throw_fish_timer = game.time.time + 1000 * (bear_boss.health+1);
@@ -217,8 +219,9 @@ function touch_bear_boss() {
                 bear_boss.kill();
             }
             bear_boss.color = bear_boss.color_scheme[bear_boss.health];
+//            console.log("load texture move")
             bear_boss.loadTexture(bear_boss.color+"_bear");
-            bear_boss.animations.add('move', [0, 1, 2, 3], 4, true);
+//            bear_boss.animations.add('move', [0, 1, 2, 3], 4, true);
             bear_boss.hit_recently_timer = game.time.time + 5000;
             bear_boss.action = 'damaged'
             bear_boss.damage_action = 0
@@ -238,10 +241,17 @@ function bear_boss_damaged(){
         bear_boss.damage_action = 1
     } else if (bear_boss.body.center.x >= 850) {
         bear_boss.damage_action = 2
-        bearfruit.kill();
+//        bearfruit.kill();
     } else if (bear_boss.body.center.y <= 100) {
         bear_boss.action = 'moving'
+        // throw fish immediately when finished with run
+        bear_boss.throw_fish_timer = game.time.time
     }
+    if (bear_boss.body.center.x >= bearfruit.body.center.x && bear_boss.body.center.y >= 300) {
+        // kill the fruit when bearboss runs over it
+        bearfruit.kill();
+    }
+    
     switch (bear_boss.damage_action) {
         case 0:
             // move to 0, 500
