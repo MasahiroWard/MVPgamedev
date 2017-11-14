@@ -46,6 +46,13 @@ function chameleon_float(){
         player.scale.setTo(-0.13, 0.13)
         player.body.velocity.x = 150;
     }
+    if (chameleonWasHit > game.time.time){
+        chameleon_flash(chameleonWasHit - game.time.time);
+    } 
+    else {
+        player.alpha = 1;
+    }
+
     
     // End ballooning after 2 seconds
     if (game.time.time > balloon_end_time){
