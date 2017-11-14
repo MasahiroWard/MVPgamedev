@@ -15,13 +15,23 @@ var cat_boss, yarn_ball, bossMusic;
 function loadCatBoss(){
     game.load.image('cat_yarn', 'assets/sprites/black_yarnball2.png');
     game.load.spritesheet('sleep_cat', 'assets/spritesheets/sleep_cat_spritesheet.png',162,111);
-    game.load.spritesheet('throw_cat', 'assets/spritesheets/throw_cat_spritesheet.png',146,192);
+    game.load.spritesheet('blue_throw_cat', 'assets/spritesheets/throw_cat_spritesheet.png',146,192);
     game.load.spritesheet('blue_cat', 'assets/spritesheets/blue_catwalk_spritesheet.png',158,146);
     game.load.spritesheet('red_cat', 'assets/spritesheets/red_catwalk_spritesheet.png',157,147);
     game.load.spritesheet('green_cat', 'assets/spritesheets/green_catwalk_spritesheet.png',158,147);
     game.load.spritesheet('yellow_cat', 'assets/spritesheets/yellow_catwalk_spritesheet.png',158,147);
     game.load.spritesheet('orange_cat', 'assets/spritesheets/orange_catwalk_spritesheet.png',157,145);
     game.load.spritesheet('purple_cat', 'assets/spritesheets/purple_catwalk_spritesheet.png',158,146);
+    
+    game.load.spritesheet('green_throw_cat', 'assets/spritesheets/green_throw_spritesheet.png',584/4,192);
+    game.load.spritesheet('orange_throw_cat', 'assets/spritesheets/orange_throw_spritesheet.png',584/4,191);
+    game.load.spritesheet('red_throw_cat', 'assets/spritesheets/red_throw_spritesheet.png',592/4,193);
+    game.load.spritesheet('yellow_throw_cat', 'assets/spritesheets/yellow_throw_spritesheet.png',592/4,192);
+    game.load.spritesheet('purple_throw_cat', 'assets/spritesheets/purple_throw_spritesheet.png',584/4,192);
+    
+    
+    
+    
     game.load.audio('bossMusic', 'assets/sounds/bossMusic.mp3');
     game.load.audio('meow', 'assets/sounds/meow.mp3');
 }
@@ -86,7 +96,7 @@ function cat_boss_sleep() {
 
 function cat_touch_yarn() {
     cat_boss.action = 'throwing';
-    cat_boss.loadTexture('throw_cat');
+    cat_boss.loadTexture(cat_boss.color  + '_throw_cat');
 //    cat_boss.body.setSize(146, 192);
     game.physics.arcade.moveToObject(yarn_ball, cat_boss, 400);
     cat_boss.throw_ball_timer = game.time.time + 10000;

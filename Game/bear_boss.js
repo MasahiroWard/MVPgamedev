@@ -19,13 +19,21 @@ var fish;
 function loadBearBoss(){
     game.load.image('projectile_fish', 'assets/sprites/fish_sprite.png');
     
-    game.load.spritesheet('throw_bear', 'assets/spritesheets/throw_cat_spritesheet.png',146,192);
     game.load.spritesheet('blue_bear', 'assets/spritesheets/blue_catwalk_spritesheet.png',158,146);
     game.load.spritesheet('red_bear', 'assets/spritesheets/red_catwalk_spritesheet.png',157,147);
     game.load.spritesheet('green_bear', 'assets/spritesheets/green_catwalk_spritesheet.png',158,147);
     game.load.spritesheet('yellow_bear', 'assets/spritesheets/yellow_catwalk_spritesheet.png',158,147);
     game.load.spritesheet('orange_bear', 'assets/spritesheets/orange_catwalk_spritesheet.png',157,145);
     game.load.spritesheet('purple_bear', 'assets/spritesheets/purple_catwalk_spritesheet.png',158,146);
+    
+    game.load.spritesheet('blue_throw_bear', 'assets/spritesheets/throw_cat_spritesheet.png',584/4,192);
+    game.load.spritesheet('green_throw_bear', 'assets/spritesheets/green_throw_spritesheet.png',584/4,192);
+    game.load.spritesheet('purple_throw_bear', 'assets/spritesheets/purple_throw_spritesheet.png',584/4,192);
+    game.load.spritesheet('orange_throw_bear', 'assets/spritesheets/orange_throw_spritesheet.png',584/4,191);
+    game.load.spritesheet('yellow_throw_bear', 'assets/spritesheets/yellow_throw_spritesheet.png',592/4,192);
+    game.load.spritesheet('red_throw_bear', 'assets/spritesheets/red_throw_spritesheet.png',592/4,193);
+    
+    
     game.load.audio('friendly', 'assets/sounds/friendly.mp3');    
 }
 
@@ -34,7 +42,7 @@ function place_bear_boss(x, y, color_scheme) {
     game.physics.arcade.enable(bear_boss);
     bear_boss.body.collideWorldBounds = true;
     bear_boss.animations.add('move', [0, 1, 2, 3], 4, true);
-    bear_boss.animations.add('throw', [0, 1, 2, 3], 4, true);
+//    bear_boss.animations.add('throw_fish', [0, 1, 2, 3], 3, true);
     bear_boss.body.immovable = true;
     bear_boss.anchor.setTo(0.5, 0.5);
     bear_boss.body.setSize(200, 150);
@@ -80,6 +88,7 @@ function bear_boss_move(layer_list) {
     }
 //    console.log(bear_boss.action)
     bear_boss.animations.play("move");
+    console.log(bear_boss.animations);
     if (bear_boss.body.x < player.body.x) {
         bear_boss.scale.setTo(-1, 1);
     } else {
@@ -97,6 +106,7 @@ function bear_boss_move(layer_list) {
         case "moving":
             bear_boss_moving()
             if (bear_boss.throw_fish_timer < game.time.time) {
+//                bear_boss.animations.stop();
                 fish_throw();
             };
             
@@ -159,10 +169,13 @@ function bear_boss_moving() {
 
 
 function fish_throw() {
+//    bear_boss.animations.stop()
 //    bear_boss.animations.play('throw_fish');
     bear_boss.alpha = 1;
     bear_boss.action = 'throwing';
-    bear_boss.loadTexture('throw_bear');
+    bear_boss.loadTexture(bear_boss.color + '_throw_bear');
+    bear_boss.animations.add('move', [0, 1, 2, 3], 4, true);
+
     bear_boss.body.velocity.x = 0;
     bear_boss.body.velocity.y = -500;
     
@@ -180,6 +193,8 @@ function fish_throw_release() {
         game.physics.arcade.moveToObject(fish, player, 400);
     }
     bear_boss.loadTexture(bear_boss.color+"_bear");
+    bear_boss.animations.add('move', [0, 1, 2, 3], 4, true);
+
     if (player.body.y < 1000) {
         bear_boss.throw_fish_timer = game.time.time + 1000 * (bear_boss.health+1);
     } else {
@@ -203,6 +218,7 @@ function touch_bear_boss() {
             }
             bear_boss.color = bear_boss.color_scheme[bear_boss.health];
             bear_boss.loadTexture(bear_boss.color+"_bear");
+            bear_boss.animations.add('move', [0, 1, 2, 3], 4, true);
             bear_boss.hit_recently_timer = game.time.time + 5000;
             bear_boss.action = 'damaged'
             bear_boss.damage_action = 0
