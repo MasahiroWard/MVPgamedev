@@ -212,7 +212,7 @@ demo.balloonstate.prototype = {
         
         
         // catboss and bearboss
-        place_cat_boss(500,74*50,['green']);//,'yellow','blue','orange','red','purple']);
+        place_cat_boss(500,74*50,['green','yellow','blue','orange','red','purple']);
         
         place_bear_boss(500, 0, ['green','blue','red','yellow','purple','orange']);
 
@@ -342,7 +342,7 @@ demo.balloonstate.prototype = {
                 balloon_respawn_fruits[f].reset_time = game.time.time + 2000;
             }
         }
-        player.health = 2;
+//        player.health = 2;
         if (!bear_boss.alive) {
             game.state.start('victory');
         }
