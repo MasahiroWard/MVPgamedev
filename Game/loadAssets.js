@@ -97,5 +97,7 @@ function loadImages(){
     game.load.image('difficulty_txt', 'assets/sprites/difficulty.png');
     
     game.load.image('stomach_txt', 'assets/sprites/stomach.png');
+    
+
 }
 
