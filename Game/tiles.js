@@ -1,3 +1,4 @@
+var ladTopYes = true;
 
 function add_game_bg(sprite_name){
     //game.stage.backgroundColor = '#DDDDDD';
@@ -53,13 +54,18 @@ function ladder_movement(tile_arr, ladTileIndex, ladderTopIndex){
         }
         if (checking.index == ladderTopIndex){
             ladder_function();
-            if (cursors.up.isDown) {
+            if (cursors.up.isDown && ladTopYes == true) {
                 player.body.velocity.y = -chameleon_jump_velocity;
+                ladTopYes = false;
             }
         } else if (checking.index == ladTileIndex) {
                    ladder_function()
                    }
     }
+    if (!cursors.up.isDown){
+        ladTopYes = true;
+    }
+    
 }
 
 function ladder_function(){

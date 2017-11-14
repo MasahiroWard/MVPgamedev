@@ -1,4 +1,4 @@
-var menu_balloon, easy_option, difficult_option;
+var menu_balloon, easy_option, difficult_option, cute;
 
 // Menu State
 demo.menu = function(){};
@@ -21,13 +21,25 @@ demo.menu.prototype = {
         // Allows keyboard inputs
         cursors = game.input.keyboard.createCursorKeys();
         game.input.keyboard.addCallbacks(this, null, null, keyPress);
+//        cute = game.add.audio('cute');
 
-        
         // Stop sounds when starting a state
         game.sound.stopAll();
-        
         cute = game.add.audio('cute');
         cute.play('','',0.3,true,true);
+
+
+// use this to avoid restarting music after returning from bestiary - need to find a place to put 
+// cute = game.add.audio('cute'); in order to do this ...
+//        if (!cute.isPlaying){
+//            console.log('not playing');
+//            game.sound.stopAll();
+////            cute = game.add.audio('cute');
+//
+//            cute.play('','',0.3,true,true);
+//        }
+        
+
         
         
         // start game at bottom of screen

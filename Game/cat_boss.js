@@ -120,7 +120,7 @@ function cat_boss_throw() {
         yarn_ball.body.velocity.x = 0;
         yarn_ball.body.velocity.y = 0;
     }
-    if (cat_boss.alive){
+    if (cat_boss.alive && !meow.isPlaying){
         meow.play('','',3);
     }
 }
