@@ -10,6 +10,9 @@ demo.victory.prototype = {
     create: function(){
         // Stop sounds when starting a state
         game.sound.stopAll();
+        zazie = game.add.audio('zazie');
+        zazie.play('','',0.3,true,true);
+        
         game.stage.backgroundColor = "#000000"
         
         var emitter = game.add.emitter(game.world.centerX,0,500);
