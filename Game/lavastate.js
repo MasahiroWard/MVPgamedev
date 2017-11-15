@@ -127,12 +127,12 @@ demo.lavastate.prototype = {
         placeMP(13*50, 65*50, 2, 1, 0, 4, 0, 200);
         
         // random fruit stuff in super moving platform place y: [64, 75]
-        placeFruit(5*50, 72*50, "redfruit");
-        placeFruit(8*50, 71*50, "yellowfruit");
-        placeFruit(15*50, 73*50, "redfruit");
-        placeFruit(3*50, 67*50, "orangefruit");
-        placeFruit(8*50, 64*50, "orangefruit");
-        placeFruit(13*50, 63*50, "yellowfruit");
+        placeFruit(randomIntFromInterval(3, 17)*50, 72*50, "redfruit");
+        placeFruit(randomIntFromInterval(3, 17)*50, 70*50, "yellowfruit");
+        placeFruit(randomIntFromInterval(3, 17)*50, 68*50, "orangefruit");
+        placeFruit(randomIntFromInterval(3, 17)*50, 67*50, "yellowfruit");
+        placeFruit(randomIntFromInterval(3, 17)*50, 65*50, "orangefruit");
+        placeFruit(randomIntFromInterval(3, 17)*50, 64*50, "redfruit");
         
         placeHealthpack(16*50, 61*50);
         
