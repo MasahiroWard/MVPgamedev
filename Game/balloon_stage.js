@@ -3,7 +3,6 @@
 // Declare state vars only used in this state
 var unicornMap, unicornlayer1, unicornlayer2;
 var balloon_respawn_fruits = {};
-var balloon_strong_birds = {};
 var hungry_chameleon;
 //var state_var_2;
 
@@ -160,13 +159,21 @@ demo.balloonstate.prototype = {
         balloon_respawn_fruits.health2 = placeHealthpack(1000, 275);
         balloon_respawn_fruits.health2.mytween = game.add.tween(balloon_respawn_fruits.health2).to({x:[0, 950], y:[275, 275]}, 10000, Phaser.Easing.Linear.None, true, 0, -1, false);
         
-        balloon_strong_birds.bird1 = placeBird(220, 350, ["purple"])
-        balloon_strong_birds.bird2 = placeBird(720, 350, ["orange"])
+        
+        var bear_bird = placeBird(600, 350, ['green','blue','red','yellow','purple','orange'])
+        bear_bird.mytween = game.add.tween(bear_bird).to({x: [400, 600], y:[350, 350]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        
+        var bear_bird1 = placeBird(100, 350, ['green','blue','red','yellow','purple','orange'])
+        bear_bird1.mytween = game.add.tween(bear_bird1).to({x: [300, 100], y:[350, 350]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+
+        var bear_bird2 = placeBird(600, 350, ['green','blue','red','yellow','purple','orange'])
+        bear_bird2.mytween = game.add.tween(bear_bird2).to({x: [800, 600], y:[350, 350]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+
+        
         var bear_snake1 = placeSnake(220, 550, ['green','blue','red','yellow','purple','orange'])
         var bear_snake2 = placeSnake(720, 550, ['green','blue','red','yellow','purple','orange'])
         bear_snake1.mytween = game.add.tween(bear_snake1).to({x:[220, 220], y:[800, 550]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
         bear_snake2.mytween = game.add.tween(bear_snake2).to({x:[720, 720], y:[800, 550]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
-        bear_bird = placeBird(500, 350, ['green','blue','red','yellow','purple','orange'])
         
 //        console.log(["purple"]*5)
 
@@ -283,9 +290,6 @@ demo.balloonstate.prototype = {
 //            rainbow.play('', '', 0.5, true, true);
 //            console.log('music change');
 //        }
-        for (b in balloon_strong_birds) {
-            balloon_strong_birds[b].health = 1;
-        }
         if (player.ballooning) {
             chameleon_float();
         } else {
