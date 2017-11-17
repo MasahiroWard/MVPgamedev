@@ -160,20 +160,20 @@ demo.balloonstate.prototype = {
         balloon_respawn_fruits.health2.mytween = game.add.tween(balloon_respawn_fruits.health2).to({x:[0, 950], y:[275, 275]}, 10000, Phaser.Easing.Linear.None, true, 0, -1, false);
         
         
-        var bear_bird = placeBird(600, 350, ['green','blue','red','yellow','purple','orange'])
-        bear_bird.mytween = game.add.tween(bear_bird).to({x: [400, 600], y:[350, 350]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        var bear_bird = placeBird(550, 350, ['green','blue','red','yellow','purple','orange'])
+        bear_bird.mytween = game.add.tween(bear_bird).to({x: [400, 550], y:[350, 350]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
         
         var bear_bird1 = placeBird(100, 350, ['green','blue','red','yellow','purple','orange'])
         bear_bird1.mytween = game.add.tween(bear_bird1).to({x: [300, 100], y:[350, 350]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
 
-        var bear_bird2 = placeBird(600, 350, ['green','blue','red','yellow','purple','orange'])
-        bear_bird2.mytween = game.add.tween(bear_bird2).to({x: [800, 600], y:[350, 350]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        var bear_bird2 = placeBird(650, 350, ['green','blue','red','yellow','purple','orange'])
+        bear_bird2.mytween = game.add.tween(bear_bird2).to({x: [800, 650], y:[350, 350]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
 
         
-        var bear_snake1 = placeSnake(220, 550, ['green','blue','red','yellow','purple','orange'])
-        var bear_snake2 = placeSnake(720, 550, ['green','blue','red','yellow','purple','orange'])
-        bear_snake1.mytween = game.add.tween(bear_snake1).to({x:[220, 220], y:[800, 550]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
-        bear_snake2.mytween = game.add.tween(bear_snake2).to({x:[720, 720], y:[800, 550]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        var bear_snake1 = placeSnake(170, 550, ['green','blue','red','yellow','purple','orange'])
+        var bear_snake2 = placeSnake(770, 550, ['green','blue','red','yellow','purple','orange'])
+        bear_snake1.mytween = game.add.tween(bear_snake1).to({x:[170, 170], y:[800, 550]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        bear_snake2.mytween = game.add.tween(bear_snake2).to({x:[770, 770], y:[800, 550]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
         
 //        console.log(["purple"]*5)
 
