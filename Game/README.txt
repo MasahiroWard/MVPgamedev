@@ -31,7 +31,12 @@ balloon by TheDweebMan (https://freesound.org/people/TheDweebMan/sounds/277212/)
 chirp by esperar (https://freesound.org/people/esperar/sounds/170814/),
 Guitar2 by Toivo161 (https://freesound.org/people/Toivo161/sounds/267216/),
 disappointed by Robinhood76 (https://freesound.org/people/Robinhood76/sounds/98874/),
-Slide whistle by InspectorJ (https://freesound.org/people/InspectorJ/sounds/402581/)
+Slide whistle by InspectorJ (https://freesound.org/people/InspectorJ/sounds/402581/),
+Bing by kantouth (https://freesound.org/people/kantouth/sounds/106727/),
+Jingle by Sirkoto51 (https://freesound.org/people/Sirkoto51/sounds/346265/),
+Meow by thearxx08 (https://freesound.org/people/thearxx08/sounds/333916/),
+Question by plasterbrain (https://freesound.org/people/plasterbrain/sounds/396195/)
+
 
 
 
@@ -57,3 +62,8 @@ http://creativecommons.org/licenses/by/3.0/
 New Friendly Kevin MacLeod (incompetech.com)
 Licensed under Creative Commons: By Attribution 3.0 License
 http://creativecommons.org/licenses/by/3.0/
+
+Zazie Kevin MacLeod (incompetech.com)
+Licensed under Creative Commons: By Attribution 3.0 License
+http://creativecommons.org/licenses/by/3.0/
+
