@@ -157,10 +157,17 @@ demo.balloonstate.prototype = {
         balloon_respawn_fruits.orangebear1 = placeFruit(450, 500,     "orangefruit")
         balloon_respawn_fruits.purplebear1 = placeFruit(450, 550, "purplefruit")
 
-        balloon_respawn_fruits.health2 = placeHealthpack(200, 275);
-        balloon_respawn_fruits.health3 = placeHealthpack(700, 275);
+        balloon_respawn_fruits.health2 = placeHealthpack(1000, 275);
+        balloon_respawn_fruits.health2.mytween = game.add.tween(balloon_respawn_fruits.health2).to({x:[0, 950], y:[275, 275]}, 10000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        
         balloon_strong_birds.bird1 = placeBird(220, 350, ["purple"])
         balloon_strong_birds.bird2 = placeBird(720, 350, ["orange"])
+        var bear_snake1 = placeSnake(220, 550, ['green','blue','red','yellow','purple','orange'])
+        var bear_snake2 = placeSnake(720, 550, ['green','blue','red','yellow','purple','orange'])
+        bear_snake1.mytween = game.add.tween(bear_snake1).to({x:[220, 220], y:[800, 550]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        bear_snake2.mytween = game.add.tween(bear_snake2).to({x:[720, 720], y:[800, 550]}, 4000, Phaser.Easing.Linear.None, true, 0, -1, false);
+        bear_bird = placeBird(500, 350, ['green','blue','red','yellow','purple','orange'])
+        
 //        console.log(["purple"]*5)
 
         for (f in balloon_respawn_fruits) {
@@ -212,7 +219,7 @@ demo.balloonstate.prototype = {
         
         
         // catboss and bearboss
-        place_cat_boss(500,74*50,['green','yellow','blue','orange','red','purple']);
+        place_cat_boss(500,74*50,['green']);//,'yellow','blue','orange','red','purple']);
         
         place_bear_boss(500, 0, ['green','blue','red','yellow','purple','orange']);
 
@@ -223,7 +230,6 @@ demo.balloonstate.prototype = {
         
         place_bear_fruit();
         bearfruit.reset_time = game.time.time + 2000;
-        
             
         // These should be the last thing added so that it is on top of all other sprites (never hidden)
         createInventory(0, 525);
@@ -335,9 +341,11 @@ demo.balloonstate.prototype = {
 
 //        console.log(balloon_respawn_fruits);
         for (f in balloon_respawn_fruits) {
-//            console.log(balloon_respawn_fruits[f])
+//            console.log(f)
             if (!balloon_respawn_fruits[f].alive && game.time.time > balloon_respawn_fruits[f].reset_time) {
                 balloon_respawn_fruits[f].revive()
+            } else if (f == "health2" && balloon_respawn_fruits[f].alive) {
+                balloon_respawn_fruits[f].reset_time = game.time.time + 10000;
             } else if (balloon_respawn_fruits[f].alive) {
                 balloon_respawn_fruits[f].reset_time = game.time.time + 2000;
             }
