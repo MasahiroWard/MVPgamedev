@@ -8,6 +8,10 @@ demo.gameover.prototype = {
         game.world.setBounds(0, 0, 1000, tilemap_height);        
     },
     create: function(){
+        death_count += 1; 
+//        console.log(death_count);
+        game.add.text(400,400,"Death Count: " + death_count);
+        
         add_game_bg('bg2');
         game.stage.backgroundColor = "#ffffff";
         game.physics.startSystem(Phaser.Physics.Arcade);
@@ -15,6 +19,8 @@ demo.gameover.prototype = {
         var gameovertext = game.add.sprite(500, 150, "game_over_txt");
         gameovertext.anchor.setTo(0.5, 0.5);
         gameovertext.scale.setTo(1.2, 1.2);
+        
+        game.add.text(400,400,"Death Count: " + death_count);
         
         game.sound.stopAll();
         disappointed.play('','',0.6);

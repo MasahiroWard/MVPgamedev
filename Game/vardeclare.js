@@ -88,3 +88,8 @@ var restart_state;
 
 // difficulty level 
 var difficulty = "easy";
+
+
+// death counter
+var death_count = 0;
+
