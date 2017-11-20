@@ -39,7 +39,7 @@ demo.lavastate.prototype = {
         happyrock.play('','',0.2,true,true);
         
         // add background
-        add_game_bg('bg2');
+        add_game_bg('bg3');
         
         game.stage.backgroundColor = '#DDDDDD';
 
