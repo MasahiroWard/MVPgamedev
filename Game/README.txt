@@ -52,7 +52,7 @@ Supernatural(Instrumental) by Alex (c) copyright 2016 Licensed under a Creative 
 
 
 
-Happy rock & clearday & cute by 
+Happy rock, clearday, cute and energy by 
 https://www.bensound.com
 
 Rainbows Kevin MacLeod (incompetech.com)
