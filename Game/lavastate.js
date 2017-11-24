@@ -34,9 +34,11 @@ demo.lavastate.prototype = {
 //        game.camera.y = 0
         
         // play background music
-        happyrock = game.add.audio('happyrock');
+//        happyrock = game.add.audio('happyrock');
+        energy = game.add.audio('energy');
         
-        happyrock.play('','',0.2,true,true);
+        energy.play('','',0.5,true,true);
+//        happyrock.play('','',0.2,true,true);
         
         // add background
         add_game_bg('bg3');
