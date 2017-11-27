@@ -137,7 +137,7 @@ demo.menu.prototype = {
             }
         );
 
-        easy_option = game.add.sprite(620, 275, "easy_txt");
+        easy_option = game.add.sprite(620, 350, "easy_txt");
         easy_option.anchor.setTo(0.5,0.5);
         easy_option.inputEnabled = true;
         easy_option.events.onInputUp.add(
@@ -146,7 +146,7 @@ demo.menu.prototype = {
             }
         );
         
-        difficult_option = game.add.sprite(850, 275, "hard_txt");
+        difficult_option = game.add.sprite(850, 350, "hard_txt");
         difficult_option.anchor.setTo(0.5,0.5);
         difficult_option.inputEnabled = true;
         difficult_option.events.onInputUp.add(
@@ -155,14 +155,15 @@ demo.menu.prototype = {
             }
         );
 
-        var difficulty_text = game.add.sprite(610, 190, "difficulty_txt");
+        var difficulty_text = game.add.sprite(610, 250, "difficulty_txt");
+        difficulty_text.anchor.setTo(0, 0.5);
         
 // bestiary option 
         
 
         
 
-        var bestiary_option = game.add.sprite(730, 400, "bestiary_txt");
+        var bestiary_option = game.add.sprite(730, 450, "bestiary_txt");
         bestiary_option.inputEnabled = true;
         bestiary_option.events.onInputUp.add(
             function(){
