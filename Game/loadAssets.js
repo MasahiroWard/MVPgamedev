@@ -23,6 +23,7 @@ function loadImages(){
     game.load.image('pause_darkener', 'assets/backgrounds/black_rectangle.png')
     game.load.image('bg2', 'assets/backgrounds/icebackground.png');
     game.load.image('bg3', 'assets/backgrounds/lavatemp.png');
+    game.load.image('tempUnicorn', 'assets/backgrounds/tempunicorn.png');
     
     // Sprites used in tutorial messages
     game.load.image('downarrow', 'assets/sprites/white_downarrow.png')

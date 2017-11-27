@@ -51,7 +51,7 @@ demo.balloonstate.prototype = {
         
         // Add game background
         // change 'bg1' to whatever is required
-        add_game_bg('bg1')
+        add_game_bg('tempUnicorn')
         
         ////////////////////////////////////////////
         // Add in tilemap
