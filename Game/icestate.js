@@ -1,5 +1,7 @@
 
 var ice_dictionary ;
+var ice_respawn_fruits = {};
+
 demo.icestate = function(){};
 demo.icestate.prototype = {
     preload: function(){
@@ -86,7 +88,6 @@ demo.icestate.prototype = {
         placeFruit(650, game.world.height -350,"greenfruit");
         placeFruit(750, game.world.height - 1600, "bluefruit");
         placeFruit(150, 1000, "greenfruit");
-        placeFruit(200, 300, "purplefruit");
         placeFruit(500, game.world.height - 1600, "purplefruit");
         placeFruit(825, 5025, "bluefruit");
         placeHealthpack(725,3275);
@@ -98,8 +99,16 @@ demo.icestate.prototype = {
         placeFruit(275,8575,"greenfruit");
         placeFruit(775,875,"purplefruit");
         placeHealthpack(25, 250);
-        placeFruit(925, 250, "greenfruit");
         placeFruit(400,2775, "purplefruit");
+        
+        // Fruit for catboss
+        ice_respawn_fruits.greencat = placeFruit(925, 250, "greenfruit");
+        ice_respawn_fruits.purplecat = placeFruit(200, 300, "purplefruit");
+        ice_respawn_fruits.bluecat = placeFruit(500, 500, 'bluefruit')
+
+        for (f in ice_respawn_fruits) {
+            ice_respawn_fruits[f].reset_time = game.time.time + 2000;
+        }
         
         placeHealthpack(500, 550);
         
@@ -196,6 +205,13 @@ demo.icestate.prototype = {
         snakes_group.forEach(moveSnake, this);
         moving_platform_group.forEach(movingPlatformsUpdate, this);
         
+        for (f in ice_respawn_fruits) {
+            if (!ice_respawn_fruits[f].alive && game.time.time > ice_respawn_fruits[f].reset_time) {
+                ice_respawn_fruits[f].revive()
+            } else if (ice_respawn_fruits[f].alive) {
+                ice_respawn_fruits[f].reset_time = game.time.time + 2000;
+            }
+        }
         
         update_health(player.health);
         if (!cat_boss.alive) {
