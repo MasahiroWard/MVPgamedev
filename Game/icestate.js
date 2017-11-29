@@ -169,7 +169,13 @@ demo.icestate.prototype = {
         // move the camera (if it wasnt obvious)        
         // speed up when player reaches boss
         if (player.body.y > 650) {
-            move_camera(1,1);
+            if (player.body.y >= game.camera.y + 200) {
+                move_camera(1,1);
+            }
+            else {
+                move_camera(0,1);
+            }
+            
         } else if (player.body.y < 650) {
             move_camera(0, 2);
         }
